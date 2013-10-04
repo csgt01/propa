@@ -3,11 +3,13 @@ package service;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 import models.Colour;
+import models.ColourBlock;
+import models.Column;
 import models.Riddle;
+import models.Row;
 
 public class RiddleLoader {
 
@@ -15,7 +17,7 @@ public class RiddleLoader {
 
     private int state = 0;
 
-    public List<String> readFile(String filename) {
+    public Riddle readFile(String filename) {
         Scanner scanner = null;
         ArrayList<String> lines = new ArrayList<String>();
         try {
@@ -30,13 +32,16 @@ public class RiddleLoader {
                 scanner.close();
             }
         }
+        int index = 1;
         for (String str : lines) {
+//            System.out.println(index);
             if (str.length() > 0) {
                 analyzeLine(str);
             }
+            index++;
         }
-        System.out.println(riddle);
-        return lines;
+        System.out.println("Riddle:" + riddle);
+        return riddle;
     }
 
     public void analyzeLine(String str) {
@@ -69,13 +74,52 @@ public class RiddleLoader {
             break;
         case 2:
             if (str.startsWith("column")) {
-                state = 2;
+                state = 3;
             } else {
-               
+                str = str.trim();
+                Row row = new Row();
+                String[] blocks = str.split(",");
+                for (int i = 0; i < blocks.length; i++) {
+
+                    ColourBlock cb = new ColourBlock();
+                    String block = blocks[i];
+                    block = block.trim();
+                    if (!block.equals("0") && !block.equals("")) {
+                        cb.setColour(riddle.getColourByName(block
+                                .substring(block.length() - 1)));
+                        cb.setHowMany(Integer.valueOf(block.substring(
+                                0, (block.length() - 1))));
+                        row.addBlock(cb);
+                    }
+                }
+                riddle.addRow(row);
             }
             break;
+        case 3:
+            if (str.startsWith("bliblablub")) {
+                state = 4;
+            } else {
+                str = str.trim();
+                Column column = new Column();
+                String[] blocks = str.split(",");
+                for (int i = 0; i < blocks.length; i++) {
+
+                    ColourBlock cb = new ColourBlock();
+                    String block = blocks[i];
+                    block = block.trim();
+                    if (!block.equals("0") && !block.equals("")) {
+                        cb.setColour(riddle.getColourByName(block
+                                .substring(block.length() - 1)));
+                        cb.setHowMany(Integer.valueOf(block.substring(
+                                0, (block.length() - 1))));
+                        column.addBlock(cb);
+                    }
+                }
+                riddle.addColumn(column);
+            }
+            break; 
         default:
-            break;
+                break;
         }
     }
 
