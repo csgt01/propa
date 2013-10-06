@@ -54,26 +54,28 @@ public class NonoSolver implements INonogramSolver {
          }
       }
 
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < 5; i++) {
          matrix = checkColumns(matrix);
-//         showMatrix(matrix);
+         // showMatrix(matrix);
          matrix = checkRows(matrix);
-//         showMatrix(matrix);
+         // showMatrix(matrix);
          matrix = checkRowForMathingBlocks(matrix);
-//         showMatrix(matrix);
+         // showMatrix(matrix);
          matrix = checkColumnForMathingBlocks(matrix);
-//         showMatrix(matrix);
+         // showMatrix(matrix);
          checkBlocksInRowsToBeTTrue(matrix);
-//         showMatrix(matrix);
+         // showMatrix(matrix);
          matrix = checkBeginAndEndOfColumnsForBlocks(matrix);
-//         showMatrix(matrix);
+         // showMatrix(matrix);
 
          matrix = checkBeginnigOfRowForExactSpaceForFirstBlock(matrix);
-//         showMatrix(matrix);
+         // showMatrix(matrix);
+
+         matrix = checkEndOfRowForExactSpaceForLastBlock(matrix);
 
          checkBlocksInColumnsToBeTTrue(matrix);
          checkBlocksInRowsToBeTTrue(matrix);
-//         matrix = fillReadyRowsAndColumns(matrix);
+         // matrix = fillReadyRowsAndColumns(matrix);
       }
 
       showMatrix(matrix);
@@ -89,7 +91,7 @@ public class NonoSolver implements INonogramSolver {
     */
    private char[][] checkBeginnigOfRowForExactSpaceForFirstBlock(char[][] matrix) {
       System.out.println("checkBeginnigOfRowForExactSpaceForFirstBlock");
-//      showMatrix(matrix);
+      // showMatrix(matrix);
       // gehe Rows durch
       for (int roInt = 0; roInt < riddle.getHeight(); roInt++) {
          System.out.println("row:" + roInt);
@@ -97,45 +99,104 @@ public class NonoSolver implements INonogramSolver {
          ColourBlock block = null;
          if (row != null && row.getBlocks() != null) {
             block = row.getBlocks().get(0);
-         }
 
-         if (null != block && !block.isGone() && block.getHowMany() > 1) {
-            int columnInt = 0;
-            // vorhangeln bis ersten *
-            while (columnInt < riddle.getWidth() && matrix[roInt][columnInt] == '-') {
-               columnInt++;
-            }
-            if (matrix[roInt][columnInt] == '*') {
-               boolean toFill = true;
-               for (int index = columnInt; index < (columnInt + block.getHowMany()); index++) {
-                  if (matrix[roInt][index] != '*') {
-                     toFill = false;
-                  }
+            if (null != block && !block.isGone() && block.getHowMany() > 1) {
+               int columnInt = 0;
+               // vorhangeln bis ersten *
+               while (columnInt < riddle.getWidth() && matrix[roInt][columnInt] == '-') {
+                  columnInt++;
                }
-               if (toFill) {
-                  if ((columnInt + block.getHowMany()) >= riddle.getWidth() || matrix[roInt][columnInt + block.getHowMany()] == '*') {
-                     toFill = false;
-                  }
-                  for (int index = columnInt; index < riddle.getWidth(); index++) {
-                     if (matrix[roInt][index] == block.getColour().getName().charAt(0)) {
-                        toFill = false;
-                        break;
-                     }
-                     if (matrix[roInt][index] == '-' || matrix[roInt][index] != '*') {
-                        break;
-                     }
-                  }
-               }
-               if (toFill) {
+               if (matrix[roInt][columnInt] == '*') {
+                  boolean toFill = true;
                   for (int index = columnInt; index < (columnInt + block.getHowMany()); index++) {
-                     matrix[roInt][index] = block.getColour().getName().charAt(0);
-                     block.setGone(true);
+                     if (matrix[roInt][index] != '*' && matrix[roInt][index] != block.getColour().getName().charAt(0)) {
+                        toFill = false;
+                     }
+                  }
+                  if (toFill) {
+                     if ((columnInt + block.getHowMany()) >= riddle.getWidth() || matrix[roInt][columnInt + block.getHowMany()] == '*') {
+                        toFill = false;
+                     }
+                     for (int index = columnInt; index < riddle.getWidth(); index++) {
+                        if (matrix[roInt][index] == block.getColour().getName().charAt(0)) {
+                           toFill = false;
+                           break;
+                        }
+                        if (matrix[roInt][index] == '-' || matrix[roInt][index] != '*') {
+                           break;
+                        }
+                     }
+                  }
+                  if (toFill) {
+                     for (int index = columnInt; index < (columnInt + block.getHowMany()); index++) {
+                        matrix[roInt][index] = block.getColour().getName().charAt(0);
+                        block.setGone(true);
+                     }
                   }
                }
             }
          }
       }
-//      showMatrix(matrix);
+      // showMatrix(matrix);
+      return matrix;
+   }
+
+   /**
+    * Überprüft am Anfang der Row, ob der erste Block genau in die Lücke passt.
+    * '-' werden geskipt.
+    * 
+    * @param matrix
+    * @return
+    */
+   private char[][] checkEndOfRowForExactSpaceForLastBlock(char[][] matrix) {
+      System.out.println("checkBeginnigOfRowForExactSpaceForFirstBlock");
+      // showMatrix(matrix);
+      // gehe Rows durch
+      for (int roInt = riddle.getWidth() - 1; roInt > -1; roInt--) {
+         System.out.println("row:" + roInt);
+         Row row = riddle.getRows().get(roInt);
+         ColourBlock block = null;
+         if (row != null && row.getBlocks() != null) {
+            block = row.getBlocks().get(row.getBlocks().size() - 1);
+
+            if (null != block && !block.isGone() && block.getHowMany() > 1) {
+               int columnInt = riddle.getWidth() - 1;
+               // vorhangeln bis ersten *
+               while (columnInt > -1 && matrix[roInt][columnInt] == '-') {
+                  columnInt--;
+               }
+               if (matrix[roInt][columnInt] == '*') {
+                  boolean toFill = true;
+                  for (int index = columnInt; index > (columnInt - block.getHowMany()); index--) {
+                     if (matrix[roInt][index] != '*' && matrix[roInt][index] != block.getColour().getName().charAt(0)) {
+                        toFill = false;
+                     }
+                  }
+                  if (toFill) {
+                     if ((columnInt - block.getHowMany()) < 0 || matrix[roInt][columnInt - block.getHowMany()] == '*') {
+                        toFill = false;
+                     }
+                     for (int index = columnInt; index > columnInt - block.getHowMany(); index--) {
+                        if (matrix[roInt][index] == block.getColour().getName().charAt(0)) {
+                           toFill = false;
+                           break;
+                        }
+                        if (matrix[roInt][index] == '-' || matrix[roInt][index] != '*') {
+                           break;
+                        }
+                     }
+                  }
+                  if (toFill) {
+                     for (int index = columnInt; index > (columnInt - block.getHowMany()); index--) {
+                        matrix[roInt][index] = block.getColour().getName().charAt(0);
+                        block.setGone(true);
+                     }
+                  }
+               }
+            }
+         }
+      }
+      // showMatrix(matrix);
       return matrix;
    }
 
