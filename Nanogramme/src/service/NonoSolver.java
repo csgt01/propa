@@ -83,7 +83,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Überprüft am Anfang der Row, ob der erste Block genau in die Lücke passt.
+    * ï¿½berprï¿½ft am Anfang der Row, ob der erste Block genau in die Lï¿½cke passt.
     * '-' werden geskipt.
     * 
     * @param matrix
@@ -142,7 +142,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Überprüft am Anfang der Row, ob der erste Block genau in die Lücke passt.
+    * ÃœberprÃ¼ft am Anfang der Row, ob der erste Block genau in die LÃ¼cke passt.
     * '-' werden geskipt.
     * 
     * @param matrix
@@ -201,7 +201,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Überprüft den Anfang und das Ende der Columns, ob ein angefangener Block
+    * ï¿½berprï¿½ft den Anfang und das Ende der Columns, ob ein angefangener Block
     * eingetragen ist.
     * 
     * @param matrix
@@ -234,7 +234,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Übrtprüft, ob es Blöcke gibt, die vollständig sind, aber nicht gone=true
+    * ï¿½brtprï¿½ft, ob es Blï¿½cke gibt, die vollstï¿½ndig sind, aber nicht gone=true
     * sind.
     * 
     * @param matrix
@@ -265,7 +265,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Übrtprüft, ob es Blöcke gibt, die vollständig sind, aber nicht gone=true
+    * ï¿½brtprï¿½ft, ob es Blï¿½cke gibt, die vollstï¿½ndig sind, aber nicht gone=true
     * sind.
     * 
     * @param matrix
@@ -301,7 +301,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Überprüft, ob alle Blöcke true sind. Falls ja, werden "*" mit "-" ersetzt.
+    * ï¿½berprï¿½ft, ob alle Blï¿½cke true sind. Falls ja, werden "*" mit "-" ersetzt.
     * 
     * @param matrix
     * @return
@@ -491,17 +491,18 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Überprüft, ob es überhaupt Blöcke in der Column gibt. Wenn nicht wird die
-    * Column mit "-" aufgefüllt. Wenn ja, dann wird die Größe der Blöcke
-    * aufaddiert (wenn gleich Farben aufeinanderfolgen wird zusätzlich 1
-    * addiert. Wenn dann die Anzahl = der Breite ist, werden die Blöcke in die
-    * Matrix übertragen (in fillColumn()).
+    * ï¿½berprï¿½ft, ob es ï¿½berhaupt Blï¿½cke in der Column gibt. Wenn nicht wird die
+    * Column mit "-" aufgefï¿½llt. Wenn ja, dann wird die Grï¿½ï¿½e der Blï¿½cke
+    * aufaddiert (wenn gleich Farben aufeinanderfolgen wird zusï¿½tzlich 1
+    * addiert. Wenn dann die Anzahl = der Breite ist, werden die Blï¿½cke in die
+    * Matrix ï¿½bertragen (in fillColumn()).
     * 
     * @param matrix
     * @return
     */
    private char[][] checkColumns(char[][] matrix) {
       System.out.println("checkColumns");
+      System.out.println(riddle);
       for (int j = 0; j < riddle.getColumns().size(); j++) {
          Column column = riddle.getColumns().get(j);
          int count = 0;
@@ -526,10 +527,10 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Überprüft, ob es überhaupt Blöcke in der Row gibt. Wenn nicht wird die Row
-    * mit "-" aufgefüllt. Wenn ja, dann wird die Größe der Blöcke aufaddiert
-    * (wenn gleich Farben aufeinanderfolgen wird zusätzlich 1 addiert. Wenn dann
-    * die Anzahl = der Breite ist, werden die Blöcke in die Matrix übertragen
+    * ï¿½berprï¿½ft, ob es ï¿½berhaupt Blï¿½cke in der Row gibt. Wenn nicht wird die Row
+    * mit "-" aufgefï¿½llt. Wenn ja, dann wird die Grï¿½ï¿½e der Blï¿½cke aufaddiert
+    * (wenn gleich Farben aufeinanderfolgen wird zusï¿½tzlich 1 addiert. Wenn dann
+    * die Anzahl = der Breite ist, werden die Blï¿½cke in die Matrix ï¿½bertragen
     * (in fillRow()).
     * 
     * @param matrix
@@ -560,7 +561,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt die komplette Row mit "-".
+    * Fï¿½llt die komplette Row mit "-".
     * 
     * @param j
     * @param matrix
@@ -577,7 +578,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt die komplette Column mit "-".
+    * Fï¿½llt die komplette Column mit "-".
     * 
     * @param j
     * @param matrix
@@ -594,7 +595,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt die Column mit den Blöcken und etwaigen "-",
+    * Fï¿½llt die Column mit den Blï¿½cken und etwaigen "-",
     * 
     * @param number
     * @param column
@@ -623,7 +624,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt die Row mit den Blöcken und etwaigen "-",
+    * Fï¿½llt die Row mit den Blï¿½cken und etwaigen "-",
     * 
     * @param number
     * @param column
