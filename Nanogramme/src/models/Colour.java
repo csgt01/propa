@@ -8,7 +8,7 @@ public class Colour {
     
     private int blue;
     
-    private String name;
+    private char name;
 
     public int getRed() {
         return red;
@@ -34,11 +34,11 @@ public class Colour {
         this.blue = blue;
     }
 
-    public String getName() {
+    public char getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(char name) {
         this.name = name;
     }
 

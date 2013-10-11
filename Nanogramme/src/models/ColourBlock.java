@@ -34,12 +34,11 @@ public class ColourBlock {
         this.gone = gone;
     }
 
-    @Override
-    public String toString() {
-        return "ColourBlock [howMany=" + howMany + ", colour=" + colour
-                + "]";
-    }
-    
+   @Override
+   public String toString() {
+      return "ColourBlock [howMany=" + howMany + ", colour=" + colour + ", gone=" + gone + "]";
+   }
+
     
 
 }

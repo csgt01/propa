@@ -63,7 +63,7 @@ public class RiddleLoader {
             } else {
                 String[] splits = str.split(" ");
                 Colour colour = new Colour();
-                colour.setName(splits[0]);
+                colour.setName(splits[0].charAt(0));
                 String rgbsString = splits[1];
                 String[] rgbs = rgbsString.split(",");
                 colour.setRed(Integer.valueOf(rgbs[0]));
@@ -77,7 +77,7 @@ public class RiddleLoader {
                 state = 3;
             } else {
                 str = str.trim();
-                Row row = new Row();
+                Row row = new Row(riddle.getWidth());
                 String[] blocks = str.split(",");
                 for (int i = 0; i < blocks.length; i++) {
 
@@ -100,7 +100,7 @@ public class RiddleLoader {
                 state = 4;
             } else {
                 str = str.trim();
-                Column column = new Column();
+                Column column = new Column(riddle.getHeight());
                 String[] blocks = str.split(",");
                 for (int i = 0; i < blocks.length; i++) {
 

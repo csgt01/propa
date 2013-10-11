@@ -1,7 +1,7 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -15,8 +15,8 @@ public class Riddle {
     private int rowCount = 0;
     private int columnCount = 0;
     
-    private LinkedHashMap<Integer, Row> rows;
-    private LinkedHashMap<Integer, Column> columns;
+    private LinkedList<Row> rows;
+    private LinkedList<Column> columns;
     
     public Riddle() {
         colours = new ArrayList<Colour>();
@@ -55,24 +55,22 @@ public class Riddle {
     
     public void addRow(Row row) {
         if (null == rows) {
-            rows = new LinkedHashMap<Integer, Row>();
+            rows = new LinkedList<Row>();
         }
-        rows.put(rowCount, row);
-        rowCount++;
+        rows.add(row);
     }
     
     public void addColumn(Column column) {
         if (null == columns) {
-            columns = new LinkedHashMap<Integer, Column>();
+            columns = new LinkedList<Column>();
         }
-        columns.put(columnCount, column);
-        columnCount++;
+        columns.add(column);
     }
     
     public Colour getColourByName(String name) {
         Colour returnColour = null;
         for (Colour colour : colours) {
-            if (colour.getName().equals(name)) {
+            if (colour.getName() == (name.charAt(0))) {
                 returnColour = colour;
             }
         }
@@ -81,28 +79,28 @@ public class Riddle {
     
     
 
-    public LinkedHashMap<Integer, Row> getRows() {
+    public LinkedList<Row> getRows() {
         return rows;
     }
 
-    public void setRows(LinkedHashMap<Integer, Row> rows) {
+    public void setRows(LinkedList<Row> rows) {
         this.rows = rows;
     }
 
-    public LinkedHashMap<Integer, Column> getColumns() {
+    public LinkedList<Column> getColumns() {
         return columns;
     }
 
-    public void setColumns(LinkedHashMap<Integer, Column> columns) {
+    public void setColumns(LinkedList<Column> columns) {
         this.columns = columns;
     }
 
     @Override
     public String toString() {
-        return "Riddle [colours=" + colours + ", width=" + width
+        return "Riddle [colours=" + colours + ", \nwidth=" + width
                 + ", height=" + height + ", rowCount=" + rowCount
-                + ", columnCount=" + columnCount + ", rows=" + rows
-                + ", columns=" + columns + "]";
+                + ", columnCount=" + columnCount + ", \nrows=" + rows
+                + ", \ncolumns=" + columns + "]";
     }
     
     
