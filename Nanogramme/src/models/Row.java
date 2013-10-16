@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class Row {
     
-    private LinkedList<ColourBlock> blocks;
+    private LinkedList<Block> blocks;
     
     private boolean isGone = false;
     private int entriesSet = 0;
@@ -12,20 +12,21 @@ public class Row {
     
     public Row (int maxEntries) {
        this.maxEntries = maxEntries;
+       blocks = new LinkedList<>();
     }
     
-    public void addBlock(ColourBlock block) {
+    public void addBlock(Block block) {
         if (null == blocks) {
-            blocks = new LinkedList<ColourBlock>();
+            blocks = new LinkedList<Block>();
         }
         blocks.add(block);
     }
 
-    public LinkedList<ColourBlock> getBlocks() {
+    public LinkedList<Block> getBlocks() {
         return blocks;
     }
 
-    public void setBlocks(LinkedList<ColourBlock> blocks) {
+    public void setBlocks(LinkedList<Block> blocks) {
         this.blocks = blocks;
     }
 
@@ -34,11 +35,11 @@ public class Row {
    }
 
    public void setGone(boolean isGone) {
-      if (blocks != null && isGone) {
-         for (ColourBlock block : blocks) {
-            block.setGone(true);
-         }
-      }
+//      if (blocks != null && isGone) {
+//         for (ColourBlock block : blocks) {
+//            block.setGone(true);
+//         }
+//      }
       this.isGone = isGone;
    }
 
@@ -60,7 +61,7 @@ public class Row {
    
    protected int getBlockCount() {
       int blockCount = 0;
-      for (ColourBlock block : blocks) {
+      for (Block block : blocks) {
          blockCount += block.getHowMany();
       }
       return blockCount;
@@ -76,7 +77,7 @@ public class Row {
 //         string = string.concat(block.getHowMany().toString()).concat(""+block.getColour().getName()).concat(" " + block.isGone());
 //      }
 //      return string;
-      return "Row [blocks=" + blocks + ", isGone=" + isGone + ", entriesSet=" + entriesSet + "]";
+      return "Row [blocks=" + blocks.toString() + ", isGone=" + isGone + ", entriesSet=" + entriesSet + "]\n";
    }
     
     

@@ -1,0 +1,53 @@
+title beispiel3
+by cschulte
+
+width 20
+height 20
+numberofcolors 1
+
+colors
+A 255,0,0
+
+rows
+2A,2A
+2A,1A,1A,1A
+2A,3A,1A,1A
+2A,1A,3A,1A
+11A,1A,1A
+2A,6A,1A
+10A,2A,1A,1A
+1A,2A,5A,1A,2A
+1A,3A,2A,3A
+2A,4A,5A
+2A,5A,2A
+2A,9A
+2A,11A
+1A,2A,11A
+1A,4A,10A
+4A,9A
+2A,7A
+6A
+3A,1A
+1A
+
+columns
+1A
+2A,1A
+3A,4A
+1A,2A,3A
+2A,1A,1A,7A
+5A,9A
+1A,2A,2A
+2A,1A,1A,3A,2A
+5A,11A
+3A,15A
+1A,15A
+5A,1A,10A
+3A,2A,7A
+1A,12A
+2A,1A,8A
+1A,5A
+4A,4A
+2A,3A
+1A,2A,2A
+3A

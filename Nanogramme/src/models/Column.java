@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public class Column {
 
-   private LinkedList<ColourBlock> blocks;
+   private LinkedList<Block> blocks;
 
    private boolean isGone = false;
 
@@ -14,11 +14,12 @@ public class Column {
    
    public Column (int maxEntries) {
       this.maxEntries = maxEntries;
+      blocks = new LinkedList<>();
    }
 
-   public void addBlock(ColourBlock block) {
+   public void addBlock(Block block) {
       if (null == blocks) {
-         blocks = new LinkedList<ColourBlock>();
+         blocks = new LinkedList<Block>();
       }
       blocks.add(block);
    }
@@ -28,15 +29,10 @@ public class Column {
    }
 
    public void setGone(boolean isGone) {
-      if (blocks != null && isGone) {
-         for (ColourBlock block : blocks) {
-            block.setGone(true);
-         }
-      }
       this.isGone = isGone;
    }
 
-   public LinkedList<ColourBlock> getBlocks() {
+   public LinkedList<Block> getBlocks() {
       return blocks;
    }
 
@@ -59,13 +55,13 @@ public class Column {
 
    protected int getBlockCount() {
       int blockCount = 0;
-      for (ColourBlock block : blocks) {
+      for (Block block : blocks) {
          blockCount += block.getHowMany();
       }
       return blockCount;
    }
 
-   public void setBlocks(LinkedList<ColourBlock> blocks) {
+   public void setBlocks(LinkedList<Block> blocks) {
       this.blocks = blocks;
    }
 
