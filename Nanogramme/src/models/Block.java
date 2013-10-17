@@ -150,6 +150,18 @@ public class Block {
       setStartIndex(startIndex);
       setEndIndex(startIndex + howMany - 1);
    }
+   
+   /**
+    * Gone is set and startIndex and endIndex.
+    * 
+    * @param gone the gone to set
+    */
+   public void setGone(boolean gone) {
+      this.gone = gone;
+      //TODO why nullpointer
+//      setStartIndex(startIndex);
+//      setEndIndex(startIndex + howMany - 1);
+   }
 
 
 

@@ -38,11 +38,11 @@ public class Row {
    }
 
    public void setGone(boolean isGone) {
-//      if (blocks != null && isGone) {
-//         for (ColourBlock block : blocks) {
-//            block.setGone(true);
-//         }
-//      }
+      if (blocks != null && isGone) {
+         for (Block block : blocks) {
+            block.setGone(true);
+         }
+      }
       this.isGone = isGone;
    }
 

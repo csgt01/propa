@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Column {
@@ -12,9 +13,12 @@ public class Column {
 
    private int maxEntries = 0;
    
+   private  ArrayList<LinkedList<String>> possibilities;
+   
    public Column (int maxEntries) {
       this.maxEntries = maxEntries;
       blocks = new LinkedList<>();
+      possibilities = new ArrayList<LinkedList<String>>();
    }
 
    public void addBlock(Block block) {
@@ -63,6 +67,20 @@ public class Column {
 
    public void setBlocks(LinkedList<Block> blocks) {
       this.blocks = blocks;
+   }
+   
+   /**
+    * @return the possibilities
+    */
+   public ArrayList<LinkedList<String>> getPossibilities() {
+      return possibilities;
+   }
+
+   /**
+    * @param possibilities the possibilities to set
+    */
+   public void setPossibilities(ArrayList<LinkedList<String>> possibilities) {
+      this.possibilities = possibilities;
    }
 
    @Override

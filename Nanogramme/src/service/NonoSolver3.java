@@ -72,6 +72,9 @@ public class NonoSolver3 implements INonogramSolver {
 			showBlockGoneTrue();
 			solveRecursive();
 			showMatrix();
+			showBlockGoneTrue();
+			checkRowsAndColumnsForGone();
+			System.out.println("Riddle:" + riddle);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -79,6 +82,10 @@ public class NonoSolver3 implements INonogramSolver {
 		System.out.println("Time for " + methodName + ": "
 				+ (new Date().getTime() - startTime) + " ms");
 		return matrix;
+	}
+
+	private void checkRowsAndColumnsForGone() {
+		// TODO Auto-generated method stub
 	}
 
 	/**
@@ -89,13 +96,13 @@ public class NonoSolver3 implements INonogramSolver {
 		for (Row row : getRows()) {
 			LinkedList<Block> blocks = row.getBlocks();
 			// Blöcke durchgehen.
-			setupBlocksInRowAndColumn(blocks, riddle.getWidth());
+			setupBlocksInRowAndColumn(blocks, riddle.getHeight());
 		}
 
 		for (Column column : getColumns()) {
 			LinkedList<Block> blocks = column.getBlocks();
 			// Blöcke durchgehen.
-			setupBlocksInRowAndColumn(blocks, riddle.getHeight());
+			setupBlocksInRowAndColumn(blocks, riddle.getWidth());
 		}
 	}
 
@@ -111,7 +118,7 @@ public class NonoSolver3 implements INonogramSolver {
 			Block block = blocks.get(i);
 			if (blocks.size() == 0) {
 				block.setMinStartIndex(0);
-				block.setMaxEndIndex(riddle.getWidth() - 1);
+				block.setMaxEndIndex(size - 1);
 			} else {
 				if (i == 0) {
 					block.setMinStartIndex(0);
@@ -309,6 +316,7 @@ public class NonoSolver3 implements INonogramSolver {
 				}
 				// sonst: keine Blöcke, also mit - füllen
 			} else {
+				row.setGone(true);
 				fillAreaInRowWithChar(rowInt, 0, riddle.getWidth(), '-');
 			}
 		}
@@ -416,6 +424,7 @@ public class NonoSolver3 implements INonogramSolver {
 				}
 				// sonst: keine Blöcke, also mit '-' füllen
 			} else {
+				column.setGone(true);
 				fillAreaInColumnWithChar(columnInt, 0, riddle.getHeight(), '-');
 			}
 		}
@@ -449,52 +458,132 @@ public class NonoSolver3 implements INonogramSolver {
 
 	private void solveRecursive() throws Exception {
 		System.out.println("solveRecursive()");
-		for (Row row : getRows()) {
-			ArrayList<LinkedList<String>> possibilities = row
-					.getPossibilities();
-			System.out.println("Pos1:" + possibilities);
-			if (row.getBlocks().size() > 0 && !row.isGone()) {
-				LinkedList<String> firstConditionOfRow = getFirstConditionOfRow(
-						row.getBlocks(), null, 0);
-				System.out.println("Row:" + getIndexOfRow(row));
-				if (possibilities == null || possibilities.size() == 0) {
-					possibilities = getPossibilitiesForRowOrColumn(
-							row.getBlocks(), firstConditionOfRow,
-							possibilities, 0, 0);
-					possibilities.add(getFirstConditionOfRow(row.getBlocks(),
-							null, 0));
-				}
-				row.setPossibilities(possibilities);
-				System.out.println("Pos1 size:" + possibilities.size() + " "
-						+ possibilities);
-				possibilities = erasePossibilities(row, row.getPossibilities());
-				row.setPossibilities(possibilities);
-				System.out.println("Pos2 size:" + possibilities.size() + " "
-						+ possibilities);
-				if (possibilities.size() > 0) {
-					if (possibilities.size() == 1) {
-						fillListIntoMatrix(getIndexOfRow(row),
-								possibilities.get(0));
-					} else {
-						// TODO: nothing?
+		boolean run = true;
+		while (run ) {
+			run = false;
+			for (Row row : getRows()) {
+				ArrayList<LinkedList<String>> possibilities = row
+						.getPossibilities();
+				System.out.println("Pos1:" + possibilities);
+				if (row.getBlocks().size() > 0 && !row.isGone()) {
+					LinkedList<String> firstConditionOfRow = getFirstConditionOfRow(
+							row.getBlocks(), null, 0);
+					System.out.println("Row:" + getIndexOfRow(row));
+					if (possibilities == null || possibilities.size() == 0) {
+						possibilities = getPossibilitiesForRowOrColumn(
+								row.getBlocks(), firstConditionOfRow,
+								possibilities, 0, 0);
+						possibilities.add(getFirstConditionOfRow(
+								row.getBlocks(), null, 0));
 					}
-				} else {
-					throw new Exception("No solvable!");
+					row.setPossibilities(possibilities);
+					int posibillitiesBefore = possibilities.size();
+					System.out.println("Pos1 size:" + possibilities.size()
+							+ " " + possibilities);
+					possibilities = erasePossibilitiesInRow(row,
+							row.getPossibilities());
+					row.setPossibilities(possibilities);
+					System.out.println("Pos2 size:" + possibilities.size()
+							+ " " + possibilities);
+					int posibillitiesAfter = possibilities.size();
+					if (possibilities.size() > 0) {
+						if (possibilities.size() == 1) {
+							fillListIntoMatrixInRow(getIndexOfRow(row),
+									possibilities.get(0));
+						} else {
+							// TODO: nothing?
+						}
+					} else {
+						throw new Exception("No solvable!");
+					}
+					int difference = posibillitiesBefore - posibillitiesAfter;
+					System.out.println("Difference:" + difference);
+					if (difference > 0) {
+						run = true;
+					}
+					System.out.println("------------");
 				}
-				System.out.println("------------");
+			}
+//			for (Column column : getColumns()) {
+//				System.out.println("Column:" + getIndexOfColumn(column));
+//				showMatrix();
+//				ArrayList<LinkedList<String>> possibilities = column
+//						.getPossibilities();
+//				System.out.println("Pos1:" + possibilities);
+//				if (column.getBlocks().size() > 0 && !column.isGone()) {
+//					LinkedList<String> firstConditionOfRow = getFirstConditionOfRow(
+//							column.getBlocks(), null, 0);
+//					if (possibilities == null || possibilities.size() == 0) {
+//						possibilities = getPossibilitiesForRowOrColumn(
+//								column.getBlocks(), firstConditionOfRow,
+//								possibilities, 0, 0);
+//						possibilities.add(getFirstConditionOfRow(
+//								column.getBlocks(), null, 0));
+//					}
+//					column.setPossibilities(possibilities);
+//					int posibillitiesBefore = possibilities.size();
+//					System.out.println("Pos1 size:" + possibilities.size()
+//							+ " " + possibilities);
+//					possibilities = erasePossibilitiesInColumn(column,
+//							column.getPossibilities());
+//					column.setPossibilities(possibilities);
+//					System.out.println("Pos2 size:" + possibilities.size()
+//							+ " " + possibilities);
+//					int posibillitiesAfter = possibilities.size();
+//					if (possibilities.size() > 0) {
+//						if (possibilities.size() == 1) {
+//							fillListIntoMatrixInColumn(getIndexOfColumn(column),
+//									possibilities.get(0));
+//						} else {
+//							// TODO: nothing?
+//						}
+//					} else {
+//						throw new Exception("No solvable!");
+//					}
+//					int difference = posibillitiesBefore - posibillitiesAfter;
+//					System.out.println("Difference:" + difference);
+//					if (difference > 0) {
+//						run = true;
+//					}
+//					System.out.println("+++++++++++++++++++++");
+//				}
+//			}
+		}
+
+	}
+
+	private void fillListIntoMatrixInRow(int row, LinkedList<String> possibilities) {
+		getRows().get(row).setGone(true);
+		for (int i = 0; i < riddle.getWidth(); i++) {
+			char c = possibilities.get(i).charAt(0);
+			matrix[row][i] = c;
+			if (matrix[row][i] != c) {
+				matrix[row][i] = c;
+				if (matrix[row][i] != '-') {
+					getRows().get(row).setEntriesSet();
+					getColumns().get(i).setEntriesSet();
+				}
 			}
 		}
-
 	}
-
-	private void fillListIntoMatrix(int row, LinkedList<String> possibilities) {
-
+	
+	private void fillListIntoMatrixInColumn(int column, LinkedList<String> possibilities) {
+		getColumns().get(column).setGone(true);
 		for (int i = 0; i < riddle.getWidth(); i++) {
-			matrix[row][i] = possibilities.get(i).charAt(0);
+			char c = possibilities.get(i).charAt(0);
+			matrix[i][column] = c;
+			matrix[i][column] = c;
+			if (matrix[i][column] != c) {
+				matrix[i][column] = c;
+				if (matrix[i][column] != '-') {
+					getRows().get(i).setEntriesSet();
+					getColumns().get(column).setEntriesSet();
+				}
+			}
 		}
 	}
 
-	private ArrayList<LinkedList<String>> erasePossibilities(Row row,
+	private ArrayList<LinkedList<String>> erasePossibilitiesInRow(Row row,
 			ArrayList<LinkedList<String>> possibilities) {
 		ArrayList<LinkedList<String>> possibilities2 = new ArrayList<LinkedList<String>>(
 				possibilities);
@@ -509,6 +598,22 @@ public class NonoSolver3 implements INonogramSolver {
 		}
 		return possibilities2;
 	}
+	
+	private ArrayList<LinkedList<String>> erasePossibilitiesInColumn(Column column,
+			ArrayList<LinkedList<String>> possibilities) {
+		ArrayList<LinkedList<String>> possibilities2 = new ArrayList<LinkedList<String>>(
+				possibilities);
+		for (LinkedList<String> possibility : possibilities) {
+			System.out.println(possibility);
+			boolean possible = isPossibilityGoodInColumn(possibility,
+					getIndexOfColumn(column));
+			if (!possible) {
+				possibilities2.remove(possibility);
+				System.out.println(possibility + " erased");
+			}
+		}
+		return possibilities2;
+	}
 
 	private boolean isPossibilityGoodInRow(LinkedList<String> possibility,
 			int rowInt) {
@@ -516,6 +621,33 @@ public class NonoSolver3 implements INonogramSolver {
 
 		for (int i = 0; i < riddle.getWidth(); i++) {
 			char c = matrix[rowInt][i];
+			char charAt = possibility.get(i).charAt(0);
+			if (c != charAt && c != '*') {
+				isPossible = false;
+			}
+//			Column column = getColumns().get(i);
+//			LinkedList<Block> blocks = column.getBlocks();
+//			if (null != blocks) {
+//				boolean isPresent = false;
+//				for (Block block : blocks) {
+//					if (block.getColour().getName() == charAt) {
+//						isPresent= true;
+//					}
+//				}
+//				if (isPresent) {
+//					isPossible = isPresent;
+//				}
+//			}
+		}
+		return isPossible;
+	}
+	
+	private boolean isPossibilityGoodInColumn(LinkedList<String> possibility,
+			int columnInt) {
+		boolean isPossible = true;
+
+		for (int i = 0; i < riddle.getHeight(); i++) {
+			char c = matrix[i][columnInt];
 			char charAt = possibility.get(i).charAt(0);
 			if (c != charAt && c != '*') {
 				isPossible = false;

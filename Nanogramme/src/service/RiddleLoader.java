@@ -45,7 +45,7 @@ public class RiddleLoader {
             analyzeLine(str);
          }
       }
-      System.out.println("Riddle:" + riddle);
+//      System.out.println("Riddle:" + riddle);
       return riddle;
    }
 
