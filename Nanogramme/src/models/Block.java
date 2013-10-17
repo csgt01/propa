@@ -11,6 +11,9 @@ public class Block {
     private Integer minStartIndex;
     private Integer maxEndIndex;
     
+    private int start;
+    private int end;
+    
     public Block() {
        startIndex = null;
        endIndex = null;
@@ -20,6 +23,43 @@ public class Block {
     
     
     /**
+    * @return the start
+    */
+   public int getStart() {
+      return start;
+   }
+
+
+
+   /**
+    * @param start the start to set
+    */
+   public void setStart(int start) {
+      this.start = start;
+      this.end = (start + getHowMany() -1);
+   }
+
+
+
+   /**
+    * @return the end
+    */
+   public int getEnd() {
+      return end;
+   }
+
+
+
+   /**
+    * @param end the end to set
+    */
+   public void setEnd(int end) {
+      this.end = end;
+   }
+
+
+
+   /**
     * @return the howMany
     */
    public Integer getHowMany() {
@@ -133,6 +173,7 @@ public class Block {
       } else {
          this.minStartIndex = minStartIndex;
       }
+      setStart(minStartIndex);
    }
 
 

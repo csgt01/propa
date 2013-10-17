@@ -1,8 +1,11 @@
 package service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+
+import javax.swing.text.Position;
 
 import models.Block;
 import models.Column;
@@ -69,6 +72,7 @@ public class NonoSolver3 implements INonogramSolver {
          findOverlappingAreasInRow();
          showMatrix();
          showBlockGoneTrue();
+         solveRecursive();
       } catch (Exception e) {
          e.printStackTrace();
       }
@@ -114,7 +118,7 @@ public class NonoSolver3 implements INonogramSolver {
                block.setMaxEndIndex(getMaxEndIndexOfBlock(blocks, i, size));
             } else if (i == blocks.size() - 1) {
                block.setMinStartIndex(getMinStartIndexOfBlock(blocks, i, size));
-               block.setMaxEndIndex(blocks.size() - 1);
+               block.setMaxEndIndex(size - 1);
             } else {
                block.setMinStartIndex(getMinStartIndexOfBlock(blocks, i, size));
                block.setMaxEndIndex(getMaxEndIndexOfBlock(blocks, i, size));
@@ -270,49 +274,25 @@ public class NonoSolver3 implements INonogramSolver {
          if (blocks.size() != 0) {
             Block lastBlock = null;
             int resultIndex = 0;
-            for (Block block : blocks) {
-               if (null != lastBlock && lastBlock.getColour().getName() == block.getColour().getName()) {
-                  asd.add("-");
-                  resultIndex++;
-               }
-
-               for (int i = 0; i < block.getHowMany(); i++) {
-                  asd.add(String.valueOf(block.getColour().getName()));
-               }
-
-               resultIndex += block.getHowMany();
-               lastBlock = block;
-            }
-            for (int i = resultIndex; i < riddle.getWidth(); i++) {
-               asd.add("-");
-            }
+            asd = getFirstConditionOfRow(blocks, lastBlock, resultIndex);
             first.addAll(asd);
             LinkedList<Integer> result = new LinkedList<Integer>();
             for (int i = 0; i < first.size(); i++) {
-
                if (!first.get(i).equals("-")) {
                   result.add(i);
                }
             }
             String removed;
             while (asd.getLast().equals("-")) {
-
                removed = asd.removeLast();
-
                asd.addFirst(removed);
-
                int size = result.size();
                for (int i = size - 1; i > -1; i--) {
-
                   Integer index = result.get(i);
                   if (!first.get(index).equals(asd.get(index))) {
-
                      result.remove(index);
-
                   }
-
                }
-
             }
             for (Integer column : result) {
                char charAt = first.get(column).charAt(0);
@@ -324,6 +304,34 @@ public class NonoSolver3 implements INonogramSolver {
          }
       }
       return;
+   }
+
+   /**
+    * @param asd
+    * @param blocks
+    * @param lastBlock
+    * @param resultIndex
+    * @return
+    */
+   private LinkedList<String> getFirstConditionOfRow(LinkedList<Block> blocks, Block lastBlock, int resultIndex) {
+      LinkedList<String> asd = new LinkedList<String>();
+      for (Block block : blocks) {
+         if (null != lastBlock && lastBlock.getColour().getName() == block.getColour().getName()) {
+            asd.add("-");
+            resultIndex++;
+         }
+
+         for (int i = 0; i < block.getHowMany(); i++) {
+            asd.add(String.valueOf(block.getColour().getName()));
+         }
+
+         resultIndex += block.getHowMany();
+         lastBlock = block;
+      }
+      for (int i = resultIndex; i < riddle.getWidth(); i++) {
+         asd.add("-");
+      }
+      return asd;
    }
 
    /**
@@ -418,6 +426,76 @@ public class NonoSolver3 implements INonogramSolver {
             getColumns().get(columnIndex).setEntriesSet();
          }
       }
+   }
+
+   private void solveRecursive() {
+      System.out.println("solveRecursive()");
+      boolean diff = false;
+      for (Row row : getRows()) {
+         ArrayList<LinkedList<String>> possibilities = row.getPossibilities();
+         System.out.println("Pos1:" + possibilities);
+         if (row.getBlocks().size() > 0) {
+            LinkedList<String> firstConditionOfRow = getFirstConditionOfRow(row.getBlocks(), null, 0);
+            System.out.println("Row:" + getIndexOfRow(row));
+            ArrayList<LinkedList<String>> possibilitiesForRowOrColumn = new ArrayList<LinkedList<String>>();
+            possibilitiesForRowOrColumn = getPossibilitiesForRowOrColumn(row.getBlocks(), firstConditionOfRow, 0, 0);
+            System.out.println("Pos1:" + possibilitiesForRowOrColumn);
+            
+            System.out.println("------------");
+         }
+      }
+
+   }
+
+   private ArrayList<LinkedList<String>> erasePossibilities(Row row,  ArrayList<LinkedList<String>> possibilities) {
+      ArrayList<LinkedList<String>> possibilities2 = new ArrayList<LinkedList<String>>(possibilities);
+      for (LinkedList<String> possibility : row.getPossibilities()) {
+         System.out.println(possibility);
+         boolean possible = isPossibilityGoodInRow(possibility, getIndexOfRow(row));
+         if (!possible) {
+//            possibilities.remove(possibility);
+            System.out.println(possibility);
+         }
+      }
+      return possibilities2;
+   }
+
+   private boolean isPossibilityGoodInRow(LinkedList<String> possibility, int rowInt) {
+      boolean isPossible = true;
+      
+      for (int i = 0; i < riddle.getWidth(); i++) {
+         char c = matrix[rowInt][i];
+         char charAt = possibility.get(i).charAt(0);
+         if (c != charAt && c != '*') {
+            isPossible = false;
+         }
+      }
+      return isPossible;
+   }
+
+   private ArrayList<LinkedList<String>> getPossibilitiesForRowOrColumn(LinkedList<Block> blocks1, LinkedList<String> aa, int numberOfBlock, int add1) {
+      int add = add1;
+      LinkedList<Block> blocks = new LinkedList<Block>(blocks1);
+      Block block = blocks.get(numberOfBlock);
+      int numberOfBlock2 = numberOfBlock + 1;
+      int start = block.getMinStartIndex() + add;
+      ArrayList<LinkedList<String>> possibilities = new ArrayList<LinkedList<String>>();
+      for (int i = start; i+ block.getHowMany() <= block.getMaxEndIndex(); i++) {
+         
+         if (numberOfBlock2 < blocks.size()) {
+            LinkedList<String> bb = new LinkedList<String>(aa);
+            possibilities.addAll(getPossibilitiesForRowOrColumn(blocks, bb, numberOfBlock2, add));
+         }
+         if (aa.getLast() == "-") {
+            LinkedList<String> cc = aa;
+            cc.removeLast();
+            cc.add(start, "-");
+            possibilities.add(cc);
+            System.out.println(cc + "i:" + add);
+         }
+         add++;
+      }
+      return possibilities;
    }
 
    /**
