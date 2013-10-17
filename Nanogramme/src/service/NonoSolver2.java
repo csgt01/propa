@@ -763,7 +763,7 @@ public class NonoSolver2 implements INonogramSolver {
                      }
                      if (fillIt) {
                         if ((riddle.getHeight() - rowInt) >= getSpaceNeededForBlocksFromBeginningToEnd(blocks, blockInt)) {
-                           colourBlock.setGone(true);
+//                           colourBlock.setGone(true);
                            rowInt += colourBlock.getHowMany();
                         } else {
                            break;
@@ -818,7 +818,7 @@ public class NonoSolver2 implements INonogramSolver {
                      }
                      if (fillIt) {
                         if (rowInt + 1 >= getSpaceNeededForBlocksFromEndToBeginning(blocks, blockInt)) {
-                           colourBlock.setGone(true);
+//                           colourBlock.setGone(true);
                            rowInt -= colourBlock.getHowMany();
                            // if ((blockInt - 1) > -1 &&
                            // colourBlock.getColour().getName() ==
@@ -872,7 +872,7 @@ public class NonoSolver2 implements INonogramSolver {
             }
             if (column != null && column.getBlocks() != null) {
                for (Block block : column.getBlocks()) {
-                  block.setGone(true);
+//                  block.setGone(true);
                }
             }
          }
@@ -935,7 +935,7 @@ public class NonoSolver2 implements INonogramSolver {
                      }
                   }
                   if (fillIt) {
-                     colourBlock.setGone(true);
+//                     colourBlock.setGone(true);
                      columnInt += colourBlock.getHowMany();
                      // if ((blockInt + 1) < blocks.size() &&
                      // colourBlock.getColour().getName() == blocks.get(blockInt
@@ -978,7 +978,7 @@ public class NonoSolver2 implements INonogramSolver {
                      }
                   }
                   if (fillIt) {
-                     colourBlock.setGone(true);
+//                     colourBlock.setGone(true);
                      columnInt -= colourBlock.getHowMany();
                      // if ((blockInt - 1) > -1 &&
                      // colourBlock.getColour().getName() == blocks.get(blockInt
@@ -1024,7 +1024,7 @@ public class NonoSolver2 implements INonogramSolver {
             }
             if (column != null && column.getBlocks() != null) {
                for (Block block : column.getBlocks()) {
-                  block.setGone(true);
+//                  block.setGone(true);
                }
             }
          }
@@ -1179,7 +1179,7 @@ public class NonoSolver2 implements INonogramSolver {
                               throw new Exception("must be !!" + rowInt + " " + columnInt);
                            }
                            fillAreaInRowWithChar(matrix, rowInt, columnInt, columnInt + block.getHowMany(), block.getColour().getName());
-                           block.setGone(true);
+//                           block.setGone(true);
                            columnInt += block.getHowMany();
                         }
                      }
@@ -1230,7 +1230,7 @@ public class NonoSolver2 implements INonogramSolver {
                               throw new Exception("must be !!" + rowInt + " " + columnIn + " " + matrix[rowInt][(columnIn - block.getHowMany() + 1)] + " " + block.getColour().getName());
                            }
                            fillAreaInRowWithChar(matrix, rowInt, (columnIn + 1 - block.getHowMany()), columnIn + 1, block.getColour().getName());
-                           block.setGone(true);
+//                           block.setGone(true);
                            columnIn -= block.getHowMany();
                         }
                      }
@@ -1618,7 +1618,7 @@ public class NonoSolver2 implements INonogramSolver {
                   fillAreaInColumnWithChar(matrix, getIndexOfColumn(column), rowIndex, rowIndex + block.getHowMany(), block.getColour().getName());
                   rowIndex += block.getHowMany();
                   lastBlock = block;
-                  block.setGone(true);
+//                  block.setGone(true);
                }
                column.setGone(true);
             }
@@ -1694,7 +1694,7 @@ public class NonoSolver2 implements INonogramSolver {
                      fillAreaInRowWithChar(matrix, getIndexOfRow(row), columnIndex, columnIndex + block.getHowMany(), block.getColour().getName());
                      columnIndex += block.getHowMany();
                      lastBlock = block;
-                     block.setGone(true);
+//                     block.setGone(true);
                   }
                   row.setGone(true);
                }
