@@ -111,7 +111,6 @@ public class RiddleLoader {
             Column column = new Column(riddle.getHeight());
             String[] blocks = str.split(",");
             for (int i = 0; i < blocks.length; i++) {
-
                Block cb = new Block();
                String block = blocks[i];
                block = block.trim();
