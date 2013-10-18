@@ -87,7 +87,7 @@ public class RiddleLoader {
             state = 3;
          } else {
             str = str.trim();
-            Row row = new Row(riddle.getWidth());
+            Row row = new Row();
             String[] blocks = str.split(",");
             for (int i = 0; i < blocks.length; i++) {
 
@@ -108,7 +108,7 @@ public class RiddleLoader {
             state = 4;
          } else {
             str = str.trim();
-            Column column = new Column(riddle.getHeight());
+            Column column = new Column();
             String[] blocks = str.split(",");
             for (int i = 0; i < blocks.length; i++) {
                Block cb = new Block();

@@ -12,8 +12,7 @@ public class Row {
     private int maxEntries = 0;
     private  ArrayList<LinkedList<String>> possibilities;
     
-    public Row (int maxEntries) {
-       this.maxEntries = maxEntries;
+    public Row () {
        blocks = new LinkedList<>();
        possibilities = new ArrayList<LinkedList<String>>();
     }
@@ -23,6 +22,7 @@ public class Row {
             blocks = new LinkedList<Block>();
         }
         blocks.add(block);
+        maxEntries += block.getHowMany();
     }
 
     public LinkedList<Block> getBlocks() {
@@ -50,16 +50,18 @@ public class Row {
       return entriesSet;
    }
 
-   public void setEntriesSet() {
+   /**
+	 * Inkrementiert die Anzahl der gesetzten Felder.
+	 * 
+	 * @return true wenn alle Felder gesetzt sind.
+	 */
+   public boolean setEntriesSet() {
       entriesSet++;
-      int blockCount = maxEntries;
-      if (blocks != null) {
-         blockCount = getBlockCount();
-      }
-      
-      if (entriesSet == maxEntries || entriesSet >= blockCount) {
+      if (entriesSet == maxEntries) {
          setGone(true);
+         return true;
       }
+      return false;
    }
    
    
@@ -96,7 +98,7 @@ public class Row {
 //         string = string.concat(block.getHowMany().toString()).concat(""+block.getColour().getName()).concat(" " + block.isGone());
 //      }
 //      return string;
-      return "Row [blocks=" + blocks.toString() + ", isGone=" + isGone + ", entriesSet=" + entriesSet + "]\n";
+	      return "\nRow [maxEntries=" + maxEntries + ", , entriesSet=" + entriesSet + ", isGone=" + isGone + ", blocks=" + blocks + "]";
    }
     
     
