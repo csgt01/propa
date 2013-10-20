@@ -34,6 +34,9 @@ public class Column {
 
 	public void setGone(boolean isGone) {
 		this.isGone = isGone;
+		 for (Block block : blocks) {
+          block.setGone(true);
+       }
 	}
 
 	public LinkedList<Block> getBlocks() {

@@ -11,52 +11,12 @@ public class Block {
     private Integer minStartIndex;
     private Integer maxEndIndex;
     
-    private int start;
-    private int end;
     
     public Block() {
        startIndex = null;
        endIndex = null;
        gone = false;
     }
-
-    
-    
-    /**
-    * @return the start
-    */
-   public int getStart() {
-      return start;
-   }
-
-
-
-   /**
-    * @param start the start to set
-    */
-   public void setStart(int start) {
-      this.start = start;
-      this.end = (start + getHowMany() -1);
-   }
-
-
-
-   /**
-    * @return the end
-    */
-   public int getEnd() {
-      return end;
-   }
-
-
-
-   /**
-    * @param end the end to set
-    */
-   public void setEnd(int end) {
-      this.end = end;
-   }
-
 
 
    /**
@@ -107,7 +67,6 @@ public class Block {
     */
    public void setStartIndex(Integer startIndex) {
       this.startIndex = startIndex;
-      this.minStartIndex = startIndex;
    }
 
 
@@ -126,7 +85,6 @@ public class Block {
     */
    public void setEndIndex(Integer endIndex) {
       this.endIndex = endIndex;
-      this.maxEndIndex = endIndex;
    }
 
 
@@ -185,7 +143,6 @@ public class Block {
       } else {
          this.minStartIndex = minStartIndex;
       }
-      setStart(minStartIndex);
    }
 
 
