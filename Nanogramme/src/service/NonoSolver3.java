@@ -76,29 +76,6 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
 
-         // if (getStarCountInRiddle() > 0) {
-         // //TODO: anpassen
-         // for (Row row : getRows()) {
-         // ArrayList<LinkedList<String>> possibilities =
-         // row.getPossibilities();
-         // if (possibilities.size() > 1) {
-         // LinkedList<String> possibility = row.getPossibilities().get( 1);
-         // fillListIntoMatrixInRow(getIndexOfRow(row), possibility);
-         // possibilities.removeAll(possibilities);
-         // possibilities.add(possibility);
-         // row.setPossibilities(possibilities);
-         // }
-         // }
-         // }
-//         boolean run2 = true;
-//         while (run1) {
-//            int starCount = getStarCountInRiddle();
-//            solveIterative();
-//            solveRecursive();
-//            if (starCount <= getStarCountInRiddle()) {
-//               run2 = false;
-//            }
-//         }
          System.out.println(riddle);
          showMatrix();
       } catch (Exception e) {
@@ -176,13 +153,13 @@ public class NonoSolver3 implements INonogramSolver {
          int index = getIndexOfRow(row);
          System.out.println(index);
          // Blöcke durchgehen.
-         setupBlocksInRowAndColumn(blocks, riddle.getHeight());
+         setupBlocksInRowAndColumn(blocks, riddle.getWidth());
       }
 
       for (Column column : getColumns()) {
          LinkedList<Block> blocks = column.getBlocks();
          // Blöcke durchgehen.
-         setupBlocksInRowAndColumn(blocks, riddle.getWidth());
+         setupBlocksInRowAndColumn(blocks, riddle.getHeight());
       }
       System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
    }
@@ -501,7 +478,7 @@ public class NonoSolver3 implements INonogramSolver {
       System.out.println(methodName);
       long startTime = new Date().getTime();
       for (Row row : riddle.getRows()) {
-         fillBlocksOnEndOfRow(row, row.getBlocks().size() - 1, riddle.getHeight() - 1);
+         fillBlocksOnEndOfRow(row, row.getBlocks().size() - 1, riddle.getWidth() - 1);
       }
       System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
       return matrix;
@@ -645,9 +622,19 @@ public class NonoSolver3 implements INonogramSolver {
       System.out.println(methodName);
       long startTime = new Date().getTime();
       boolean run = true;
+      for (Column column : getColumns()) {
+         LinkedList<String> firstConditionOfRow = getFirstConditionOfRow(column.getBlocks(), null, 0);
+         ArrayList<LinkedList<String>> possibilities = column.getPossibilities();
+         if (possibilities == null || possibilities.size() == 0) {
+            possibilities = getPossibilitiesForRowOrColumn(column.getBlocks(), firstConditionOfRow, possibilities, 0, 0);
+            possibilities.add(getFirstConditionOfRow(column.getBlocks(), null, 0));
+         }
+         column.setPossibilities(possibilities);
+      }
       // läuft, bis keine Änderungen mehr vorkommen
       while (run) {
          run = false;
+         
          for (Row row : getRows()) {
             System.out.println("Row:" + getIndexOfRow(row));
             // Initiale leere Liste
@@ -677,10 +664,11 @@ public class NonoSolver3 implements INonogramSolver {
                   if (possibilities.size() == 1) {
                      fillListIntoMatrixInRow(getIndexOfRow(row), possibilities.get(0));
                   } else {
+                     // TODO: Schnittmenge in Reihe eintragen
                      System.out.println(possibilities);
                   }
                } else {
-                  throw new Exception("Not solvable!\n" + "Row:\n" + row);
+                  throw new Exception("Not solvable!\n" + "Row " + getIndexOfRow(row) + ":\n" + row);
                }
                int difference = posibillitiesBefore - posibillitiesAfter;
                // System.out.println("Difference:" + difference);
@@ -719,7 +707,7 @@ public class NonoSolver3 implements INonogramSolver {
                      System.out.println(possibilities);
                   }
                } else {
-                  throw new Exception("No solvable!");
+                  throw new Exception("Not solvable!\n" + "Column " + getIndexOfColumn(column) + ":\n" + column);
                }
                int difference = posibillitiesBefore - posibillitiesAfter;
                // System.out.println("Difference:" + difference);
