@@ -789,9 +789,9 @@ public class NonoSolver3 implements INonogramSolver {
          if (charInMatrix == '*' && getColumns().get(i).isGone() && charInPoss != '-') {
             isPossible = false;
          }
-//         if (!checkPossibilityOfRowAgainstColumns(possibility, rowInt)) {
-//            isPossible = false;
-//         }
+         if (!checkPossibilityOfRowAgainstColumns(possibility, rowInt)) {
+            isPossible = false;
+         }
       }
       System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
       return isPossible;
@@ -821,9 +821,9 @@ public class NonoSolver3 implements INonogramSolver {
          if (charInMatrix == '*' && getRows().get(i).isGone() && charInPoss != '-') {
             isPossible = false;
          }
-//         if (!checkPossibilityOfColumnAgainstRows(possibility, columnInt)) {
-//            isPossible = false;
-//         }
+         if (!checkPossibilityOfColumnAgainstRows(possibility, columnInt)) {
+            isPossible = false;
+         }
       }
       System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
       return isPossible;
