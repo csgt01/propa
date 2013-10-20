@@ -762,6 +762,7 @@ public class NonoSolver3 implements INonogramSolver {
          add++;
       }
       System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      System.out.println("Possibilities:\n");
       return possibilities2;
    }
 
