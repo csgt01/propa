@@ -356,7 +356,7 @@ public class NonoSolver3 implements INonogramSolver {
    private char[][] fillBlocksOnBeginningOfColumns() throws Exception {
       System.out.println("fillBlocksOnBeginningOfColumn");
       for (Column column : riddle.getColumns()) {
-         fillBlocksOnBeginningOfColumn(column, 0);
+         fillBlocksOnBeginningOfColumn(column, 0, 0);
       }
       return matrix;
    }
@@ -368,10 +368,10 @@ public class NonoSolver3 implements INonogramSolver {
     * @param blockIndex
     * @throws Exception
     */
-   private void fillBlocksOnBeginningOfColumn(Column column, int blockIndex) throws Exception {
+   private void fillBlocksOnBeginningOfColumn(Column column, int blockIndex, int rowIndex) throws Exception {
       if (!column.isGone()) {
          int block = blockIndex;
-         int rowInt = 0;
+         int rowInt = rowIndex;
          boolean run = true;
          // '-' überspringen
          while (run) {
@@ -389,13 +389,17 @@ public class NonoSolver3 implements INonogramSolver {
                // wenn die Farben übereinstimmen Matrix mit Block füllen
                if ((rowInt + colourBlock.getHowMany()) < riddle.getHeight() && matrix[rowInt][getIndexOfColumn(column)] == colourBlock.getColour().getName()) {
                   fillAreaInColumnWithChar(getIndexOfColumn(column), rowInt, (rowInt + colourBlock.getHowMany()), colourBlock.getColour().getName());
+                  rowInt = rowInt + colourBlock.getHowMany();
                   colourBlock.setGone(true);
-                  // TODO: wenn dahinter noch ein Block Methode wieder aufrufen
+                  // wenn dahinter noch ein Block Methode wieder aufrufen
                   if (blocks.size() > block + 1) {
-                     Block nextBlock = blocks.get(block + 1);
+                	  block++;
+                     Block nextBlock = blocks.get(block);
                      if (nextBlock != null && nextBlock.getColour().getName() == colourBlock.getColour().getName()) {
-                        fillAreaInColumnWithChar(getIndexOfColumn(column), rowInt + colourBlock.getHowMany(), rowInt + colourBlock.getHowMany() + 1, '-');
+                        fillAreaInColumnWithChar(getIndexOfColumn(column), rowInt, rowInt + 1, '-');
+                        rowInt++;
                      }
+                     fillBlocksOnBeginningOfColumn(column, block, rowInt);
                      // falls kein Block dahinter kann Spalte mit '-'
                      // gefüllt werden
                   } else {
@@ -455,7 +459,7 @@ public class NonoSolver3 implements INonogramSolver {
                   if (possibilities.size() == 1) {
                      fillListIntoMatrixInRow(getIndexOfRow(row), possibilities.get(0));
                   } else {
-                     // TODO: nothing?
+                     System.out.println(possibilities);
                   }
                } else {
                   throw new Exception("Not solvable!\n" + "Row:\n" + row);
@@ -494,7 +498,7 @@ public class NonoSolver3 implements INonogramSolver {
                   if (possibilities.size() == 1) {
                      fillListIntoMatrixInColumn(getIndexOfColumn(column), possibilities.get(0));
                   } else {
-                     // TODO: nothing?
+                	  System.out.println(possibilities);
                   }
                } else {
                   throw new Exception("No solvable!");
@@ -635,11 +639,11 @@ public class NonoSolver3 implements INonogramSolver {
    private ArrayList<LinkedList<String>> erasePossibilitiesInRow(Row row, ArrayList<LinkedList<String>> possibilities) {
       ArrayList<LinkedList<String>> possibilities2 = new ArrayList<LinkedList<String>>(possibilities);
       for (LinkedList<String> possibility : possibilities) {
-         System.out.println(possibility);
+//         System.out.println(possibility);
          boolean possible = isPossibilityGoodInRow(possibility, getIndexOfRow(row));
          if (!possible) {
             possibilities2.remove(possibility);
-            System.out.println(possibility + " erased");
+//            System.out.println(possibility + " erased");
          }
       }
       return possibilities2;
@@ -694,7 +698,7 @@ public class NonoSolver3 implements INonogramSolver {
       for (int i = resultIndex; i < riddle.getWidth(); i++) {
          asd.add("-");
       }
-      System.out.println("firstCond:" + asd);
+//      System.out.println("firstCond:" + asd);
       return asd;
    }
 
