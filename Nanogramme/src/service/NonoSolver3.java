@@ -280,6 +280,9 @@ public class NonoSolver3 implements INonogramSolver {
             String removed;
             // so lange nach rechts verschieben, bis Ende erreicht und zu
             // asd hinzufügen.
+            
+            // TODO: wenn eine möglichkeit nicht zur spielsituation passt, nicht über result iterieren
+            
             while (workingList.getLast().equals("-")) {
                removed = workingList.removeLast();
                workingList.addFirst(removed);

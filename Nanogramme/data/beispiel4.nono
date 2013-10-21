@@ -1,0 +1,43 @@
+title bla, aber in gruen ;-)
+by cschulte
+
+width 15
+height 15
+numberofcolors 1
+
+colors
+A 255,0,0
+
+rows
+9A
+7A,2A
+2A,5A,2A
+2A,2A,2A,2A
+1A,3A,3A,1A
+1A,1A
+1A,2A,2A,1A
+1A,2A,2A,1A
+1A,1A
+1A,1A,1A
+1A,2A,1A
+2A,1A,2A,2A
+2A,5A,2A
+2A,2A,
+9A
+
+columns
+9A
+2A,2A
+2A,2A
+2A,2A
+5A,2A,1A,1A
+5A,2A,1A,1A
+3A,1A,1A,1A,1A
+3A,1A,1A
+5A,2A,1A,1A
+1A,2A,2A,3A,1A
+1A,1A,2A,1A
+2A,2A
+2A,2A
+2A,2A
+9A
