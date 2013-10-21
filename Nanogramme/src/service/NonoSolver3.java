@@ -86,7 +86,33 @@ public class NonoSolver3 implements INonogramSolver {
          showMatrix();
          System.out.println(riddle);
       }
-
+      getSizesOfPossibilities();
+      
+      // if (getStarCountInRiddle() > 0) {
+      // int rowWithSmallestSizesOfPossibilities =
+      // getRowWithSmallestSizesOfPossibilities();
+      // System.out.println(rowWithSmallestSizesOfPossibilities);
+      // LinkedList<String> first =
+      // getRows().get(rowWithSmallestSizesOfPossibilities).getPossibilities().get(1);
+      // getRows().get(rowWithSmallestSizesOfPossibilities).getPossibilities().remove(0);
+      // try {
+      // fillListIntoMatrixInRow(rowWithSmallestSizesOfPossibilities, first);
+      // boolean run1 = true;
+      // while (run1) {
+      // int starCount = getStarCountInRiddle();
+      // solveIterative();
+      // solveRecursive();
+      // if (starCount <= getStarCountInRiddle()) {
+      // run1 = false;
+      // }
+      // }
+      // } catch (Exception e) {
+      // // TODO Auto-generated catch block
+      // e.printStackTrace();
+      // }
+      // }
+      
+showMatrix();     
       System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
       return matrix;
    }
@@ -280,9 +306,6 @@ public class NonoSolver3 implements INonogramSolver {
             String removed;
             // so lange nach rechts verschieben, bis Ende erreicht und zu
             // asd hinzufügen.
-            
-            // TODO: wenn eine möglichkeit nicht zur spielsituation passt, nicht über result iterieren
-            
             while (workingList.getLast().equals("-")) {
                removed = workingList.removeLast();
                workingList.addFirst(removed);
@@ -386,7 +409,7 @@ public class NonoSolver3 implements INonogramSolver {
                   fillColumnWithFree(column);
                }
             } else {
-               throw new Exception("char " + matrix[getIndexOfColumn(column)][rowInt] + " ungleich " + colourBlock.getColour().getName());
+               throw new DataCollisionException("char " + matrix[getIndexOfColumn(column)][rowInt] + " ungleich " + colourBlock.getColour().getName());
             }
 
          }
@@ -460,7 +483,7 @@ public class NonoSolver3 implements INonogramSolver {
                   }
                } else {
                   if ((rowInt + colourBlock.getHowMany()) < riddle.getHeight()) {
-                     throw new Exception("char " + matrix[rowInt][getIndexOfColumn(column)] + " at" + rowInt + "/" + getIndexOfColumn(column) + " ungleich " + colourBlock.getColour().getName());
+                     throw new DataCollisionException("char " + matrix[rowInt][getIndexOfColumn(column)] + " at" + rowInt + "/" + getIndexOfColumn(column) + " ungleich " + colourBlock.getColour().getName());
                   }
                }
 
@@ -528,7 +551,7 @@ public class NonoSolver3 implements INonogramSolver {
                   fillRowWithFree(row);
                }
             } else {
-               throw new Exception("char " + matrix[getIndexOfRow(row)][columnInt] + " ungleich " + colourBlock.getColour().getName());
+               throw new DataCollisionException("char " + matrix[getIndexOfRow(row)][columnInt] + " ungleich " + colourBlock.getColour().getName());
             }
 
          }
@@ -603,7 +626,7 @@ public class NonoSolver3 implements INonogramSolver {
                   }
                } else {
                   if ((columnInt + colourBlock.getHowMany()) < riddle.getWidth()) {
-                     throw new Exception("char " + matrix[columnInt][getIndexOfRow(row)] + " at" + columnInt + "/" + getIndexOfRow(row) + " ungleich " + colourBlock.getColour().getName());
+                     throw new DataCollisionException("char " + matrix[columnInt][getIndexOfRow(row)] + " at" + columnInt + "/" + getIndexOfRow(row) + " ungleich " + colourBlock.getColour().getName());
                   }
                }
 
@@ -637,7 +660,7 @@ public class NonoSolver3 implements INonogramSolver {
       // läuft, bis keine Änderungen mehr vorkommen
       while (run) {
          run = false;
-         
+
          for (Row row : getRows()) {
             System.out.println("Row:" + getIndexOfRow(row));
             // Initiale leere Liste
@@ -671,7 +694,7 @@ public class NonoSolver3 implements INonogramSolver {
                      System.out.println(possibilities);
                   }
                } else {
-                  throw new Exception("Not solvable!\n" + "Row " + getIndexOfRow(row) + ":\n" + row);
+                  throw new NotSolvableException("Not solvable!\n" + "Row " + getIndexOfRow(row) + ":\n" + row);
                }
                int difference = posibillitiesBefore - posibillitiesAfter;
                // System.out.println("Difference:" + difference);
@@ -685,9 +708,9 @@ public class NonoSolver3 implements INonogramSolver {
          }
          for (Column column : getColumns()) {
             System.out.println("Column:" + getIndexOfColumn(column));
-//            showMatrix();
+            // showMatrix();
             ArrayList<LinkedList<String>> possibilities = column.getPossibilities();
-//            System.out.println("Pos1:" + possibilities);
+            // System.out.println("Pos1:" + possibilities);
             if (column.getBlocks().size() > 0 && !column.isGone()) {
                LinkedList<String> firstConditionOfRow = getFirstConditionOfRow(column.getBlocks(), null, 0);
                if (possibilities == null || possibilities.size() == 0) {
@@ -737,8 +760,8 @@ public class NonoSolver3 implements INonogramSolver {
     * @return
     */
    private ArrayList<LinkedList<String>> getPossibilitiesForRowOrColumn(LinkedList<Block> blocks1, LinkedList<String> aa, ArrayList<LinkedList<String>> possibilities, int numberOfBlock, int add1) {
-      String methodName = "getPossibilitiesForRowOrColumn()";
-      System.out.println(methodName);
+//      String methodName = "getPossibilitiesForRowOrColumn()";
+//      System.out.println(methodName);
       long startTime = new Date().getTime();
       int add = add1;
       LinkedList<Block> blocks = new LinkedList<Block>(blocks1);
@@ -764,8 +787,8 @@ public class NonoSolver3 implements INonogramSolver {
          }
          add++;
       }
-      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
-      System.out.println("Possibilities:\n");
+//      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+//      System.out.println("Possibilities:\n");
       return possibilities2;
    }
 
@@ -835,9 +858,9 @@ public class NonoSolver3 implements INonogramSolver {
 
    // TODO row setEntries mit char...
    private boolean checkPossibilityOfRowAgainstColumns(LinkedList<String> possibility, int rowInt) {
-//      String methodName = "checkPossibilityOfRowAgainstColumns()";
-//      System.out.println(methodName);
-//      long startTime = new Date().getTime();
+      // String methodName = "checkPossibilityOfRowAgainstColumns()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
       boolean isPossible = true;
       // String (Splaten durchgehen)
       for (int columnInt = 0; columnInt < possibility.size(); columnInt++) {
@@ -858,15 +881,16 @@ public class NonoSolver3 implements INonogramSolver {
          // isPossible = checkIfColumnsStateIsPossible(checkMatrix, columnInt);
          // }
       }
-//      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return isPossible;
    }
 
    // TODO row setEntries mit char...
    private boolean checkPossibilityOfColumnAgainstRows(LinkedList<String> possibility, int columnInt) {
-//      String methodName = "checkPossibilityOfColumnAgainstRows()";
-//      System.out.println(methodName);
-//      long startTime = new Date().getTime();
+      // String methodName = "checkPossibilityOfColumnAgainstRows()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
       boolean isPossible = true;
       // String (Splaten durchgehen)
       for (int rowInt = 0; rowInt < possibility.size(); rowInt++) {
@@ -887,7 +911,8 @@ public class NonoSolver3 implements INonogramSolver {
          // isPossible = checkIfColumnsStateIsPossible(checkMatrix, columnInt);
          // }
       }
-//      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return isPossible;
    }
 
@@ -1249,16 +1274,30 @@ public class NonoSolver3 implements INonogramSolver {
       System.out.println(methodName);
       long startTime = new Date().getTime();
       if (matrix[rowIndex][columnIndex] != '*' && matrix[rowIndex][columnIndex] != c) {
-         throw new Exception("Fehler: row:" + rowIndex + " column:" + columnIndex + " " + c + " ungleich " + matrix[rowIndex][columnIndex]);
+         throw new DataCollisionException("Fehler: row:" + rowIndex + " column:" + columnIndex + " " + c + " ungleich " + matrix[rowIndex][columnIndex]);
       }
       if (matrix[rowIndex][columnIndex] != c) {
          matrix[rowIndex][columnIndex] = c;
          if (matrix[rowIndex][columnIndex] != '-') {
             if (getRows().get(rowIndex).setEntriesSet()) {
                fillRowWithFree(getRows().get(rowIndex));
+               LinkedList<String> list = new LinkedList<String>();
+               ArrayList<LinkedList<String>> list2 = new ArrayList<LinkedList<String>>();
+               for (int column = 0; column < riddle.getWidth(); column++) {
+                  list.add(String.valueOf(matrix[rowIndex][column]));
+               }
+               list2.add(list);
+               getRows().get(rowIndex).setPossibilities(list2);
             }
             if (getColumns().get(columnIndex).setEntriesSet()) {
                fillColumnWithFree(getColumns().get(columnIndex));
+               LinkedList<String> list = new LinkedList<String>();
+               ArrayList<LinkedList<String>> list2 = new ArrayList<LinkedList<String>>();
+               for (int row = 0; row < riddle.getHeight(); row++) {
+                  list.add(String.valueOf(matrix[row][columnIndex]));
+               }
+               list2.add(list);
+               getColumns().get(columnIndex).setPossibilities(list2);
             }
          }
       }
@@ -1375,6 +1414,37 @@ public class NonoSolver3 implements INonogramSolver {
       }
       System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
       return starCount;
+   }
+
+   private int getRowWithSmallestSizesOfPossibilities() {
+      String methodName = "getSizesOfPossibilities()";
+      System.out.println(methodName);
+      long startTime = new Date().getTime();
+      int smallestRowInt = 0;
+      Integer sizesmallestRowInt = null;
+      for (Row row : getRows()) {
+         int size = row.getPossibilities().size();
+         if (sizesmallestRowInt == null || (size < sizesmallestRowInt && size != 1)) {
+            sizesmallestRowInt = size;
+            smallestRowInt = getIndexOfRow(row);
+         }
+         System.out.println("Row " + getIndexOfRow(row) + " pssibilities size:" + size);
+      }
+      return smallestRowInt;
+   }
+   
+   private void getSizesOfPossibilities() {
+      String methodName = "getSizesOfPossibilities()";
+      System.out.println(methodName);
+      long startTime = new Date().getTime();
+      for (Row row : getRows()) {
+         System.out.println("Row " + getIndexOfRow(row) + " pssibilities size:" + row.getPossibilities().size());
+         System.out.println(row.getPossibilities());
+      }
+      for (Column column : getColumns()) {
+         System.out.println("Column " + getIndexOfColumn(column) + " pssibilities size:" + column.getPossibilities().size());
+      }
+      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
    }
 
 }
