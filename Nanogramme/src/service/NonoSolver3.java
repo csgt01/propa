@@ -87,14 +87,14 @@ public class NonoSolver3 implements INonogramSolver {
          System.out.println(riddle);
       }
       getSizesOfPossibilities();
-      
+
       // if (getStarCountInRiddle() > 0) {
       // int rowWithSmallestSizesOfPossibilities =
       // getRowWithSmallestSizesOfPossibilities();
       // System.out.println(rowWithSmallestSizesOfPossibilities);
       // LinkedList<String> first =
-      // getRows().get(rowWithSmallestSizesOfPossibilities).getPossibilities().get(1);
-      // getRows().get(rowWithSmallestSizesOfPossibilities).getPossibilities().remove(0);
+      // getRows().get(rowWithSmallestSizesOfPossibilities).getPossibilities().get(0);
+      // getRows().get(rowWithSmallestSizesOfPossibilities).getPossibilities().remove(1);
       // try {
       // fillListIntoMatrixInRow(rowWithSmallestSizesOfPossibilities, first);
       // boolean run1 = true;
@@ -110,9 +110,10 @@ public class NonoSolver3 implements INonogramSolver {
       // // TODO Auto-generated catch block
       // e.printStackTrace();
       // }
+      // getSizesOfPossibilities();
       // }
-      
-showMatrix();     
+
+      showMatrix();
       System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
       return matrix;
    }
@@ -483,7 +484,8 @@ showMatrix();
                   }
                } else {
                   if ((rowInt + colourBlock.getHowMany()) < riddle.getHeight()) {
-                     throw new DataCollisionException("char " + matrix[rowInt][getIndexOfColumn(column)] + " at" + rowInt + "/" + getIndexOfColumn(column) + " ungleich " + colourBlock.getColour().getName());
+                     throw new DataCollisionException("char " + matrix[rowInt][getIndexOfColumn(column)] + " at" + rowInt + "/" + getIndexOfColumn(column) + " ungleich "
+                           + colourBlock.getColour().getName());
                   }
                }
 
@@ -692,6 +694,7 @@ showMatrix();
                   } else {
                      // TODO: Schnittmenge in Reihe eintragen
                      System.out.println(possibilities);
+                     schnittmengeFindenInReihe(getIndexOfRow(row), possibilities);
                   }
                } else {
                   throw new NotSolvableException("Not solvable!\n" + "Row " + getIndexOfRow(row) + ":\n" + row);
@@ -731,6 +734,7 @@ showMatrix();
                      fillListIntoMatrixInColumn(getIndexOfColumn(column), possibilities.get(0));
                   } else {
                      System.out.println(possibilities);
+                     schnittmengeFindenInSpalte(getIndexOfColumn(column), possibilities);
                   }
                } else {
                   throw new Exception("Not solvable!\n" + "Column " + getIndexOfColumn(column) + ":\n" + column);
@@ -748,6 +752,62 @@ showMatrix();
    }
 
    /**
+    * Findet chars, die in allen posibilities gesetzt sind.
+    * 
+    * @param indexOfRow
+    * @param possibilities
+    * @throws Exception
+    */
+   private void schnittmengeFindenInReihe(int indexOfRow, ArrayList<LinkedList<String>> possibilities) throws Exception {
+      // 1. Möglichkeit herausnehmen und Indeces in result schreiben.
+      LinkedList<String> firstLinkedList = possibilities.get(0);
+      ArrayList<Integer> results = new ArrayList<Integer>();
+      for (int j = 0; j < firstLinkedList.size(); j++) {
+         results.add(new Integer(j));
+      }
+      // wenn strings an derselben Stelle nicht übereinstimmen herausstreichen
+      // aus results
+      for (LinkedList<String> list : possibilities) {
+         for (int i = 0; i < list.size(); i++) {
+            if (!firstLinkedList.get(i).equals(list.get(i))) {
+               results.remove(new Integer(i));
+            }
+         }
+      }
+      for (Integer index : results) {
+         writeCharInMatrix(indexOfRow, firstLinkedList.get(index).charAt(0), index);
+      }
+   }
+
+   /**
+    * Findet chars, die in allen posibilities gesetzt sind.
+    * 
+    * @param indexOfColumn
+    * @param possibilities
+    * @throws Exception
+    */
+   private void schnittmengeFindenInSpalte(int indexOfColumn, ArrayList<LinkedList<String>> possibilities) throws Exception {
+      // 1. Möglichkeit herausnehmen und Indeces in result schreiben.
+      LinkedList<String> firstLinkedList = possibilities.get(0);
+      ArrayList<Integer> results = new ArrayList<Integer>();
+      for (int j = 0; j < firstLinkedList.size(); j++) {
+         results.add(new Integer(j));
+      }
+      // wenn strings an derselben Stelle nicht übereinstimmen herausstreichen
+      // aus results
+      for (LinkedList<String> list : possibilities) {
+         for (int i = 0; i < list.size(); i++) {
+            if (!firstLinkedList.get(i).equals(list.get(i))) {
+               results.remove(new Integer(i));
+            }
+         }
+      }
+      for (Integer index : results) {
+         writeCharInMatrix(index, firstLinkedList.get(index).charAt(0), indexOfColumn);
+      }
+   }
+
+   /**
     * Schreibt alle Möglichkeiten die Reihe oder Spalte mit den Blöcken zu
     * belegen. Die Methode ruft sich selber auf, um zwischen den Blöcken zu
     * wechseln.
@@ -760,8 +820,8 @@ showMatrix();
     * @return
     */
    private ArrayList<LinkedList<String>> getPossibilitiesForRowOrColumn(LinkedList<Block> blocks1, LinkedList<String> aa, ArrayList<LinkedList<String>> possibilities, int numberOfBlock, int add1) {
-//      String methodName = "getPossibilitiesForRowOrColumn()";
-//      System.out.println(methodName);
+      // String methodName = "getPossibilitiesForRowOrColumn()";
+      // System.out.println(methodName);
       long startTime = new Date().getTime();
       int add = add1;
       LinkedList<Block> blocks = new LinkedList<Block>(blocks1);
@@ -787,8 +847,9 @@ showMatrix();
          }
          add++;
       }
-//      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
-//      System.out.println("Possibilities:\n");
+      // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      // System.out.println("Possibilities:\n");
       return possibilities2;
    }
 
@@ -1432,7 +1493,7 @@ showMatrix();
       }
       return smallestRowInt;
    }
-   
+
    private void getSizesOfPossibilities() {
       String methodName = "getSizesOfPossibilities()";
       System.out.println(methodName);
@@ -1443,6 +1504,8 @@ showMatrix();
       }
       for (Column column : getColumns()) {
          System.out.println("Column " + getIndexOfColumn(column) + " pssibilities size:" + column.getPossibilities().size());
+         System.out.println(column.getPossibilities());
+         System.out.println();
       }
       System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
    }
