@@ -725,7 +725,7 @@ public class NonoSolver3 implements INonogramSolver {
 		long startTime = new Date().getTime();
 		boolean run = true;
 		for (Column column : getColumns()) {
-			LinkedList<String> firstConditionOfRow = getFirstConditionOfRow(
+			LinkedList<String> firstConditionOfRow = getFirstConditionOfColumn(
 					column.getBlocks(), null, 0);
 			ArrayList<LinkedList<String>> possibilities = column
 					.getPossibilities();
@@ -733,7 +733,7 @@ public class NonoSolver3 implements INonogramSolver {
 				possibilities = getPossibilitiesForRowOrColumn(
 						column.getBlocks(), firstConditionOfRow, possibilities,
 						0, 0);
-				possibilities.add(getFirstConditionOfRow(column.getBlocks(),
+				possibilities.add(getFirstConditionOfColumn(column.getBlocks(),
 						null, 0));
 			}
 			column.setPossibilities(possibilities);
@@ -868,7 +868,7 @@ public class NonoSolver3 implements INonogramSolver {
 		// wenn strings an derselben Stelle nicht übereinstimmen herausstreichen
 		// aus results
 		for (LinkedList<String> list : possibilities) {
-			for (int i = 0; i < riddle.getHeight(); i++) {
+			for (int i = 0; i < riddle.getWidth(); i++) {
 				if (!firstLinkedList.get(i).equals(list.get(i))) {
 					results.remove(new Integer(i));
 				}
@@ -895,7 +895,7 @@ public class NonoSolver3 implements INonogramSolver {
 		// 1. Möglichkeit herausnehmen und Indeces in result schreiben.
 		LinkedList<String> firstLinkedList = possibilities.get(0);
 		ArrayList<Integer> results = new ArrayList<Integer>();
-		for (int j = 0; j < riddle.getWidth(); j++) {
+		for (int j = 0; j < riddle.getHeight(); j++) {
 			results.add(new Integer(j));
 		}
 		// wenn strings an derselben Stelle nicht übereinstimmen herausstreichen
@@ -1653,7 +1653,7 @@ public class NonoSolver3 implements INonogramSolver {
 		System.out.println(methodName);
 		long startTime = new Date().getTime();
 		getColumns().get(column).setGone(true);
-		for (int i = 0; i < riddle.getWidth(); i++) {
+		for (int i = 0; i < riddle.getHeight(); i++) {
 			char c = possibilities.get(i).charAt(0);
 			if (matrix[i][column] != c) {
 				matrix[i][column] = c;
