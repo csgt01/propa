@@ -725,13 +725,14 @@ public class NonoSolver3 implements INonogramSolver {
 		long startTime = new Date().getTime();
 		boolean run = true;
 		for (Column column : getColumns()) {
-			LinkedList<String> firstConditionOfRow = getFirstConditionOfColumn(
+			LinkedList<String> firstConditionOfColumn = getFirstConditionOfColumn(
 					column.getBlocks(), null, 0);
+			System.out.println("First condition of column:" + firstConditionOfColumn);
 			ArrayList<LinkedList<String>> possibilities = column
 					.getPossibilities();
 			if (possibilities == null || possibilities.size() == 0) {
 				possibilities = getPossibilitiesForRowOrColumn(
-						column.getBlocks(), firstConditionOfRow, possibilities,
+						column.getBlocks(), firstConditionOfColumn, possibilities,
 						0, 0);
 				possibilities.add(getFirstConditionOfColumn(column.getBlocks(),
 						null, 0));
@@ -830,6 +831,7 @@ public class NonoSolver3 implements INonogramSolver {
 									possibilities.get(0));
 						} else {
 							System.out.println(possibilities);
+							// TODO why erased row 2 always columns!!!!
 							schnittmengeFindenInSpalte(
 									getIndexOfColumn(column), possibilities);
 						}
@@ -862,7 +864,7 @@ public class NonoSolver3 implements INonogramSolver {
 		// 1. Möglichkeit herausnehmen und Indeces in result schreiben.
 		LinkedList<String> firstLinkedList = possibilities.get(0);
 		ArrayList<Integer> results = new ArrayList<Integer>();
-		for (int j = 0; j < firstLinkedList.size(); j++) {
+		for (int j = 0; j < riddle.getWidth(); j++) {
 			results.add(new Integer(j));
 		}
 		// wenn strings an derselben Stelle nicht übereinstimmen herausstreichen
@@ -872,9 +874,6 @@ public class NonoSolver3 implements INonogramSolver {
 				if (!firstLinkedList.get(i).equals(list.get(i))) {
 					results.remove(new Integer(i));
 				}
-//				if (!firstLinkedList.get(i).equals(String.valueOf(matrix[indexOfRow][i]))) {
-//					results.remove(new Integer(i));
-//				}
 			}
 		}
 		for (Integer index : results) {
@@ -901,13 +900,10 @@ public class NonoSolver3 implements INonogramSolver {
 		// wenn strings an derselben Stelle nicht übereinstimmen herausstreichen
 		// aus results
 		for (LinkedList<String> list : possibilities) {
-			for (int i = 0; i < list.size(); i++) {
+			for (int i = 0; i < riddle.getHeight(); i++) {
 				if (!firstLinkedList.get(i).equals(list.get(i))) {
 					results.remove(new Integer(i));
 				}
-//				if (!firstLinkedList.get(i).equals(String.valueOf(matrix[i][indexOfColumn]))) {
-//					results.remove(new Integer(i));
-//				}
 			}
 		}
 		for (Integer index : results) {
@@ -993,9 +989,10 @@ public class NonoSolver3 implements INonogramSolver {
 					&& charInPoss != '-') {
 				isPossible = false;
 			}
-			if (!checkPossibilityOfRowAgainstColumns(possibility, rowInt)) {
-				isPossible = false;
-			}
+			//TODO: check this method
+//			if (!checkPossibilityOfRowAgainstColumns(possibility, rowInt)) {
+//				isPossible = false;
+//			}
 		}
 		System.out.println("Time for " + methodName + ": "
 				+ (new Date().getTime() - startTime) + " ms");
@@ -1249,7 +1246,7 @@ public class NonoSolver3 implements INonogramSolver {
          resultIndex += block.getHowMany();
          lastBlock = block;
       }
-      for (int i = resultIndex; i < riddle.getHeight(); i++) {
+      for (int i = resultIndex; i < riddle.getWidth(); i++) {
          asd.add("-");
       }
       // System.out.println("firstCond:" + asd);
