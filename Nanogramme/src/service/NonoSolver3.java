@@ -89,31 +89,30 @@ public class NonoSolver3 implements INonogramSolver {
 			System.out.println(riddle);
 		}
 		getSizesOfPossibilities();
-
-		// if (getStarCountInRiddle() > 0) {
-		// int rowWithSmallestSizesOfPossibilities =
-		// getRowWithSmallestSizesOfPossibilities();
-		// System.out.println(rowWithSmallestSizesOfPossibilities);
-		// LinkedList<String> first =
-		// getRows().get(rowWithSmallestSizesOfPossibilities).getPossibilities().get(0);
-		// getRows().get(rowWithSmallestSizesOfPossibilities).getPossibilities().remove(1);
-		// try {
-		// fillListIntoMatrixInRow(rowWithSmallestSizesOfPossibilities, first);
-		// boolean run1 = true;
-		// while (run1) {
-		// int starCount = getStarCountInRiddle();
-		// solveIterative();
-		// solveRecursive();
-		// if (starCount <= getStarCountInRiddle()) {
-		// run1 = false;
-		// }
-		// }
-		// } catch (Exception e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// getSizesOfPossibilities();
-		// }
+//TODO: recursiv
+//		 if (getStarCountInRiddle() > 0) {
+//		 int rowWithSmallestSizesOfPossibilities =
+//		 getRowWithSmallestSizesOfPossibilities();
+//		 System.out.println(rowWithSmallestSizesOfPossibilities);
+//		 LinkedList<String> first =
+//		 getRows().get(rowWithSmallestSizesOfPossibilities).getPossibilities().get(1);
+//		 getRows().get(rowWithSmallestSizesOfPossibilities).getPossibilities().remove(0);
+//		 try {
+//		 fillListIntoMatrixInRow(rowWithSmallestSizesOfPossibilities, first);
+//		 boolean run1 = true;
+//		 while (run1) {
+//		 int starCount = getStarCountInRiddle();
+//		 solveIterative();
+//		 solveRecursive();
+//		 if (starCount <= getStarCountInRiddle()) {
+//		 run1 = false;
+//		 }
+//		 }
+//		 } catch (Exception e) {
+//		 e.printStackTrace();
+//		 }
+//		 getSizesOfPossibilities();
+//		 }
 
 		showMatrix();
 		showBlockGoneTrue();
@@ -1047,8 +1046,9 @@ public class NonoSolver3 implements INonogramSolver {
 		boolean isPossible = true;
 		// String (Splaten durchgehen)
 		for (int columnInt = 0; columnInt < possibility.size(); columnInt++) {
-			ArrayList<LinkedList<String>> possibilitiesOfColumn = getColumns().get(
-					columnInt).getPossibilities();
+			Column column = getColumns().get(
+					columnInt);
+			ArrayList<LinkedList<String>> possibilitiesOfColumn = column.getPossibilities();
 			if (isPossible && possibilitiesOfColumn != null && possibilitiesOfColumn.size() > 0) {
 				boolean isPossibleInColumn = false;
 				for (LinkedList<String> possibilityOfColumn : possibilitiesOfColumn) {
