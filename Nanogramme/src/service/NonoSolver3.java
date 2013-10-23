@@ -77,48 +77,102 @@ public class NonoSolver3 implements INonogramSolver {
 					run1 = false;
 				}
 			}
-
-			System.out.println(riddle);
-			showMatrix();
+			if (getStarCountInRiddle() >= 0) {
+				LinkedList<LinkedList<String>> theMatrix = solveByBrutForce(
+						new LinkedList<LinkedList<String>>(), 0, 0);
+				System.out.println("-----------------");
+				System.out.println(theMatrix);
+				System.out.println("-----------------");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(e);
-			showMatrix();
+		} finally {
 			showBlockGoneTrue();
+			getSizesOfPossibilities();
+			// System.out.println(riddle);
 			showMatrix();
-			System.out.println(riddle);
 		}
-		getSizesOfPossibilities();
-//TODO: recursiv
-//		 if (getStarCountInRiddle() > 0) {
-//		 int rowWithSmallestSizesOfPossibilities =
-//		 getRowWithSmallestSizesOfPossibilities();
-//		 System.out.println(rowWithSmallestSizesOfPossibilities);
-//		 LinkedList<String> first =
-//		 getRows().get(rowWithSmallestSizesOfPossibilities).getPossibilities().get(1);
-//		 getRows().get(rowWithSmallestSizesOfPossibilities).getPossibilities().remove(0);
-//		 try {
-//		 fillListIntoMatrixInRow(rowWithSmallestSizesOfPossibilities, first);
-//		 boolean run1 = true;
-//		 while (run1) {
-//		 int starCount = getStarCountInRiddle();
-//		 solveIterative();
-//		 solveRecursive();
-//		 if (starCount <= getStarCountInRiddle()) {
-//		 run1 = false;
-//		 }
-//		 }
-//		 } catch (Exception e) {
-//		 e.printStackTrace();
-//		 }
-//		 getSizesOfPossibilities();
-//		 }
-
-		showMatrix();
-		showBlockGoneTrue();
 		System.out.println("Time for " + methodName + ": "
 				+ (new Date().getTime() - startTime) + " ms");
 		return matrix;
+	}
+
+	/**
+	 * Diese Methode nimmt die erste Möglichkeit der ersten Reihe und ruft sich
+	 * rekursiv auf, bis sie bei der letzten Reihe angekommen ist. Dann wird
+	 * getestet, ob das Ergebnis eine gültige Lösung ist. Wenn nicht, wird die
+	 * nächate getestest. TODO: weiter ausführen, wenn MEthode steht. TODO:
+	 * durch poss iterieren TODO: IDEE: liste weitergeben, im letzten testen;
+	 * weiter durchgehen (poss) wenn keine möglichkeit richtig, dann null
+	 * zurückgeben, und im vorherigen eine möglichkeit weiter
+	 * 
+	 * @param rowInt
+	 * @param possibilityInt
+	 * @return
+	 */
+	private LinkedList<LinkedList<String>> solveByBrutForce(
+			LinkedList<LinkedList<String>> listFromBefore, int rowInt,
+			int possibilityInt) {
+		System.out.println("BLABLABLA");
+		int rowIndex = rowInt;
+		System.out.println("Row:" + rowIndex);
+		int possibilityIndex = possibilityInt;
+		LinkedList<LinkedList<String>> returnList = listFromBefore;
+		if (rowIndex < riddle.getHeight()) {
+			Row row = getRows().get(rowIndex);
+			// eigene poss hinzufügen
+			rowIndex++;
+			while (possibilityIndex < row.getPossibilities().size()) {
+				returnList = listFromBefore;
+				LinkedList<String> workingList = row.getPossibilities().get(
+						possibilityIndex);
+				returnList.addLast(workingList);
+				// Wenn noch Reihen übrig sind Methode neu aufrufen
+				if (rowIndex < riddle.getHeight()) {
+					returnList = solveByBrutForce(returnList, rowIndex, 0);
+					if (null == returnList) {
+						possibilityIndex++;
+					} else {
+						return returnList;
+					}
+
+				} else {
+					boolean check = checkStateOfWrittenMatrix(returnList);
+					if (!check) {
+						returnList = null;
+						possibilityIndex++;
+					} else {
+						return returnList;
+					}
+				}
+			}
+		}
+		return returnList;
+	}
+
+	/**
+	 * Prüft ob die in {@link #solveByBrutForce(LinkedList, int, int)}
+	 * zusammengestellte Matrix korrekt ist.
+	 * 
+	 * @param returnList
+	 * @return
+	 */
+	private boolean checkStateOfWrittenMatrix(
+			LinkedList<LinkedList<String>> returnList) {
+		boolean isValid = false;
+
+		String[][] testMatrix = new String[riddle.getHeight()][riddle
+				.getWidth()];
+		for (int rowIndix = 0; rowIndix < returnList.size(); rowIndix++) {
+			LinkedList<String> row = returnList.get(rowIndix);
+			for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
+				testMatrix[rowIndix][columnIndex] = row.get(columnIndex);
+			}
+		}
+		System.out.println("YYYYYYYYYYY");
+		showAMatrix(testMatrix);
+		return isValid;
 	}
 
 	private void solveIterative() throws Exception {
@@ -727,13 +781,14 @@ public class NonoSolver3 implements INonogramSolver {
 		for (Column column : getColumns()) {
 			LinkedList<String> firstConditionOfColumn = getFirstConditionOfColumn(
 					column.getBlocks(), null, 0);
-			System.out.println("First condition of column:" + firstConditionOfColumn);
+			System.out.println("First condition of column:"
+					+ firstConditionOfColumn);
 			ArrayList<LinkedList<String>> possibilities = column
 					.getPossibilities();
 			if (possibilities == null || possibilities.size() == 0) {
 				possibilities = getPossibilitiesForRowOrColumn(
-						column.getBlocks(), firstConditionOfColumn, possibilities,
-						0, 0);
+						column.getBlocks(), firstConditionOfColumn,
+						possibilities, 0, 0);
 				possibilities.add(getFirstConditionOfColumn(column.getBlocks(),
 						null, 0));
 			}
@@ -779,7 +834,7 @@ public class NonoSolver3 implements INonogramSolver {
 							fillListIntoMatrixInRow(getIndexOfRow(row),
 									possibilities.get(0));
 						} else {
-							// TODO: 
+							// TODO:
 							System.out.println(possibilities);
 							schnittmengeFindenInReihe(getIndexOfRow(row),
 									possibilities);
@@ -989,10 +1044,10 @@ public class NonoSolver3 implements INonogramSolver {
 					&& charInPoss != '-') {
 				isPossible = false;
 			}
-			//TODO: check this method
-//			if (!checkPossibilityOfRowAgainstColumns(possibility, rowInt)) {
-//				isPossible = false;
-//			}
+			// TODO: check this method
+			// if (!checkPossibilityOfRowAgainstColumns(possibility, rowInt)) {
+			// isPossible = false;
+			// }
 		}
 		System.out.println("Time for " + methodName + ": "
 				+ (new Date().getTime() - startTime) + " ms");
@@ -1043,10 +1098,11 @@ public class NonoSolver3 implements INonogramSolver {
 		boolean isPossible = true;
 		// String (Splaten durchgehen)
 		for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-			Column column = getColumns().get(
-					columnInt);
-			ArrayList<LinkedList<String>> possibilitiesOfColumn = column.getPossibilities();
-			if (isPossible && possibilitiesOfColumn != null && possibilitiesOfColumn.size() > 0) {
+			Column column = getColumns().get(columnInt);
+			ArrayList<LinkedList<String>> possibilitiesOfColumn = column
+					.getPossibilities();
+			if (isPossible && possibilitiesOfColumn != null
+					&& possibilitiesOfColumn.size() > 0) {
 				boolean isPossibleInColumn = false;
 				for (LinkedList<String> possibilityOfColumn : possibilitiesOfColumn) {
 					if (possibilityOfColumn.get(rowInt).equals(
@@ -1182,78 +1238,78 @@ public class NonoSolver3 implements INonogramSolver {
 	// Helper
 
 	/**
-    * @param asd
-    * @param blocks
-    * @param lastBlock
-    * @param resultIndex
-    * @return
-    */
-   private LinkedList<String> getFirstConditionOfRow(LinkedList<Block> blocks,
-         Block lastBlock, int resultIndex) {
-      String methodName = "getFirstConditionOfRow()";
-      System.out.println(methodName);
-      long startTime = new Date().getTime();
-      LinkedList<String> asd = new LinkedList<String>();
-      for (Block block : blocks) {
-         if (null != lastBlock
-               && lastBlock.getColour().getName() == block.getColour()
-                     .getName()) {
-            asd.add("-");
-            resultIndex++;
-         }
+	 * @param asd
+	 * @param blocks
+	 * @param lastBlock
+	 * @param resultIndex
+	 * @return
+	 */
+	private LinkedList<String> getFirstConditionOfRow(LinkedList<Block> blocks,
+			Block lastBlock, int resultIndex) {
+		String methodName = "getFirstConditionOfRow()";
+		System.out.println(methodName);
+		long startTime = new Date().getTime();
+		LinkedList<String> asd = new LinkedList<String>();
+		for (Block block : blocks) {
+			if (null != lastBlock
+					&& lastBlock.getColour().getName() == block.getColour()
+							.getName()) {
+				asd.add("-");
+				resultIndex++;
+			}
 
-         for (int i = 0; i < block.getHowMany(); i++) {
-            asd.add(String.valueOf(block.getColour().getName()));
-         }
+			for (int i = 0; i < block.getHowMany(); i++) {
+				asd.add(String.valueOf(block.getColour().getName()));
+			}
 
-         resultIndex += block.getHowMany();
-         lastBlock = block;
-      }
-      for (int i = resultIndex; i < riddle.getWidth(); i++) {
-         asd.add("-");
-      }
-      // System.out.println("firstCond:" + asd);
-      System.out.println("Time for " + methodName + ": "
-            + (new Date().getTime() - startTime) + " ms");
-      return asd;
-   }
-   
-   /**
-    * @param asd
-    * @param blocks
-    * @param lastBlock
-    * @param resultIndex
-    * @return
-    */
-   private LinkedList<String> getFirstConditionOfColumn(LinkedList<Block> blocks,
-         Block lastBlock, int resultIndex) {
-      String methodName = "getFirstConditionOfRow()";
-      System.out.println(methodName);
-      long startTime = new Date().getTime();
-      LinkedList<String> asd = new LinkedList<String>();
-      for (Block block : blocks) {
-         if (null != lastBlock
-               && lastBlock.getColour().getName() == block.getColour()
-                     .getName()) {
-            asd.add("-");
-            resultIndex++;
-         }
+			resultIndex += block.getHowMany();
+			lastBlock = block;
+		}
+		for (int i = resultIndex; i < riddle.getWidth(); i++) {
+			asd.add("-");
+		}
+		// System.out.println("firstCond:" + asd);
+		System.out.println("Time for " + methodName + ": "
+				+ (new Date().getTime() - startTime) + " ms");
+		return asd;
+	}
 
-         for (int i = 0; i < block.getHowMany(); i++) {
-            asd.add(String.valueOf(block.getColour().getName()));
-         }
+	/**
+	 * @param asd
+	 * @param blocks
+	 * @param lastBlock
+	 * @param resultIndex
+	 * @return
+	 */
+	private LinkedList<String> getFirstConditionOfColumn(
+			LinkedList<Block> blocks, Block lastBlock, int resultIndex) {
+		String methodName = "getFirstConditionOfRow()";
+		System.out.println(methodName);
+		long startTime = new Date().getTime();
+		LinkedList<String> asd = new LinkedList<String>();
+		for (Block block : blocks) {
+			if (null != lastBlock
+					&& lastBlock.getColour().getName() == block.getColour()
+							.getName()) {
+				asd.add("-");
+				resultIndex++;
+			}
 
-         resultIndex += block.getHowMany();
-         lastBlock = block;
-      }
-      for (int i = resultIndex; i < riddle.getWidth(); i++) {
-         asd.add("-");
-      }
-      // System.out.println("firstCond:" + asd);
-      System.out.println("Time for " + methodName + ": "
-            + (new Date().getTime() - startTime) + " ms");
-      return asd;
-   }
+			for (int i = 0; i < block.getHowMany(); i++) {
+				asd.add(String.valueOf(block.getColour().getName()));
+			}
+
+			resultIndex += block.getHowMany();
+			lastBlock = block;
+		}
+		for (int i = resultIndex; i < riddle.getWidth(); i++) {
+			asd.add("-");
+		}
+		// System.out.println("firstCond:" + asd);
+		System.out.println("Time for " + methodName + ": "
+				+ (new Date().getTime() - startTime) + " ms");
+		return asd;
+	}
 
 	/**
 	 * Display the matrix.
@@ -1263,6 +1319,30 @@ public class NonoSolver3 implements INonogramSolver {
 	 */
 	private void showMatrix() {
 		String methodName = "showMatrix()";
+		System.out.println(methodName);
+		long startTime = new Date().getTime();
+		for (int i = 0; i < riddle.getHeight(); i++) {
+			String out = "";
+			for (int j = 0; j < riddle.getWidth(); j++) {
+				out += matrix[i][j];
+				out += "  ";
+			}
+			System.out.println(out);
+		}
+		System.out.println();
+		// showBlockGoneTrue(matrix);
+		System.out.println("Time for " + methodName + ": "
+				+ (new Date().getTime() - startTime) + " ms");
+	}
+
+	/**
+	 * Display the matrix.
+	 * 
+	 * @param matrix
+	 * @throws Exception
+	 */
+	private void showAMatrix(String[][] matrix) {
+		String methodName = "showAMatrix()";
 		System.out.println(methodName);
 		long startTime = new Date().getTime();
 		for (int i = 0; i < riddle.getHeight(); i++) {
@@ -1363,8 +1443,8 @@ public class NonoSolver3 implements INonogramSolver {
 				block.setMinStartIndex(0);
 				block.setMaxEndIndex(size - 1);
 			} else if (blocks.size() == 1) {
-			   block.setMinStartIndex(0);
-            block.setMaxEndIndex(size - 1);
+				block.setMinStartIndex(0);
+				block.setMaxEndIndex(size - 1);
 			} else {
 				if (i == 0) {
 					block.setMinStartIndex(0);
