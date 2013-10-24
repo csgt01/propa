@@ -81,7 +81,9 @@ public class NonoSolver3 implements INonogramSolver {
             getSizesOfPossibilities();
             ArrayList<LinkedList<String>> theMatrix = solveByBrutForce(new ArrayList<LinkedList<String>>(), 0, 0);
             System.out.println("-----------------");
-            System.out.println(theMatrix);
+            for (LinkedList<String> list : theMatrix) {
+               System.out.println(list);
+            }
             System.out.println("-----------------");
          }
       } catch (Exception e) {
@@ -113,21 +115,23 @@ public class NonoSolver3 implements INonogramSolver {
     */
    private ArrayList<LinkedList<String>> solveByBrutForce(ArrayList<LinkedList<String>> listFromBefore, int rowInt, int possibilityInt) {
       // // System.out.println("solveByBrutForce");
-      int rowIndex = rowInt;
-       System.out.println("Row:" + rowIndex);
-      int possibilityIndex = possibilityInt;
-      ArrayList<LinkedList<String>> returnList = listFromBefore;
+      Integer rowIndex = new Integer(rowInt);
+       
+      Integer possibilityIndex = new Integer(possibilityInt);
+      ArrayList<LinkedList<String>> returnList = new ArrayList<LinkedList<String>>(listFromBefore);
       if (rowIndex < riddle.getHeight()) {
+//         System.out.println("Row:" + rowIndex);
          Row row = getRows().get(rowIndex);
          // eigene poss hinzufügen
-         rowIndex++;
          while (possibilityIndex < row.getPossibilities().size()) {
-            System.out.println("pos:" + possibilityIndex);
+//            System.out.println("pos:" + possibilityIndex);
             returnList = listFromBefore;
             returnList.add(row.getPossibilities().get(possibilityIndex));
             // Wenn noch Reihen übrig sind Methode neu aufrufen
-            if (rowIndex < riddle.getHeight()) {
-               returnList = solveByBrutForce(returnList, rowIndex, 0);
+            if (rowIndex + 1 < riddle.getHeight()) {
+//               System.out.println("Row before call again:" + (rowIndex +1));
+               returnList = solveByBrutForce(returnList, (rowIndex +1), 0);
+//               System.out.println("Row after call again:" + (rowIndex));
                if (null == returnList) {
                   possibilityIndex++;
                } else {
@@ -156,7 +160,7 @@ public class NonoSolver3 implements INonogramSolver {
     */
    private boolean checkStateOfWrittenMatrix(ArrayList<LinkedList<String>> returnList) {
       // Array anlegen
-      // // System.out.println("XXXXXXXXXXX");
+       // System.out.println("XXXXXXXXXXX");
 //      for (LinkedList<String> list : returnList) {
 //         System.out.println(list);
 //      }
