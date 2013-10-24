@@ -10,6 +10,8 @@ public class Block {
     private boolean gone;
     private Integer minStartIndex;
     private Integer maxEndIndex;
+    private String color;
+    
     
     
     public Block() {
@@ -17,7 +19,6 @@ public class Block {
        endIndex = null;
        gone = false;
     }
-
 
    /**
     * @return the howMany
@@ -49,6 +50,7 @@ public class Block {
     */
    public void setColour(Colour colour) {
       this.colour = colour;
+      this.color = String.valueOf(colour.getName());
    }
 
 
@@ -171,7 +173,14 @@ public class Block {
 
 
 
-   /* (non-Javadoc)
+   /**
+ * @return the color
+ */
+public String getColor() {
+	return color;
+}
+
+/* (non-Javadoc)
     * @see java.lang.Object#toString()
     */
    @Override
