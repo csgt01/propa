@@ -77,12 +77,12 @@ public class NonoSolver3 implements INonogramSolver {
                run1 = false;
             }
          }
-         if (getStarCountInRiddle() > 0) {
+         if (getStarCountInRiddle() >= 0) {
         	 getSizesOfPossibilities();
-            LinkedList<LinkedList<String>> theMatrix = solveByBrutForce(new LinkedList<LinkedList<String>>(), 0, 0);
-            // // System.out.println("-----------------");
+        	 LinkedList<LinkedList<String>> theMatrix = solveByBrutForce(new LinkedList<LinkedList<String>>(), 0, 0);
+              System.out.println("-----------------");
               System.out.println(theMatrix);
-            // // System.out.println("-----------------");
+              System.out.println("-----------------");
          }
       } catch (Exception e) {
          e.printStackTrace();
@@ -155,7 +155,7 @@ public class NonoSolver3 implements INonogramSolver {
    private boolean checkStateOfWrittenMatrix(LinkedList<LinkedList<String>> returnList) {
       // Array anlegen
       // // System.out.println("XXXXXXXXXXX");
-//      showAMatrix(testMatrix);
+      System.out.println(returnList);
 
       // eigentliche Tests:
       int columnInt = 0;
