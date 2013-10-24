@@ -78,11 +78,11 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
          if (getStarCountInRiddle() >= 0) {
-        	 getSizesOfPossibilities();
-        	 LinkedList<LinkedList<String>> theMatrix = solveByBrutForce(new LinkedList<LinkedList<String>>(), 0, 0);
-              System.out.println("-----------------");
-              System.out.println(theMatrix);
-              System.out.println("-----------------");
+            getSizesOfPossibilities();
+            ArrayList<LinkedList<String>> theMatrix = solveByBrutForce(new ArrayList<LinkedList<String>>(), 0, 0);
+            System.out.println("-----------------");
+            System.out.println(theMatrix);
+            System.out.println("-----------------");
          }
       } catch (Exception e) {
          e.printStackTrace();
@@ -93,7 +93,8 @@ public class NonoSolver3 implements INonogramSolver {
          // // // System.out.println(riddle);
          showMatrix();
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return matrix;
    }
 
@@ -110,19 +111,20 @@ public class NonoSolver3 implements INonogramSolver {
     * @param possibilityInt
     * @return
     */
-   private LinkedList<LinkedList<String>> solveByBrutForce(LinkedList<LinkedList<String>> listFromBefore, int rowInt, int possibilityInt) {
+   private ArrayList<LinkedList<String>> solveByBrutForce(ArrayList<LinkedList<String>> listFromBefore, int rowInt, int possibilityInt) {
       // // System.out.println("solveByBrutForce");
       int rowIndex = rowInt;
-       // System.out.println("Row:" + rowIndex);
+       System.out.println("Row:" + rowIndex);
       int possibilityIndex = possibilityInt;
-      LinkedList<LinkedList<String>> returnList = listFromBefore;
+      ArrayList<LinkedList<String>> returnList = listFromBefore;
       if (rowIndex < riddle.getHeight()) {
          Row row = getRows().get(rowIndex);
          // eigene poss hinzufügen
          rowIndex++;
          while (possibilityIndex < row.getPossibilities().size()) {
+            System.out.println("pos:" + possibilityIndex);
             returnList = listFromBefore;
-            returnList.addLast(row.getPossibilities().get(possibilityIndex));
+            returnList.add(row.getPossibilities().get(possibilityIndex));
             // Wenn noch Reihen übrig sind Methode neu aufrufen
             if (rowIndex < riddle.getHeight()) {
                returnList = solveByBrutForce(returnList, rowIndex, 0);
@@ -152,10 +154,12 @@ public class NonoSolver3 implements INonogramSolver {
     * @param returnList
     * @return
     */
-   private boolean checkStateOfWrittenMatrix(LinkedList<LinkedList<String>> returnList) {
+   private boolean checkStateOfWrittenMatrix(ArrayList<LinkedList<String>> returnList) {
       // Array anlegen
       // // System.out.println("XXXXXXXXXXX");
-      System.out.println(returnList);
+//      for (LinkedList<String> list : returnList) {
+//         System.out.println(list);
+//      }
 
       // eigentliche Tests:
       int columnInt = 0;
@@ -163,7 +167,7 @@ public class NonoSolver3 implements INonogramSolver {
       while (columnInt < riddle.getWidth()) {
          Column column = getColumns().get(columnInt);
          LinkedList<Block> blocks = column.getBlocks();
-		if (blocks != null && blocks.size() > 0) {
+         if (blocks != null && blocks.size() > 0) {
             int roInt = 0;
             int blockInt = 0;
             while (roInt < riddle.getHeight()) {
@@ -172,19 +176,21 @@ public class NonoSolver3 implements INonogramSolver {
                } else {
                   // Ist eine Farbe, aber keine Blöcke mehr!
                   if (blockInt >= blocks.size()) {
+//                     System.out.println("false1: row: " + roInt + " column: " + columnInt);
                      return false;
                   } else {
                      // Block prüfen
                      Block block = blocks.get(blockInt);
                      for (int i = 0; i < block.getHowMany(); i++) {
                         if (!(returnList.get(roInt).get(columnInt).equals(block.getColor()))) {
+//                           System.out.println("false2: row: " + roInt + " column: " + columnInt);
                            return false;
                         }
                      }
                      roInt += block.getHowMany();
-                     if ((blockInt + 1) < blocks.size() 
-                           && block.getColor().equals(blocks.get(blockInt + 1).getColor()) 
-                           && returnList.get(roInt).get(columnInt).equals(empty)) {
+                     // Nächster Block ist gleiche Farbe, also muss - sein!
+                     if ((blockInt + 1) < blocks.size() && block.getColor().equals(blocks.get(blockInt + 1).getColor()) && !returnList.get(roInt).get(columnInt).equals(empty)) {
+//                        System.out.println("false3: row: " + roInt + " column: " + columnInt);
                         return false;
                      }
                      blockInt++;
@@ -195,6 +201,7 @@ public class NonoSolver3 implements INonogramSolver {
             // nur -!!!
             for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
                if (returnList.get(rowInt).get(columnInt).equals(empty)) {
+                  System.out.println("false4: row: " + rowInt + " column: " + columnInt);
                   return false;
                }
             }
@@ -202,8 +209,8 @@ public class NonoSolver3 implements INonogramSolver {
          columnInt++;
       }
 
-//         // // System.out.println("YYYYYYYYYYY");
-//         showAMatrix(testMatrix);
+      // // // System.out.println("YYYYYYYYYYY");
+      // showAMatrix(testMatrix);
       return true;
    }
 
@@ -235,7 +242,8 @@ public class NonoSolver3 implements INonogramSolver {
             run = false;
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -252,7 +260,8 @@ public class NonoSolver3 implements INonogramSolver {
             matrix[i][j] = '*';
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -277,7 +286,8 @@ public class NonoSolver3 implements INonogramSolver {
          // Blöcke durchgehen.
          setupBlocksInRowAndColumn(blocks, riddle.getHeight());
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    // Iterativ
@@ -356,7 +366,8 @@ public class NonoSolver3 implements INonogramSolver {
             fillAreaInColumnWithChar(columnInt, 0, riddle.getHeight(), '-');
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return;
    }
 
@@ -417,7 +428,8 @@ public class NonoSolver3 implements INonogramSolver {
             fillAreaInRowWithChar(rowInt, 0, riddle.getWidth(), '-');
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return;
    }
 
@@ -438,7 +450,8 @@ public class NonoSolver3 implements INonogramSolver {
             fillColumnWithFree(column);
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -454,7 +467,8 @@ public class NonoSolver3 implements INonogramSolver {
       for (Column column : riddle.getColumns()) {
          fillBlocksOnEndOfColumn(column, column.getBlocks().size() - 1, riddle.getHeight() - 1);
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return matrix;
    }
 
@@ -504,7 +518,8 @@ public class NonoSolver3 implements INonogramSolver {
 
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -520,7 +535,8 @@ public class NonoSolver3 implements INonogramSolver {
       for (Column column : riddle.getColumns()) {
          fillBlocksOnBeginningOfColumn(column, 0, 0);
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return matrix;
    }
 
@@ -581,7 +597,8 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -597,7 +614,8 @@ public class NonoSolver3 implements INonogramSolver {
       for (Row row : riddle.getRows()) {
          fillBlocksOnEndOfRow(row, row.getBlocks().size() - 1, riddle.getWidth() - 1);
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return matrix;
    }
 
@@ -647,7 +665,8 @@ public class NonoSolver3 implements INonogramSolver {
 
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -663,7 +682,8 @@ public class NonoSolver3 implements INonogramSolver {
       for (Row row : riddle.getRows()) {
          fillBlocksOnBeginningOfRow(row, 0, 0);
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return matrix;
    }
 
@@ -724,7 +744,8 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    // Rekursiv
@@ -741,7 +762,8 @@ public class NonoSolver3 implements INonogramSolver {
       boolean run = true;
       for (Column column : getColumns()) {
          LinkedList<String> firstConditionOfColumn = getFirstConditionOfColumn(column.getBlocks(), null, 0);
-         // // System.out.println("First condition of column:" + firstConditionOfColumn);
+         // // System.out.println("First condition of column:" +
+         // firstConditionOfColumn);
          ArrayList<LinkedList<String>> possibilities = column.getPossibilities();
          if (possibilities == null || possibilities.size() == 0) {
             possibilities = getPossibilitiesForRowOrColumn(column.getBlocks(), firstConditionOfColumn, possibilities, 0, 0);
@@ -839,7 +861,8 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -969,11 +992,12 @@ public class NonoSolver3 implements INonogramSolver {
             isPossible = false;
          }
          // TODO: check this method
-			if (!checkPossibilityOfRowAgainstColumns(possibility, rowInt)) {
-				isPossible = false;
-			}
+         if (!checkPossibilityOfRowAgainstColumns(possibility, rowInt)) {
+            isPossible = false;
+         }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return isPossible;
    }
 
@@ -1005,7 +1029,8 @@ public class NonoSolver3 implements INonogramSolver {
             isPossible = false;
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return isPossible;
    }
 
@@ -1092,7 +1117,8 @@ public class NonoSolver3 implements INonogramSolver {
             // // System.out.println(possibility + " erased");
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return possibilities2;
    }
 
@@ -1117,7 +1143,8 @@ public class NonoSolver3 implements INonogramSolver {
             // // // System.out.println(possibility + " erased");
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return possibilities2;
    }
 
@@ -1152,7 +1179,8 @@ public class NonoSolver3 implements INonogramSolver {
          asd.add("-");
       }
       // // // System.out.println("firstCond:" + asd);
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return asd;
    }
 
@@ -1185,7 +1213,8 @@ public class NonoSolver3 implements INonogramSolver {
          asd.add("-");
       }
       // // // System.out.println("firstCond:" + asd);
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return asd;
    }
 
@@ -1209,7 +1238,8 @@ public class NonoSolver3 implements INonogramSolver {
       }
       // // System.out.println();
       // showBlockGoneTrue(matrix);
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -1232,7 +1262,8 @@ public class NonoSolver3 implements INonogramSolver {
       }
       // // System.out.println();
       // showBlockGoneTrue(matrix);
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    private void showBlockGoneTrue() {
@@ -1251,7 +1282,8 @@ public class NonoSolver3 implements INonogramSolver {
       }
       for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
          Column column = getColumns().get(columnInt);
-         // // System.out.println("Column:" + columnInt + " -- " + column.isGone());
+         // // System.out.println("Column:" + columnInt + " -- " +
+         // column.isGone());
          LinkedList<Block> blocks = column.getBlocks();
          if (null != blocks) {
             for (Block block : blocks) {
@@ -1259,7 +1291,8 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -1277,7 +1310,8 @@ public class NonoSolver3 implements INonogramSolver {
             matrix[row][indexOfColumn] = '-';
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -1295,7 +1329,8 @@ public class NonoSolver3 implements INonogramSolver {
             matrix[indexOfRow][column] = '-';
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -1330,7 +1365,8 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -1357,7 +1393,8 @@ public class NonoSolver3 implements INonogramSolver {
          }
          lastBlock = block;
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return index;
    }
 
@@ -1383,7 +1420,8 @@ public class NonoSolver3 implements INonogramSolver {
          }
          lastBlock = block;
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return (size - 1 - index);
    }
 
@@ -1432,7 +1470,8 @@ public class NonoSolver3 implements INonogramSolver {
       for (int row = rowBegin; row < rowEnd; row++) {
          writeCharInMatrix(row, c, columnIndex);
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return matrix;
    }
 
@@ -1455,7 +1494,8 @@ public class NonoSolver3 implements INonogramSolver {
       for (int column = columnBegin; column < columnEnd; column++) {
          writeCharInMatrix(rowIndex, c, column);
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -1503,7 +1543,8 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -1533,7 +1574,8 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -1563,7 +1605,8 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return checkMatrix;
    }
 
@@ -1593,7 +1636,8 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
    }
 
    /**
@@ -1614,7 +1658,8 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
       }
-      // // System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
       return starCount;
    }
 
@@ -1630,7 +1675,8 @@ public class NonoSolver3 implements INonogramSolver {
             sizesmallestRowInt = size;
             smallestRowInt = getIndexOfRow(row);
          }
-         // // System.out.println("Row " + getIndexOfRow(row) + " pssibilities size:" + size);
+         // // System.out.println("Row " + getIndexOfRow(row) +
+         // " pssibilities size:" + size);
       }
       return smallestRowInt;
    }
@@ -1640,15 +1686,15 @@ public class NonoSolver3 implements INonogramSolver {
       // // System.out.println(methodName);
       long startTime = new Date().getTime();
       for (Row row : getRows()) {
-           System.out.println("Row " + getIndexOfRow(row) + " pssibilities size:" + row.getPossibilities().size());
-           System.out.println(row.getPossibilities());
+         System.out.println("Row " + getIndexOfRow(row) + " pssibilities size:" + row.getPossibilities().size());
+         System.out.println(row.getPossibilities());
       }
       for (Column column : getColumns()) {
-           System.out.println("Column " + getIndexOfColumn(column) + " pssibilities size:" + column.getPossibilities().size());
-           System.out.println(column.getPossibilities());
-           System.out.println();
+         System.out.println("Column " + getIndexOfColumn(column) + " pssibilities size:" + column.getPossibilities().size());
+         System.out.println(column.getPossibilities());
+         System.out.println();
       }
-        System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
    }
 
 }
