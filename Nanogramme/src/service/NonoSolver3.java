@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.sun.org.apache.bcel.internal.generic.LNEG;
+
 import models.Block;
 import models.Column;
 import models.Riddle;
@@ -84,7 +86,7 @@ public class NonoSolver3 implements INonogramSolver {
 			if (getStarCountInRiddle() >= 0) {
 				getSizesOfPossibilities();
 				ArrayList<ArrayList<String>> theMatrix;
-				if (getPossibillitySizeOfRow() < getPossibillitySizeOfColumn()) {
+				if (false) {
 					System.out.println("vfdsfffdfsfdsdfsdfssdffdsfdsf1");
 					possibillities = getPossibillitySizeOfRow();
 					timeFor = new Date().getTime();
@@ -340,7 +342,7 @@ public class NonoSolver3 implements INonogramSolver {
 		int rowInt = 0;
 		String empty = "-";
 		while (rowInt < riddle.getHeight()) {
-			Column column = getColumns().get(rowInt);
+			Row column = getRows().get(rowInt);
 			LinkedList<Block> blocks = column.getBlocks();
 			if (blocks != null && blocks.size() > 0) {
 				int columnInt = 0;
@@ -1055,7 +1057,7 @@ public class NonoSolver3 implements INonogramSolver {
 			ArrayList<LinkedList<String>> possibilities = column
 					.getPossibilities();
 			if (possibilities == null || possibilities.size() == 0) {
-				possibilities = getPossibilitiesForRowOrColumn(
+				possibilities = getPossibilitiesForRowOrColumn(true,
 						column.getBlocks(), firstConditionOfColumn,
 						possibilities, 0, 0);
 				possibilities.add(getFirstConditionOfColumn(column.getBlocks(),
@@ -1080,7 +1082,7 @@ public class NonoSolver3 implements INonogramSolver {
 					if (possibilities == null || possibilities.size() == 0) {
 						LinkedList<String> firstConditionOfRow = getFirstConditionOfRow(
 								row.getBlocks(), null, 0);
-						possibilities = getPossibilitiesForRowOrColumn(
+						possibilities = getPossibilitiesForRowOrColumn(false, 
 								row.getBlocks(), firstConditionOfRow,
 								possibilities, 0, 0);
 						// Initiale Möglichkeit muss von HAnd hinzugefügt werden
@@ -1134,7 +1136,7 @@ public class NonoSolver3 implements INonogramSolver {
 					LinkedList<String> firstConditionOfRow = getFirstConditionOfColumn(
 							column.getBlocks(), null, 0);
 					if (possibilities == null || possibilities.size() == 0) {
-						possibilities = getPossibilitiesForRowOrColumn(
+						possibilities = getPossibilitiesForRowOrColumn(true,
 								column.getBlocks(), firstConditionOfRow,
 								possibilities, 0, 0);
 						possibilities.add(getFirstConditionOfColumn(
@@ -1252,7 +1254,7 @@ public class NonoSolver3 implements INonogramSolver {
 	 * @param add1
 	 * @return
 	 */
-	private ArrayList<LinkedList<String>> getPossibilitiesForRowOrColumn(
+	private ArrayList<LinkedList<String>> getPossibilitiesForRowOrColumn(boolean forColumn,
 			LinkedList<Block> blocks1, LinkedList<String> aa,
 			ArrayList<LinkedList<String>> possibilities, int numberOfBlock,
 			int add1) {
@@ -1263,29 +1265,44 @@ public class NonoSolver3 implements INonogramSolver {
 		LinkedList<Block> blocks = new LinkedList<Block>(blocks1);
 		ArrayList<LinkedList<String>> possibilities2 = new ArrayList<LinkedList<String>>(
 				possibilities);
-		Block block = blocks.get(numberOfBlock);
-		int numberOfBlock2 = numberOfBlock + 1;
-		int start = block.getMinStartIndex() + add;
-		for (int i = start; i + block.getHowMany() <= block.getMaxEndIndex(); i++) {
-			// iterativ die Blöcke durchgehen
-			LinkedList<String> bb = new LinkedList<String>(aa);
-			if (numberOfBlock2 < blocks.size()) {
-				possibilities2 = getPossibilitiesForRowOrColumn(blocks, bb,
-						possibilities2, numberOfBlock2, add);
-			}
-			//
-			if (aa.getLast().equals("-")) {
-				aa.removeLast();
-				aa.add(start, "-");
-				// // // System.out.println("aaaaa" + aa);
-				possibilities2.add(new LinkedList<String>(aa));
-			} else {
-				// // // System.out.println(aa);
-				possibilities2.add(new LinkedList<String>(aa));
-			}
-			add++;
-		}
-		// // // System.out.println("Time for " + methodName + ": " + (new
+		if (blocks.size() > 0) {
+         Block block = blocks.get(numberOfBlock);
+         int numberOfBlock2 = numberOfBlock + 1;
+         int start = block.getMinStartIndex() + add;
+         for (int i = start; i + block.getHowMany() <= block.getMaxEndIndex(); i++) {
+            // iterativ die Blöcke durchgehen
+            LinkedList<String> bb = new LinkedList<String>(aa);
+            if (numberOfBlock2 < blocks.size()) {
+               possibilities2 = getPossibilitiesForRowOrColumn(forColumn, blocks, bb, possibilities2, numberOfBlock2, add);
+            }
+            //
+            if (aa.getLast().equals("-")) {
+               aa.removeLast();
+               aa.add(start, "-");
+               // // // System.out.println("aaaaa" + aa);
+               possibilities2.add(new LinkedList<String>(aa));
+            } else {
+               // // // System.out.println(aa);
+               possibilities2.add(new LinkedList<String>(aa));
+            }
+            add++;
+         } 
+      } else {
+         if(forColumn) {
+            LinkedList<String> list = new LinkedList<String>();
+            for (int i = 0; i < riddle.getHeight(); i++) {
+               list.add("-");
+            }
+            possibilities2.add(list);
+         } else {
+            LinkedList<String> list = new LinkedList<String>();
+            for (int i = 0; i < riddle.getWidth(); i++) {
+               list.add("-");
+            }
+            possibilities2.add(list);
+         }
+      }
+      // // // System.out.println("Time for " + methodName + ": " + (new
 		// Date().getTime() - startTime) + " ms");
 		// // // System.out.println("Possibilities:\n");
 		return possibilities2;
