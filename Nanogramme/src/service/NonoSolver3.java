@@ -19,10 +19,10 @@ public class NonoSolver3 implements INonogramSolver {
 
 	private Riddle riddle;
 
-	char[][] matrix;
+	private char[][] matrix;
 
-	private static int possibillities = 0;
-	private static int checkedPossibillities = 0;
+	private static long possibillities = 0;
+	private static long checkedPossibillities = 0;
 	private static long timeFor;
 
 	/**
@@ -71,7 +71,17 @@ public class NonoSolver3 implements INonogramSolver {
 		long startTime = new Date().getTime();
 		setupMatrix();
 		setupBlocks();
-		try {
+		solve();
+		System.out.println("Time for " + methodName + ": "
+				+ (new Date().getTime() - startTime) + " ms");
+		return matrix;
+	}
+
+   /**
+    * 
+    */
+   private void solve() {
+      try {
 			boolean run1 = true;
 			while (run1) {
 				int starCount = getStarCountInRiddle();
@@ -114,10 +124,7 @@ public class NonoSolver3 implements INonogramSolver {
 			// // // System.out.println(riddle);
 			showMatrix();
 		}
-		System.out.println("Time for " + methodName + ": "
-				+ (new Date().getTime() - startTime) + " ms");
-		return matrix;
-	}
+   }
 
 	/**
 	 * Diese Methode nimmt die erste Möglichkeit der ersten Reihe und ruft sich
@@ -2065,16 +2072,16 @@ public class NonoSolver3 implements INonogramSolver {
 		String methodName = "getSizesOfPossibilities()";
 		// // System.out.println(methodName);
 		long startTime = new Date().getTime();
-		int rowPosSize = getPossibillitySizeOfRow();
-		int columnPosSize = getPossibillitySizeOfColumn();
+		long rowPosSize = getPossibillitySizeOfRow();
+		long columnPosSize = getPossibillitySizeOfColumn();
 		System.out.println("RowPos: " + rowPosSize + "\n" + "ColPos: "
 				+ columnPosSize);
 		System.out.println("Time for " + methodName + ": "
 				+ (new Date().getTime() - startTime) + " ms");
 	}
 
-	private int getPossibillitySizeOfColumn() {
-		int columnPosSize = 1;
+	private long getPossibillitySizeOfColumn() {
+		long columnPosSize = 1;
 		for (Column column : getColumns()) {
 			System.out.println("Column " + getIndexOfColumn(column)
 					+ " pssibilities size:" + column.getPossibilities().size());
@@ -2085,8 +2092,8 @@ public class NonoSolver3 implements INonogramSolver {
 		return columnPosSize;
 	}
 
-	private int getPossibillitySizeOfRow() {
-		int rowPosSize = 1;
+	private long getPossibillitySizeOfRow() {
+		long rowPosSize = 1;
 
 		for (Row row : getRows()) {
 			System.out.println("Row " + getIndexOfRow(row)
