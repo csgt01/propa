@@ -61,7 +61,7 @@ public class NonoSolver3 implements INonogramSolver {
    @Override
    public char[][] getSolution() {
       String methodName = "getSolution()";
-      // // System.out.println(methodName);
+      System.out.println(methodName);
       long startTime = new Date().getTime();
       setupMatrix();
       setupBlocks();
@@ -95,8 +95,7 @@ public class NonoSolver3 implements INonogramSolver {
          // // // System.out.println(riddle);
          showMatrix();
       }
-      // // System.out.println("Time for " + methodName + ": " + (new
-      // Date().getTime() - startTime) + " ms");
+      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
       return matrix;
    }
 
@@ -116,22 +115,22 @@ public class NonoSolver3 implements INonogramSolver {
    private ArrayList<LinkedList<String>> solveByBrutForce(ArrayList<LinkedList<String>> listFromBefore, int rowInt, int possibilityInt) {
       // // System.out.println("solveByBrutForce");
       Integer rowIndex = new Integer(rowInt);
-       
+
       Integer possibilityIndex = new Integer(possibilityInt);
       ArrayList<LinkedList<String>> returnList = new ArrayList<LinkedList<String>>(listFromBefore);
       if (rowIndex < riddle.getHeight()) {
-//         System.out.println("Row:" + rowIndex);
+         // System.out.println("Row:" + rowIndex);
          Row row = getRows().get(rowIndex);
          // eigene poss hinzufügen
          while (possibilityIndex < row.getPossibilities().size()) {
-//            System.out.println("pos:" + possibilityIndex);
+            // System.out.println("pos:" + possibilityIndex);
             returnList = listFromBefore;
             returnList.add(row.getPossibilities().get(possibilityIndex));
             // Wenn noch Reihen übrig sind Methode neu aufrufen
             if (rowIndex + 1 < riddle.getHeight()) {
-//               System.out.println("Row before call again:" + (rowIndex +1));
-               returnList = solveByBrutForce(returnList, (rowIndex +1), 0);
-//               System.out.println("Row after call again:" + (rowIndex));
+               // System.out.println("Row before call again:" + (rowIndex +1));
+               returnList = solveByBrutForce(returnList, (rowIndex + 1), 0);
+               // System.out.println("Row after call again:" + (rowIndex));
                if (null == returnList) {
                   possibilityIndex++;
                } else {
@@ -160,10 +159,10 @@ public class NonoSolver3 implements INonogramSolver {
     */
    private boolean checkStateOfWrittenMatrix(ArrayList<LinkedList<String>> returnList) {
       // Array anlegen
-       // System.out.println("XXXXXXXXXXX");
-//      for (LinkedList<String> list : returnList) {
-//         System.out.println(list);
-//      }
+      // System.out.println("XXXXXXXXXXX");
+      // for (LinkedList<String> list : returnList) {
+      // System.out.println(list);
+      // }
 
       // eigentliche Tests:
       int columnInt = 0;
@@ -180,21 +179,24 @@ public class NonoSolver3 implements INonogramSolver {
                } else {
                   // Ist eine Farbe, aber keine Blöcke mehr!
                   if (blockInt >= blocks.size()) {
-//                     System.out.println("false1: row: " + roInt + " column: " + columnInt);
+                     // System.out.println("false1: row: " + roInt + " column: "
+                     // + columnInt);
                      return false;
                   } else {
                      // Block prüfen
                      Block block = blocks.get(blockInt);
                      for (int i = 0; i < block.getHowMany(); i++) {
                         if (!(returnList.get(roInt).get(columnInt).equals(block.getColor()))) {
-//                           System.out.println("false2: row: " + roInt + " column: " + columnInt);
+                           // System.out.println("false2: row: " + roInt +
+                           // " column: " + columnInt);
                            return false;
                         }
                      }
                      roInt += block.getHowMany();
                      // Nächster Block ist gleiche Farbe, also muss - sein!
                      if ((blockInt + 1) < blocks.size() && block.getColor().equals(blocks.get(blockInt + 1).getColor()) && !returnList.get(roInt).get(columnInt).equals(empty)) {
-//                        System.out.println("false3: row: " + roInt + " column: " + columnInt);
+                        // System.out.println("false3: row: " + roInt +
+                        // " column: " + columnInt);
                         return false;
                      }
                      blockInt++;
