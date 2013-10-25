@@ -83,22 +83,22 @@ public class NonoSolver3 implements INonogramSolver {
 			}
 			if (getStarCountInRiddle() >= 0) {
 				getSizesOfPossibilities();
-				ArrayList<LinkedList<String>> theMatrix;
+				ArrayList<ArrayList<String>> theMatrix;
 				if (getPossibillitySizeOfRow() < getPossibillitySizeOfColumn()) {
 					System.out.println("vfdsfffdfsfdsdfsdfssdffdsfdsf1");
-					possibillities = getPossibillitySizeOfColumn();
+					possibillities = getPossibillitySizeOfRow();
 					timeFor = new Date().getTime();
-					theMatrix = solveByBrutForceByColumn(
-							new ArrayList<LinkedList<String>>(), 0, 0);
+					theMatrix = solveByBrutForceByRow(
+							new ArrayList<ArrayList<String>>(), 0, 0);
 				} else {
 					System.out.println("vfdsfffdfsfdsdfsdfssdffdsfdsf2");
 					possibillities = getPossibillitySizeOfColumn();
 					theMatrix = solveByBrutForceByColumn(
-							new ArrayList<LinkedList<String>>(), 0, 0);
+							new ArrayList<ArrayList<String>>(), 0, 0);
 				}
 
 				System.out.println("-----------------");
-				for (LinkedList<String> list : theMatrix) {
+				for (ArrayList<String> list : theMatrix) {
 					System.out.println(list);
 				}
 				System.out.println("-----------------");
@@ -127,14 +127,15 @@ public class NonoSolver3 implements INonogramSolver {
 	 * @param possibilityInt
 	 * @return
 	 */
-	private ArrayList<LinkedList<String>> solveByBrutForceByRow(
-			ArrayList<LinkedList<String>> listFromBefore, int rowInt,
+	private ArrayList<ArrayList<String>> solveByBrutForceByRow(
+			ArrayList<ArrayList<String>> listFromBefore, int rowInt,
 			int possibilityInt) {
+	   System.gc();
 		// // System.out.println("solveByBrutForce");
 		Integer rowIndex = new Integer(rowInt);
 
 		Integer possibilityIndex = new Integer(possibilityInt);
-		ArrayList<LinkedList<String>> returnList = new ArrayList<LinkedList<String>>(
+		ArrayList<ArrayList<String>> returnList = new ArrayList<ArrayList<String>>(
 				listFromBefore);
 		if (rowIndex < riddle.getHeight()) {
 			// System.out.println("Row:" + rowIndex);
@@ -142,8 +143,9 @@ public class NonoSolver3 implements INonogramSolver {
 			// eigene poss hinzufügen
 			while (possibilityIndex < row.getPossibilities().size()) {
 				// System.out.println("pos:" + possibilityIndex);
-				returnList = listFromBefore;
-				returnList.add(row.getPossibilities().get(possibilityIndex));
+				returnList = new ArrayList<ArrayList<String>>(
+		            listFromBefore);
+				returnList.add(new ArrayList<String>(row.getPossibilities().get(possibilityIndex)));
 				// Wenn noch Reihen übrig sind Methode neu aufrufen
 				if (rowIndex + 1 < riddle.getHeight()) {
 					// System.out.println("Row before call again:" + (rowIndex
@@ -178,7 +180,7 @@ public class NonoSolver3 implements INonogramSolver {
 	 * @return
 	 */
 	private boolean checkStateOfWrittenMatrixByRow(
-			ArrayList<LinkedList<String>> returnList) {
+			ArrayList<ArrayList<String>> returnList) {
 
 		// String methodName = "checkStateOfWrittenMatrix()";
 		// System.out.println(methodName);
@@ -255,6 +257,7 @@ public class NonoSolver3 implements INonogramSolver {
 		// showAMatrix(testMatrix);
 		// System.out.println("Time for " + methodName + ": " + (new
 		// Date().getTime() - startTime.getTime()) + " ms");
+		returnList = null;
 		return true;
 	}
 
@@ -268,14 +271,13 @@ public class NonoSolver3 implements INonogramSolver {
 	 * @param possibilityInt
 	 * @return
 	 */
-	private ArrayList<LinkedList<String>> solveByBrutForceByColumn(
-			ArrayList<LinkedList<String>> listFromBefore, int coInt,
+	private ArrayList<ArrayList<String>> solveByBrutForceByColumn(
+			ArrayList<ArrayList<String>> listFromBefore, int coInt,
 			int possibilityInt) {
 		// // System.out.println("solveByBrutForce");
 		Integer columnInt = new Integer(coInt);
-
 		Integer possibilityIndex = new Integer(possibilityInt);
-		ArrayList<LinkedList<String>> returnList = new ArrayList<LinkedList<String>>(
+		ArrayList<ArrayList<String>> returnList = new ArrayList<ArrayList<String>>(
 				listFromBefore);
 		if (columnInt < riddle.getWidth()) {
 			// System.out.println("Row:" + rowIndex);
@@ -283,13 +285,16 @@ public class NonoSolver3 implements INonogramSolver {
 			// eigene poss hinzufügen
 			while (possibilityIndex < column.getPossibilities().size()) {
 				// System.out.println("pos:" + possibilityIndex);
-				returnList = listFromBefore;
-				returnList.add(column.getPossibilities().get(possibilityIndex));
+				returnList = new ArrayList<ArrayList<String>>(
+		            listFromBefore);
+				returnList.add(new ArrayList<String>(column.getPossibilities().get(possibilityIndex)));
+				ArrayList<ArrayList<String>> newList = new ArrayList<ArrayList<String>>(
+		            returnList);
 				// Wenn noch Reihen übrig sind Methode neu aufrufen
 				if (columnInt + 1 < riddle.getWidth()) {
 					// System.out.println("Row before call again:" + (rowIndex
 					// +1));
-					returnList = solveByBrutForceByColumn(returnList,
+					returnList = solveByBrutForceByColumn(newList,
 							(columnInt + 1), 0);
 					// System.out.println("Row after call again:" + (rowIndex));
 					if (null == returnList) {
@@ -319,7 +324,7 @@ public class NonoSolver3 implements INonogramSolver {
 	 * @return
 	 */
 	private boolean checkStateOfWrittenMatrixByColumn(
-			ArrayList<LinkedList<String>> returnList) {
+			ArrayList<ArrayList<String>> returnList) {
 
 		// String methodName = "checkStateOfWrittenMatrix()";
 		// System.out.println(methodName);
@@ -334,7 +339,7 @@ public class NonoSolver3 implements INonogramSolver {
 		// eigentliche Tests:
 		int rowInt = 0;
 		String empty = "-";
-		while (rowInt < riddle.getWidth()) {
+		while (rowInt < riddle.getHeight()) {
 			Column column = getColumns().get(rowInt);
 			LinkedList<Block> blocks = column.getBlocks();
 			if (blocks != null && blocks.size() > 0) {
@@ -350,7 +355,8 @@ public class NonoSolver3 implements INonogramSolver {
 							// " column: "
 							// + columnInt);
 							checkedPossibillities++;
-							if ((possibillities - checkedPossibillities) % 100000 == 0) {
+							if ((possibillities - checkedPossibillities) % 100000000 == 0) {
+							   System.gc();
 								System.out.println("False1:" + (possibillities - checkedPossibillities));
 								long time = new Date().getTime();
 								System.out.println("Time:" + (time - timeFor));
@@ -367,8 +373,9 @@ public class NonoSolver3 implements INonogramSolver {
 									// roInt +
 									// " column: " + columnInt);
 									checkedPossibillities++;
-									if ((possibillities - checkedPossibillities) % 100000 == 0) {
-										System.out.println("False2:" + (possibillities - checkedPossibillities));
+									if ((possibillities - checkedPossibillities) % 100000000 == 0) {
+									   System.gc();
+									   System.out.println("False2:" + (possibillities - checkedPossibillities));
 										long time = new Date().getTime();
 										System.out.println("Time:" + (time - timeFor));
 										timeFor = time;
@@ -388,8 +395,9 @@ public class NonoSolver3 implements INonogramSolver {
 								// System.out.println("false3: row: " + roInt +
 								// " column: " + columnInt);
 								checkedPossibillities++;
-								if ((possibillities - checkedPossibillities) % 100000 == 0) {
-									System.out.println("False3:" + (possibillities - checkedPossibillities));
+								if ((possibillities - checkedPossibillities) % 100000000 == 0) {
+								   System.gc();
+								   System.out.println("False3:" + (possibillities - checkedPossibillities));
 									long time = new Date().getTime();
 									System.out.println("Time:" + (time - timeFor));
 									timeFor = time;
@@ -407,8 +415,9 @@ public class NonoSolver3 implements INonogramSolver {
 						// System.out.println("false4: row: " + rowInt +
 						// " column: " + columnInt);
 						checkedPossibillities++;
-						if ((possibillities - checkedPossibillities) % 100000 == 0) {
-							System.out.println("False4:" + (possibillities - checkedPossibillities));
+						if ((possibillities - checkedPossibillities) % 100000000 == 0) {
+						   System.gc();
+						   System.out.println("False4:" + (possibillities - checkedPossibillities));
 							long time = new Date().getTime();
 							System.out.println("Time:" + (time - timeFor));
 							timeFor = time;
@@ -425,8 +434,9 @@ public class NonoSolver3 implements INonogramSolver {
 		// System.out.println("Time for " + methodName + ": " + (new
 		// Date().getTime() - startTime.getTime()) + " ms");
 		checkedPossibillities++;
-		if ((possibillities - checkedPossibillities) % 100000 == 0) {
-			System.out.println((possibillities - checkedPossibillities));
+		if ((possibillities - checkedPossibillities) % 100000000 == 0) {
+		   System.gc();
+		   System.out.println((possibillities - checkedPossibillities));
 			long time = new Date().getTime();
 			System.out.println("Time:" + (time - timeFor));
 			timeFor = time;
