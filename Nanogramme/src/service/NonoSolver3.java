@@ -79,7 +79,13 @@ public class NonoSolver3 implements INonogramSolver {
          }
          if (getStarCountInRiddle() >= 0) {
             getSizesOfPossibilities();
-            ArrayList<LinkedList<String>> theMatrix = solveByBrutForce(new ArrayList<LinkedList<String>>(), 0, 0);
+            ArrayList<LinkedList<String>> theMatrix;
+            if(getPossibillitySizeOfRow() < getPossibillitySizeOfColumn()) {
+            	theMatrix = solveByBrutForceByRow(new ArrayList<LinkedList<String>>(), 0, 0);
+            } else {
+            	theMatrix = solveByBrutForceByColumn(new ArrayList<LinkedList<String>>(), 0, 0);
+            }
+            
             System.out.println("-----------------");
             for (LinkedList<String> list : theMatrix) {
                System.out.println(list);
@@ -103,16 +109,13 @@ public class NonoSolver3 implements INonogramSolver {
     * Diese Methode nimmt die erste Möglichkeit der ersten Reihe und ruft sich
     * rekursiv auf, bis sie bei der letzten Reihe angekommen ist. Dann wird
     * getestet, ob das Ergebnis eine gültige Lösung ist. Wenn nicht, wird die
-    * nächate getestest. TODO: weiter ausführen, wenn MEthode steht. TODO: durch
-    * poss iterieren TODO: IDEE: liste weitergeben, im letzten testen; weiter
-    * durchgehen (poss) wenn keine möglichkeit richtig, dann null zurückgeben,
-    * und im vorherigen eine möglichkeit weiter
+    * nächate getestest.
     * 
     * @param rowInt
     * @param possibilityInt
     * @return
     */
-   private ArrayList<LinkedList<String>> solveByBrutForce(ArrayList<LinkedList<String>> listFromBefore, int rowInt, int possibilityInt) {
+   private ArrayList<LinkedList<String>> solveByBrutForceByRow(ArrayList<LinkedList<String>> listFromBefore, int rowInt, int possibilityInt) {
       // // System.out.println("solveByBrutForce");
       Integer rowIndex = new Integer(rowInt);
 
@@ -129,7 +132,7 @@ public class NonoSolver3 implements INonogramSolver {
             // Wenn noch Reihen übrig sind Methode neu aufrufen
             if (rowIndex + 1 < riddle.getHeight()) {
                // System.out.println("Row before call again:" + (rowIndex +1));
-               returnList = solveByBrutForce(returnList, (rowIndex + 1), 0);
+               returnList = solveByBrutForceByRow(returnList, (rowIndex + 1), 0);
                // System.out.println("Row after call again:" + (rowIndex));
                if (null == returnList) {
                   possibilityIndex++;
@@ -138,7 +141,7 @@ public class NonoSolver3 implements INonogramSolver {
                }
 
             } else {
-               if (!checkStateOfWrittenMatrix(returnList)) {
+               if (!checkStateOfWrittenMatrixByRow(returnList)) {
                   returnList = null;
                   possibilityIndex++;
                } else {
@@ -151,19 +154,24 @@ public class NonoSolver3 implements INonogramSolver {
    }
 
    /**
-    * Prüft ob die in {@link #solveByBrutForce(LinkedList, int, int)}
+    * Prüft ob die in {@link #solveByBrutForceByRow(LinkedList, int, int)}
     * zusammengestellte Matrix korrekt ist.
     * 
     * @param returnList
     * @return
     */
-   private boolean checkStateOfWrittenMatrix(ArrayList<LinkedList<String>> returnList) {
+   private boolean checkStateOfWrittenMatrixByRow(ArrayList<LinkedList<String>> returnList) {
+	   
+//	   String methodName = "checkStateOfWrittenMatrix()";
+//	   System.out.println(methodName);
+//	   Date startTime = new Date();
+	   
       // Array anlegen
       // System.out.println("XXXXXXXXXXX");
       // for (LinkedList<String> list : returnList) {
       // System.out.println(list);
       // }
-
+	   
       // eigentliche Tests:
       int columnInt = 0;
       String empty = "-";
@@ -217,8 +225,135 @@ public class NonoSolver3 implements INonogramSolver {
 
       // // // System.out.println("YYYYYYYYYYY");
       // showAMatrix(testMatrix);
+//      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime.getTime()) + " ms");
       return true;
    }
+   
+   /**
+    * Diese Methode nimmt die erste Möglichkeit der ersten Reihe und ruft sich
+    * rekursiv auf, bis sie bei der letzten Reihe angekommen ist. Dann wird
+    * getestet, ob das Ergebnis eine gültige Lösung ist. Wenn nicht, wird die
+    * nächate getestest.
+    * TODO: für column!
+    * 
+    * @param coInt
+    * @param possibilityInt
+    * @return
+    */
+   private ArrayList<LinkedList<String>> solveByBrutForceByColumn(ArrayList<LinkedList<String>> listFromBefore, int coInt, int possibilityInt) {
+      // // System.out.println("solveByBrutForce");
+      Integer columnInt = new Integer(coInt);
+
+      Integer possibilityIndex = new Integer(possibilityInt);
+      ArrayList<LinkedList<String>> returnList = new ArrayList<LinkedList<String>>(listFromBefore);
+      if (columnInt < riddle.getWidth()) {
+         // System.out.println("Row:" + rowIndex);
+         Column column = getColumns().get(columnInt);
+         // eigene poss hinzufügen
+         while (possibilityIndex < column.getPossibilities().size()) {
+            // System.out.println("pos:" + possibilityIndex);
+            returnList = listFromBefore;
+            returnList.add(column.getPossibilities().get(possibilityIndex));
+            // Wenn noch Reihen übrig sind Methode neu aufrufen
+            if (columnInt + 1 < riddle.getWidth()) {
+               // System.out.println("Row before call again:" + (rowIndex +1));
+               returnList = solveByBrutForceByColumn(returnList, (columnInt + 1), 0);
+               // System.out.println("Row after call again:" + (rowIndex));
+               if (null == returnList) {
+                  possibilityIndex++;
+               } else {
+                  return returnList;
+               }
+
+            } else {
+               if (!checkStateOfWrittenMatrixByColumn(returnList)) {
+                  returnList = null;
+                  possibilityIndex++;
+               } else {
+                  return returnList;
+               }
+            }
+         }
+      }
+      return returnList;
+   }
+   
+   /**
+    * Prüft ob die in {@link #solveByBrutForceByRow(LinkedList, int, int)}
+    * zusammengestellte Matrix korrekt ist.
+    * 
+    * @param returnList
+    * @return
+    */
+   private boolean checkStateOfWrittenMatrixByColumn(ArrayList<LinkedList<String>> returnList) {
+	   
+//	   String methodName = "checkStateOfWrittenMatrix()";
+//	   System.out.println(methodName);
+//	   Date startTime = new Date();
+	   
+      // Array anlegen
+      // System.out.println("XXXXXXXXXXX");
+      // for (LinkedList<String> list : returnList) {
+      // System.out.println(list);
+      // }
+	   
+      // eigentliche Tests:
+      int rowInt = 0;
+      String empty = "-";
+      while (rowInt < riddle.getWidth()) {
+         Column column = getColumns().get(rowInt);
+         LinkedList<Block> blocks = column.getBlocks();
+         if (blocks != null && blocks.size() > 0) {
+            int columnInt = 0;
+            int blockInt = 0;
+            while (columnInt < riddle.getWidth()) {
+               if (returnList.get(columnInt).get(rowInt).equals(empty)) {
+                  columnInt++;
+               } else {
+                  // Ist eine Farbe, aber keine Blöcke mehr!
+                  if (blockInt >= blocks.size()) {
+                     // System.out.println("false1: row: " + roInt + " column: "
+                     // + columnInt);
+                     return false;
+                  } else {
+                     // Block prüfen
+                     Block block = blocks.get(blockInt);
+                     for (int i = 0; i < block.getHowMany(); i++) {
+                        if (!(returnList.get(columnInt).get(rowInt).equals(block.getColor()))) {
+                           // System.out.println("false2: row: " + roInt +
+                           // " column: " + columnInt);
+                           return false;
+                        }
+                     }
+                     columnInt += block.getHowMany();
+                     // Nächster Block ist gleiche Farbe, also muss - sein!
+                     if ((blockInt + 1) < blocks.size() && block.getColor().equals(blocks.get(blockInt + 1).getColor()) && !returnList.get(columnInt).get(rowInt).equals(empty)) {
+                        // System.out.println("false3: row: " + roInt +
+                        // " column: " + columnInt);
+                        return false;
+                     }
+                     blockInt++;
+                  }
+               }
+            }
+         } else {
+            // nur -!!!
+            for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
+               if (returnList.get(rowInt).get(columnInt).equals(empty)) {
+//                  System.out.println("false4: row: " + rowInt + " column: " + columnInt);
+                  return false;
+               }
+            }
+         }
+         rowInt++;
+      }
+
+      // // // System.out.println("YYYYYYYYYYY");
+      // showAMatrix(testMatrix);
+//      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime.getTime()) + " ms");
+      return true;
+   }
+
 
    private void solveIterative() throws Exception {
       String methodName = "solveIterative()";
@@ -1691,16 +1826,32 @@ public class NonoSolver3 implements INonogramSolver {
       String methodName = "getSizesOfPossibilities()";
       // // System.out.println(methodName);
       long startTime = new Date().getTime();
-      for (Row row : getRows()) {
-         System.out.println("Row " + getIndexOfRow(row) + " pssibilities size:" + row.getPossibilities().size());
-         System.out.println(row.getPossibilities());
-      }
+      int rowPosSize = getPossibillitySizeOfRow();
+      int columnPosSize = getPossibillitySizeOfColumn();
+      System.out.println("RowPos: " + rowPosSize + "\n"+"ColPos: " + columnPosSize);
+      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+   }
+
+private int getPossibillitySizeOfColumn() {
+	int columnPosSize = 1;
       for (Column column : getColumns()) {
          System.out.println("Column " + getIndexOfColumn(column) + " pssibilities size:" + column.getPossibilities().size());
          System.out.println(column.getPossibilities());
+         columnPosSize *= column.getPossibilities().size();
          System.out.println();
       }
-      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
-   }
+	return columnPosSize;
+}
+
+private int getPossibillitySizeOfRow() {
+	int rowPosSize = 1;
+      
+      for (Row row : getRows()) {
+         System.out.println("Row " + getIndexOfRow(row) + " pssibilities size:" + row.getPossibilities().size());
+         rowPosSize *= row.getPossibilities().size();
+         System.out.println(row.getPossibilities());
+      }
+	return rowPosSize;
+}
 
 }

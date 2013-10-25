@@ -9,8 +9,26 @@ public class Colour {
     private int blue;
     
     private char name;
+    
+    private Integer nameInt;
+    
+    
 
-    public int getRed() {
+    /**
+	 * @param nameInt the nameInt to set
+	 */
+	public void setNameInt(Integer nameInt) {
+		this.nameInt = nameInt;
+	}
+
+	/**
+	 * @return the nameInt
+	 */
+	public Integer getNameInt() {
+		return nameInt;
+	}
+
+	public int getRed() {
         return red;
     }
 

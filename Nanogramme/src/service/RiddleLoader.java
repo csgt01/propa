@@ -16,6 +16,8 @@ public class RiddleLoader {
    private Riddle riddle = new Riddle();
 
    private int state = 0;
+   
+   private static int colorInt = 0;
 
    /**
     * Lädt eine Datei ein und parst das Rätsel Reihe für Reihe in
@@ -79,6 +81,8 @@ public class RiddleLoader {
             colour.setRed(Integer.valueOf(rgbs[0]));
             colour.setGreen(Integer.valueOf(rgbs[1]));
             colour.setBlue(Integer.valueOf(rgbs[2]));
+            colour.setNameInt(RiddleLoader.colorInt);
+            colorInt++;
             riddle.addColour(colour);
          }
          break;

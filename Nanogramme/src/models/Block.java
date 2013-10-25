@@ -11,6 +11,8 @@ public class Block {
     private Integer minStartIndex;
     private Integer maxEndIndex;
     private String color;
+    private Integer colorInt;
+    private char colorChar;
     
     
     
@@ -19,8 +21,28 @@ public class Block {
        endIndex = null;
        gone = false;
     }
+    
+    
 
    /**
+	 * @return the colorInt
+	 */
+	public Integer getColorInt() {
+		return colorInt;
+	}
+
+
+
+	/**
+	 * @return the colorChar
+	 */
+	public char getColorChar() {
+		return colorChar;
+	}
+
+
+
+/**
     * @return the howMany
     */
    public Integer getHowMany() {
@@ -51,6 +73,7 @@ public class Block {
    public void setColour(Colour colour) {
       this.colour = colour;
       this.color = String.valueOf(colour.getName());
+      this.colorChar = colour.getName();
    }
 
 
