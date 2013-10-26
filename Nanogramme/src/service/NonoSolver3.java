@@ -76,6 +76,12 @@ public class NonoSolver3 implements INonogramSolver {
 				+ (new Date().getTime() - startTime) + " ms");
 		return matrix;
 	}
+	
+	private void findDuplicatePossInColumn() {
+	   for(Column column : getColumns()) {
+//	      column.getPossibilities().get(0).
+	   }
+	}
 
    /**
     * 

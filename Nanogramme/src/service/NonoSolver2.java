@@ -1835,5 +1835,9 @@ public class NonoSolver2 implements INonogramSolver {
          }
       }
    }
+   
+   private void findDuplicatePossInColumn() {
+      getCol
+   }
 
 }
