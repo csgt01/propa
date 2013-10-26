@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
-import com.sun.org.apache.bcel.internal.generic.LNEG;
-
 import models.Block;
 import models.Column;
 import models.Riddle;
