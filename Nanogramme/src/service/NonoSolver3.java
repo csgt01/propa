@@ -3,6 +3,7 @@ package service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 import com.sun.org.apache.bcel.internal.generic.LNEG;
@@ -262,7 +263,7 @@ public class NonoSolver3 implements INonogramSolver {
 		returnList = null;
 		return true;
 	}
-
+	
 	/**
 	 * Diese Methode nimmt die erste Möglichkeit der ersten Reihe und ruft sich
 	 * rekursiv auf, bis sie bei der letzten Reihe angekommen ist. Dann wird
