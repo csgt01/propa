@@ -15,7 +15,7 @@ public class Main {
             Tester tester = new Tester(args, solver);
             System.out.println(tester.test());
         } else {
-            // Starten der Benutzeroberflaeche
+            MainFrame mainFrame = new MainFrame();
         }
 
     }
