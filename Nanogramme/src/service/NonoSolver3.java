@@ -30,14 +30,20 @@ public class NonoSolver3 implements INonogramSolver {
 	 * 
 	 * @param matrix
 	 */
-	public NonoSolver3(char[][] matrix) {
+	public NonoSolver3(char[][] matrix, Riddle riddle) {
 
 		if (matrix == null) {
 
 		} else {
 			this.matrix = matrix;
 		}
+		
+		this.riddle = riddle; 
 
+	}
+	
+	public NonoSolver3() {
+	   
 	}
 
 	@Override
@@ -68,8 +74,10 @@ public class NonoSolver3 implements INonogramSolver {
 		String methodName = "getSolution()";
 		System.out.println(methodName);
 		long startTime = new Date().getTime();
-		setupMatrix();
-		setupBlocks();
+		if (matrix == null) {
+         setupMatrix();
+      }
+      setupBlocks();
 		solve();
 		System.out.println("Time for " + methodName + ": "
 				+ (new Date().getTime() - startTime) + " ms");
@@ -98,7 +106,7 @@ public class NonoSolver3 implements INonogramSolver {
 					run1 = false;
 				}
 			}
-			if (getStarCountInRiddle() >= 0) {
+			if (getStarCountInRiddle() > 0) {
 				getSizesOfPossibilities();
 				ArrayList<ArrayList<String>> theMatrix;
 				if (false) {

@@ -4,6 +4,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import models.PlayGame;
+
 public class MyMenuBar extends JMenuBar {
 
    MainFrame mainFrame;
@@ -17,16 +19,19 @@ public class MyMenuBar extends JMenuBar {
    public JMenu hilfe;
    public JMenuItem oeffnen;
    public JMenuItem laden;
+   public JMenuItem check;
    public JMenuItem faq;
    public JMenuItem about;
+   private PlayGame playGame;
 
    public MyMenuBar() {
 
       init();
    }
 
-   public MyMenuBar(MainFrame mainFrame) {
+   public MyMenuBar(MainFrame mainFrame, PlayGame playGame) {
       this.mainFrame = mainFrame;
+      this.playGame = playGame;
       init();
       laden.addActionListener(mainFrame);
    }
@@ -45,7 +50,9 @@ public class MyMenuBar extends JMenuBar {
       faq = new JMenuItem("F.A.Q.");
       about = new JMenuItem("Über");
       laden = new JMenuItem("Rätsel laden");
-
+      check = new JMenuItem("check");
+      check.addActionListener(playGame);
+      
       // Menüelemente hinzufügen
       this.add(datei);
       this.add(riddle);
@@ -55,6 +62,7 @@ public class MyMenuBar extends JMenuBar {
       datei.add(oeffnen);
       hilfe.add(faq);
       riddle.add(laden);
+      riddle.add(check);
       hilfe.add(about);
    }
 

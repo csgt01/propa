@@ -1,7 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridLayout;
@@ -9,30 +9,51 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
+import models.Block;
+import models.Colour;
+import models.Column;
 import models.IPlayGame;
 import models.PlayGame;
+import models.Row;
 
 public class MainFrame extends JFrame implements ActionListener, IPlayGame {
-   
+
    /**
     * 
     */
    private static final long serialVersionUID = -8026416994513756565L;
 
-   MyMenuBar menuBar = new MyMenuBar();
+   private MyMenuBar menuBar = new MyMenuBar();
    public JFrame applikation;
    public Container container;
    public JMenuBar menueLeiste;
-   
+
+   private static File lastSelectedDir = null;
+
+   private JPanel panelTop;
+
    private PlayGame playGame;
+
+   private JToolBar toolbar;
+
+   private JLabel[][] labels;
+
+   private JPanel panelLeft;
+   
+   private Color backgroungColor = Color.WHITE;
 
    public MainFrame() {
       playGame = new PlayGame(this);
@@ -45,7 +66,7 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
       container = applikation.getContentPane();
 
       // Menüleiste erzeugen
-      menueLeiste = new MyMenuBar(this);
+      menueLeiste = new MyMenuBar(this, playGame);
 
       applikation.add(menueLeiste, BorderLayout.NORTH);
       // applikation.add(new JScrollPane(textarea), BorderLayout.CENTER);
@@ -53,31 +74,34 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
       applikation.setSize(400, 300);
       applikation.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-      JPanel panel = new JPanel(new GridLayout(7, 7, -1, -1));
-      panel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+      toolbar = new JToolBar();
+      applikation.add(toolbar, BorderLayout.SOUTH);
 
-      for (int i = 0; i < (7 * 7); i++) {
-         Button button = new Button(""+i);
-         button.addActionListener(playGame);
-         panel.add(button);
-      }
-
-      container.add(panel, BorderLayout.CENTER);
-     
-      
-      JPanel panelLeft = new JPanel(new GridLayout(7, 1));
-      for (int i = 0; i < 7; i++) {
-         panelLeft.add(new JLabel("A"));
-      }
-      applikation.add(panelLeft, BorderLayout.WEST);
-      
-      JPanel panelTop = new JPanel(new GridLayout(1, 8));
-      for (int i = 0; i < 7; i++) {
-         panelTop.add(new JLabel("A"));
-      }
-      applikation.add(panelTop, BorderLayout.NORTH);
-      
       applikation.setVisible(true);
+   }
+   Border border = LineBorder.createGrayLineBorder();
+
+   /**
+    * 
+    */
+   @Override
+   public void setupMatrix(int rows, int columns) {
+      labels = new JLabel[rows][columns];
+      JPanel panel = new JPanel(new GridLayout(rows, columns, -1, -1));
+      panel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+      for (int i = 0; i < rows; i++) {
+         for (int j = 0; j < columns; j++) {
+            JLabel button = new JLabel("" + i + "--" + j);
+            button.addMouseListener(playGame);
+            button.setOpaque(true);
+            button.setForeground(Color.LIGHT_GRAY);
+            button.setBackground(Color.LIGHT_GRAY);
+            button.setBorder(border);
+            panel.add(button);
+            labels[i][j] = button;
+         }
+      }
+      container.add(panel, BorderLayout.CENTER);
    }
 
    @Override
@@ -92,34 +116,84 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
          // TODO Auto-generated catch block
          e1.printStackTrace();
       }
-      
+
    }
-   
-   private static File lastSelectedDir = null;
-   
+
    public File getFileOrDirectryFromChooser(Component parent, int type) {
-           JFileChooser chooser = null;
-           if (lastSelectedDir != null)
-               chooser = new JFileChooser(lastSelectedDir);
-           else
-               chooser = new JFileChooser();       
-           chooser.setFileSelectionMode(type);
-           int ret = chooser.showSaveDialog(parent);
-           if(ret == JFileChooser.APPROVE_OPTION){
-               File selected = chooser.getSelectedFile();
-               if(selected.isDirectory())
-                   lastSelectedDir = selected;
-               else
-                   lastSelectedDir = selected.getParentFile();
-               return selected;
-           }
-           return null;
-       }
+      JFileChooser chooser = null;
+      if (lastSelectedDir != null)
+         chooser = new JFileChooser(lastSelectedDir);
+      else
+         chooser = new JFileChooser();
+      chooser.setFileSelectionMode(type);
+      int ret = chooser.showOpenDialog(parent);
+      if (ret == JFileChooser.APPROVE_OPTION) {
+         File selected = chooser.getSelectedFile();
+         if (selected.isDirectory())
+            lastSelectedDir = selected;
+         else
+            lastSelectedDir = selected.getParentFile();
+         return selected;
+      }
+      return null;
+   }
 
    @Override
-   public boolean placeAField(int row, int column) {
-      // TODO Auto-generated method stub
+   public boolean placeAField(int row, int column, Colour colour) {
+      labels[row][column].setOpaque(true);
+      labels[row][column].setForeground(new Color(colour.getRed(), colour.getGreen(), colour.getBlue()));
+      labels[row][column].setBackground(new Color(colour.getRed(), colour.getGreen(), colour.getBlue()));
       return false;
    }
 
+   @Override
+   public void setColours(List<Colour> colours) {
+      JButton backgroundButton = new JButton("-");
+      backgroundButton.setForeground(Color.DARK_GRAY);
+      backgroundButton.addActionListener(playGame);
+      toolbar.add(backgroundButton);
+      for (Colour colour : colours) {
+         Color color = new Color(colour.getRed(), colour.getGreen(), colour.getBlue());
+         JButton comp = new JButton(String.valueOf(colour.getName()));
+         comp.setForeground(color);
+         comp.addActionListener(playGame);
+         toolbar.add(comp);
+      }
+   }
+
+   @Override
+   public void setLeftPAnel(List<Row> rows) {
+      panelLeft = new JPanel(new GridLayout(rows.size(), 1));
+      for (Row row : rows) {
+         JPanel rowPanel = new JPanel();
+         rowPanel.setBorder(border);
+         if (row.getBlocks() != null && row.getBlocks().size() > 0) {
+            for (Block block : row.getBlocks()) {
+               JLabel comp = new JLabel(block.getHowMany() + " " + block.getColor());
+               comp.setForeground(new Color(block.getColour().getRed(), block.getColour().getGreen(), block.getColour().getBlue()));
+               rowPanel.add(comp);
+            }
+         } else {
+            rowPanel.add(new JLabel("Leer"));
+         }
+         panelLeft.add(rowPanel);
+      }
+
+      applikation.add(panelLeft, BorderLayout.WEST);
+   }
+
+   @Override
+   public void setTopPanel(List<Column> columns) {
+      // TODO Auto-generated method stub
+
+   }
+
+   @Override
+   public void wasRight(boolean isRight) {
+      System.out.println("wasRight:" + isRight);
+      if (isRight) {
+         applikation.setBackground(Color.GREEN);
+      }
+      
+   }
 }

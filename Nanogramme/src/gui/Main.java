@@ -11,7 +11,7 @@ public class Main {
      */
     public static void main(String[] args) {
         if (args.length > 0 && "-t".equals(args[0])) {
-            INonogramSolver solver = new NonoSolver3(null);
+            INonogramSolver solver = new NonoSolver3();
             Tester tester = new Tester(args, solver);
             System.out.println(tester.test());
         } else {
