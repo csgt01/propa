@@ -44,7 +44,7 @@ public class PlayGame implements ActionListener, MouseListener {
       backGroundColour.setGreen(Color.WHITE.getGreen());
       backGroundColour.setBlue(Color.WHITE.getBlue());
       setupMatrix();
-      listener.setupMatrix(riddle.getHeight(), riddle.getWidth());
+      listener.setupMatrix(riddle.getHeight(), riddle.getWidth(), riddle.getRows(), riddle.getColumns());
       char [][] matrixNeu = new char[riddle.getHeight()][riddle.getWidth()];
       for (int i = 0; i < riddle.getHeight(); i++) {
          for (int j = 0; j < riddle.getWidth(); j++) {
@@ -54,7 +54,7 @@ public class PlayGame implements ActionListener, MouseListener {
       NonoSolver3 solver = new NonoSolver3(matrixNeu, riddle);
       solutions = solver.getSolution();
       listener.setColours(riddle.getColours());
-      listener.setLeftPAnel(riddle.getRows());
+//      listener.setLeftPAnel(riddle.getRows());
    }
 
    @Override

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,7 +53,7 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
    private JLabel[][] labels;
 
    private JPanel panelLeft;
-   
+
    private Color backgroungColor = Color.WHITE;
 
    public MainFrame() {
@@ -79,24 +80,58 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 
       applikation.setVisible(true);
    }
+
    Border border = LineBorder.createGrayLineBorder();
 
    /**
     * 
     */
    @Override
-   public void setupMatrix(int rows, int columns) {
-      labels = new JLabel[rows][columns];
-      JPanel panel = new JPanel(new GridLayout(rows, columns, -1, -1));
+   public void setupMatrix(int rowInt, int columnInt, List<Row> rows, List<Column> columns) {
+      labels = new JLabel[rowInt][columnInt];
+      JPanel panel = new JPanel(new GridLayout(rowInt + 1, columnInt + 1, -1, -1));
       panel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-      for (int i = 0; i < rows; i++) {
-         for (int j = 0; j < columns; j++) {
+      for (int i = 0; i < rowInt; i++) {
+         if (i == 0) {
+            JLabel leer = new JLabel("Anzahl");
+            panel.add(leer);
+            for (Column column : columns) {
+               JPanel rowPanel = new JPanel(new GridLayout(column.getBlocks().size(), 1));
+               rowPanel.setBorder(border);
+               if (column.getBlocks() != null && column.getBlocks().size() > 0) {
+                  for (Block block : column.getBlocks()) {
+                     JLabel comp = new JLabel(block.getHowMany() + " " + block.getColor());
+                     comp.setForeground(new Color(block.getColour().getRed(), block.getColour().getGreen(), block.getColour().getBlue()));
+                     rowPanel.add(comp);
+                  }
+               } else {
+                  rowPanel.add(new JLabel("Leer"));
+               }
+               panel.add(rowPanel);
+            }
+         }
+         for (int j = 0; j < columnInt; j++) {
+            if (j == 0) {
+               JPanel rowPanel = new JPanel();
+               rowPanel.setBorder(border);
+               if (rows.get(i).getBlocks() != null && rows.get(i).getBlocks().size() > 0) {
+                  for (Block block : rows.get(i).getBlocks()) {
+                     JLabel comp = new JLabel(block.getHowMany() + " " + block.getColor());
+                     comp.setForeground(new Color(block.getColour().getRed(), block.getColour().getGreen(), block.getColour().getBlue()));
+                     rowPanel.add(comp);
+                  }
+               } else {
+                  rowPanel.add(new JLabel("Leer"));
+               }
+               panel.add(rowPanel);
+            }
             JLabel button = new JLabel("" + i + "--" + j);
             button.addMouseListener(playGame);
             button.setOpaque(true);
             button.setForeground(Color.LIGHT_GRAY);
             button.setBackground(Color.LIGHT_GRAY);
             button.setBorder(border);
+            button.setPreferredSize(new Dimension(20, 20));
             panel.add(button);
             labels[i][j] = button;
          }
@@ -194,6 +229,6 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
       if (isRight) {
          applikation.setBackground(Color.GREEN);
       }
-      
+
    }
 }
