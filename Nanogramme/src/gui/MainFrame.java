@@ -175,18 +175,29 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 
    @Override
    public boolean placeAField(int row, int column, Colour colour) {
-      labels[row][column].setOpaque(true);
-      labels[row][column].setForeground(new Color(colour.getRed(), colour.getGreen(), colour.getBlue()));
-      labels[row][column].setBackground(new Color(colour.getRed(), colour.getGreen(), colour.getBlue()));
-      return false;
+      if (null != colour) {
+//		labels[row][column].setOpaque(true);
+		labels[row][column].setForeground(new Color(colour.getRed(), colour
+				.getGreen(), colour.getBlue()));
+		labels[row][column].setBackground(new Color(colour.getRed(), colour
+				.getGreen(), colour.getBlue()));
+	} else {
+		labels[row][column].setForeground(Color.LIGHT_GRAY);
+		labels[row][column].setBackground(Color.LIGHT_GRAY);
+	}
+	return false;
    }
 
    @Override
    public void setColours(List<Colour> colours) {
-      JButton backgroundButton = new JButton("-");
-      backgroundButton.setForeground(Color.DARK_GRAY);
-      backgroundButton.addActionListener(playGame);
-      toolbar.add(backgroundButton);
+	   JButton backgroundButton = new JButton("-");
+	      backgroundButton.setForeground(Color.DARK_GRAY);
+	      backgroundButton.addActionListener(playGame);
+	      toolbar.add(backgroundButton);
+	      JButton resetButton = new JButton("Reset");
+	      resetButton.setForeground(Color.DARK_GRAY);
+	      resetButton.addActionListener(playGame);
+	      toolbar.add(resetButton);
       for (Colour colour : colours) {
          Color color = new Color(colour.getRed(), colour.getGreen(), colour.getBlue());
          JButton comp = new JButton(String.valueOf(colour.getName()));

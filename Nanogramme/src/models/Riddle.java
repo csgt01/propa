@@ -12,17 +12,39 @@ public class Riddle {
     private int width;
     private int height;
     
-    private int rowCount = 0;
-    private int columnCount = 0;
+//    private int rowCount = 0;
+//    private int columnCount = 0;
     
     private LinkedList<Row> rows;
     private LinkedList<Column> columns;
     
+    private String nono;
+    
     public Riddle() {
         colours = new ArrayList<Colour>();
     }
+    
+    
 
-    public List<Colour> getColours() {
+    /**
+	 * @return the nono
+	 */
+	public String getNono() {
+		return nono;
+	}
+
+
+
+	/**
+	 * @param nono the nono to set
+	 */
+	public void setNono(String nono) {
+		this.nono = nono;
+	}
+
+
+
+	public List<Colour> getColours() {
         return colours;
     }
 
@@ -98,8 +120,7 @@ public class Riddle {
     @Override
     public String toString() {
         return "Riddle [colours=" + colours + ", \nwidth=" + width
-                + ", height=" + height + ", rowCount=" + rowCount
-                + ", columnCount=" + columnCount + ", \nrows=" + rows
+                + ", height=" + height + ", \nrows=" + rows
                 + ", \ncolumns=" + columns + "]";
     }
     

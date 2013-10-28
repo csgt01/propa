@@ -14,7 +14,7 @@ import de.feu.propra.nonogramme.interfaces.INonogramSolver;
 
 public class NonoSolver3 implements INonogramSolver {
 
-	private RiddleLoader riddleLoader;
+	private RiddleService riddleLoader;
 
 	private Riddle riddle;
 
@@ -65,7 +65,7 @@ public class NonoSolver3 implements INonogramSolver {
 	public void openFile(String arg0) throws IOException {
 		String methodName = "openFile(" + arg0 + ")";
 		// // System.out.println(methodName);
-		riddleLoader = new RiddleLoader();
+		riddleLoader = new RiddleService();
 		riddle = riddleLoader.readFile(arg0);
 	}
 
