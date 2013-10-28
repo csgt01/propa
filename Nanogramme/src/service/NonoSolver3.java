@@ -109,7 +109,7 @@ public class NonoSolver3 implements INonogramSolver {
 			if (getStarCountInRiddle() > 0) {
 				getSizesOfPossibilities();
 				ArrayList<ArrayList<String>> theMatrix;
-				if (false) {
+				if (getPossibillitySizeOfColumn() > getPossibillitySizeOfRow()) {
 					System.out.println("vfdsfffdfsfdsdfsdfssdffdsfdsf1");
 					possibillities = getPossibillitySizeOfRow();
 					timeFor = new Date().getTime();
