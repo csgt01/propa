@@ -190,19 +190,23 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 
    @Override
    public void setColours(List<Colour> colours) {
+	   toolbar.setName("Farben");
 	   JButton backgroundButton = new JButton("-");
 	      backgroundButton.setForeground(Color.DARK_GRAY);
 	      backgroundButton.addActionListener(playGame);
+	      backgroundButton.setToolTipText("Leerfeld setzen wird ausgewählt.");
 	      toolbar.add(backgroundButton);
 	      JButton resetButton = new JButton("Reset");
 	      resetButton.setForeground(Color.DARK_GRAY);
 	      resetButton.addActionListener(playGame);
+	      resetButton.setToolTipText("Zurücksetzen eines Feldes wird ausgewählt.");
 	      toolbar.add(resetButton);
       for (Colour colour : colours) {
          Color color = new Color(colour.getRed(), colour.getGreen(), colour.getBlue());
          JButton comp = new JButton(String.valueOf(colour.getName()));
          comp.setForeground(color);
          comp.addActionListener(playGame);
+         comp.setToolTipText("Farbe wird ausgewählt.");
          toolbar.add(comp);
       }
    }
