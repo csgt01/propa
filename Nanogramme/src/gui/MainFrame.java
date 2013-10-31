@@ -206,7 +206,7 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
          JButton comp = new JButton(String.valueOf(colour.getName()));
          comp.setForeground(color);
          comp.addActionListener(playGame);
-         comp.setToolTipText("Farbe wird ausgewählt.");
+         comp.setToolTipText("Diese Farbe auswählen um ein Feld zu setzen.");
          toolbar.add(comp);
       }
    }
