@@ -74,7 +74,7 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 		applikation.add(menueLeiste, BorderLayout.NORTH);
 		// applikation.add(new JScrollPane(textarea), BorderLayout.CENTER);
 
-		applikation.setSize(400, 300);
+		applikation.setSize(600, 600);
 		applikation.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		toolbar = new JToolBar();
@@ -133,6 +133,8 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 									block.getColour().getBlue()));
 							// rowPanel.add(comp);
 							comp.setSize(30, 30);
+							comp.setBorder(border);
+                     comp.setSize(170, 30);
 							rowPanel.add(comp, c1);
 							c1.gridy += 1;
 						}
@@ -146,28 +148,42 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 				}
 			}
 			c.gridy = (i + 1);
+			GridBagConstraints c2 = new GridBagConstraints();
+         c2.gridx = 0;
+         c2.gridy = 0;
+         c2.fill = GridBagConstraints.NONE;
 			for (int j = 0; j < columnInt; j++) {
 				if (j == 0) {
+				   JPanel rowPanel = new JPanel(new
+		                GridBagLayout());
+		                rowPanel.setBorder(border);
 					c.gridx = 0;
 					// JPanel rowPanel = new JPanel();
 					// rowPanel.setBorder(border);
+					JPanel columnPanel = new JPanel(new
+                     GridBagLayout());
+              columnPanel.setBorder(border);
 					if (rows.get(i).getBlocks() != null
 							&& rows.get(i).getBlocks().size() > 0) {
 						for (Block block : rows.get(i).getBlocks()) {
+						   
 							JLabel comp = new JLabel(block.getHowMany() + " "
 									+ block.getColor());
 							comp.setForeground(new Color(block.getColour()
 									.getRed(), block.getColour().getGreen(),
 									block.getColour().getBlue()));
+							comp.setBorder(border);
 							comp.setSize(170, 30);
-							panel.add(comp, c);
+							columnPanel.add(comp, c2);
+							c2.gridx += 1;
 						}
+						
 					} else {
 						JLabel jLabel = new JLabel("Leer");
 						jLabel.setSize(170, 30);
-						panel.add(jLabel, c);
+						columnPanel.add(jLabel, c2);
 					}
-					// panel.add(rowPanel);
+					 panel.add(columnPanel, c);
 				}
 				c.gridx = (j + 1);
 				JLabel button = new JLabel("" + i + "--" + j);

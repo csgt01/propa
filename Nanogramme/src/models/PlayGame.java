@@ -66,8 +66,10 @@ public class PlayGame implements ActionListener, MouseListener {
 			boolean isRight = checkSolution();
 			listener.wasRight(isRight);
 		} else if (actionCommand.equals("Reset")) {
-			currentColor = null;
-		} else if (actionCommand.equals("-")) {
+         currentColor = null;
+      } else if (actionCommand.equals("Speichern")) {
+         riddleLoader.save(matrix);
+      } else if (actionCommand.equals("-")) {
 			currentColor = backGroundColour;
 		} else {
 			currentColor = riddle.getColourByName(actionCommand);

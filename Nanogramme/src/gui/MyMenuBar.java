@@ -47,6 +47,7 @@ public class MyMenuBar extends JMenuBar {
 
       // Untermenüelemente erzeugen
       oeffnen = new JMenuItem("Speichern");
+      oeffnen.addActionListener(playGame);
       faq = new JMenuItem("F.A.Q.");
       about = new JMenuItem("Über");
       laden = new JMenuItem("Rätsel laden");
