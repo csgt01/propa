@@ -9,6 +9,24 @@ public class Node {
 	int red;
 	int green;
 	int blue;
+	
+	Integer referencesOfChilds = null;
+	
+	public Integer getReferencesOfChilds() {
+		return referencesOfChilds;
+	}
+	
+	public void setReferencesOfChilds() {
+		if (null == referencesOfChilds) {
+			referencesOfChilds = 1;
+		} else {
+			referencesOfChilds ++;
+		}
+	}
+	
+	public void setReferencesOfChilds(Integer refs) {
+		this.referencesOfChilds = refs;
+	}
 
 	private Node[] nodes = new Node[8];
 
@@ -20,8 +38,8 @@ public class Node {
 		return nodes[index];
 	}
 
-	public void setNode(int index) {
-		nodes[index] = new Node();
+	public void setNode(int index, Node node) {
+		nodes[index] = node;
 	}
 
 	/**
@@ -84,16 +102,17 @@ public class Node {
 		this.blue = blue;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "Node \n[references=" + references + ", red=" + red + ", green="
-				+ green + ", blue=" + blue + ", nodes="
-				+ Arrays.toString(nodes) + "]";
+				+ green + ", blue=" + blue + ", referencesOfChilds="
+				+ referencesOfChilds + ", nodes=" + Arrays.toString(nodes)
+				+ "]";
 	}
+
+	
 
 }

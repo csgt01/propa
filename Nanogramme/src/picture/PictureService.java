@@ -54,6 +54,7 @@ public class PictureService {
 		// System.out.println(binary13);
 
 		Node node = root;
+		Node lastNode = root;
 		for (int i = 0; i < 8; i++) {
 			String indexString = ""
 					+ (binary11.charAt(i) + "" + binary12.charAt(i) + "" + binary13
@@ -61,10 +62,12 @@ public class PictureService {
 			int index = Integer.parseInt(indexString, 2);
 			// System.out.println(index);
 			if (node.getNode(index) == null) {
-				node.setNode(index);
+				node.setNode(index, new Node());
 			}
+			lastNode = node;
 			node = node.getNode(index);
 		}
+		lastNode.setReferencesOfChilds();
 		node.setRed(red);
 		node.setGreen(green);
 		node.setBlue(blue);
@@ -83,8 +86,63 @@ public class PictureService {
 		return bi;
 	}
 	
+	public void setReferenceChilds(Node root) {
+		boolean mustDo = false;
+		for (int i = 0; i < root.getNodes().length; i++) {
+			if (root.getNode(i) != null) {
+				if (root.getNode(i).getReferences() == 0) {
+					setReferenceChilds(root.getNode(i));
+				} else {
+					if (root.getReferencesOfChilds() == null) {
+						mustDo = true;
+					}
+				}
+			}
+		}
+		if (mustDo) {
+			int childsReferences = 0;
+			for (int i = 0; i < root.getNodes().length; i++) {
+				if (root.getNode(i) != null) {
+					childsReferences += root.getNode(i).getReferences();
+				}
+			}
+			root.setReferencesOfChilds(childsReferences);
+		}
+	}
+	
 	public void reduceColors(Node root) {
+		root.setReferences(0);
+		int childs = 0;
+		for (int i = 0; i < root.getNodes().length; i++) {
+			if (root.getNode(i) != null) {
+				root.setReferences(root.getReferences() + 1);
+				root.setBlue(root.getBlue() + root.getNode(i).getBlue());
+				root.setRed(root.getRed() + root.getNode(i).getRed());
+				root.setGreen(root.getGreen() + root.getNode(i).getGreen());
+				childs++;
+				root.setNode(i, null);
+			}
+		}
+		root.setRed((root.getRed() / childs));
+		root.setGreen((root.getGreen() / childs));
+		root.setBlue((root.getBlue() / childs));
+	}
+	
+	public Node findNodeWithLessChildsReferences(Node root) {
+		Node returnNode = root;
+		if (root.getReferencesOfChilds() != null) {
+			return root;
+		}
+		for (int i = 0; i < root.getNodes().length; i++) {
+			if (root.getNode(i) != null) {
+				Node node = findNodeWithLessChildsReferences(root.getNode(i));
+				if (returnNode.getReferencesOfChilds() == null || node.getReferencesOfChilds() < returnNode.getReferencesOfChilds()) {
+					returnNode = node;
+				}
+			}
+		}
 		
+		return returnNode;
 	}
 	
 	public int getNumbersOfLeafs(Node root) {

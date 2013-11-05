@@ -11,7 +11,7 @@ public class PictureTestClass {
    
    public static void main(String[] args) {
       
-      int color1 = 230;
+      int color1 = 130;
       int color2 = 30;
       int color3 = 20;
       
@@ -20,7 +20,7 @@ public class PictureTestClass {
       int color13 = 224;
       
       int color21 = 30;
-      int color22 = 130;
+      int color22 = 30;
       int color23 = 225;
       PictureService ps = new PictureService();
       
@@ -46,8 +46,14 @@ public class PictureTestClass {
       ps.insertNode(colorDrei, root);
       System.out.println(root);
       
+      while (ps.getNumbersOfLeafs(root) > 2) {
+		System.out.println(ps.getNumbersOfLeafs(root));
+		Node findNodeWithLessChildsReferences = ps.findNodeWithLessChildsReferences(root);
+		System.out.println(findNodeWithLessChildsReferences);
+		ps.reduceColors(findNodeWithLessChildsReferences);
+		ps.setReferenceChilds(root);
+	}
       System.out.println(ps.getNumbersOfLeafs(root));
-      
    }
 
 }
