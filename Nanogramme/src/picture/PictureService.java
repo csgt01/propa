@@ -82,5 +82,26 @@ public class PictureService {
 		g.dispose();
 		return bi;
 	}
+	
+	public void reduceColors(Node root) {
+		
+	}
+	
+	public int getNumbersOfLeafs(Node root) {
+		int result = 0;
+		
+		Node[] nodes = root.getNodes();
+		boolean isLeaf = true;
+		for (int i = 0; i < nodes.length; i++) {
+			if (nodes[i] != null) {
+				isLeaf = false;
+				result += getNumbersOfLeafs(nodes[i]);
+			}
+		}
+		if (isLeaf) {
+			result = 1;
+		}
+		return result;
+	}
 
 }

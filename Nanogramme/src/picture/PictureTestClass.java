@@ -18,6 +18,10 @@ public class PictureTestClass {
       int color11 = 30;
       int color12 = 130;
       int color13 = 224;
+      
+      int color21 = 30;
+      int color22 = 130;
+      int color23 = 225;
       PictureService ps = new PictureService();
       
       try {
@@ -32,12 +36,17 @@ public class PictureTestClass {
       
       Color color = new Color(color1, color2, color3);
       Color colorZwei = new Color(color11, color12, color13);
+      Color colorDrei = new Color(color21, color22, color23);
       Node root = new Node();
      
       ps.insertNode(color, root);
+      ps.insertNode(color, root);
       ps.insertNode(colorZwei, root);
       ps.insertNode(colorZwei, root);
+      ps.insertNode(colorDrei, root);
       System.out.println(root);
+      
+      System.out.println(ps.getNumbersOfLeafs(root));
       
    }
 

@@ -3,87 +3,97 @@ package picture;
 import java.util.Arrays;
 
 public class Node {
-   
-   int references = 0;
-   
-   int red;
-   int green;
-   int blue;
-   
-   private Node[] nodes = new Node[8];
 
-   public Node getNode(int index) {
-      return nodes[index];
-   }
-   
-   public void setNode(int index) {
-         nodes[index] = new Node();
-   }
+	int references = 0;
 
-   /**
-    * @return the references
-    */
-   public int getReferences() {
-      return references;
-   }
+	int red;
+	int green;
+	int blue;
 
-   /**
-    * @param references the references to set
-    */
-   public void setReferences(int references) {
-      this.references = references;
-   }
+	private Node[] nodes = new Node[8];
 
-   /**
-    * @return the red
-    */
-   public int getRed() {
-      return red;
-   }
+	public Node[] getNodes() {
+		return nodes;
+	}
 
-   /**
-    * @param red the red to set
-    */
-   public void setRed(int red) {
-      this.red = red;
-   }
+	public Node getNode(int index) {
+		return nodes[index];
+	}
 
-   /**
-    * @return the green
-    */
-   public int getGreen() {
-      return green;
-   }
+	public void setNode(int index) {
+		nodes[index] = new Node();
+	}
 
-   /**
-    * @param green the green to set
-    */
-   public void setGreen(int green) {
-      this.green = green;
-   }
+	/**
+	 * @return the references
+	 */
+	public int getReferences() {
+		return references;
+	}
 
-   /**
-    * @return the blue
-    */
-   public int getBlue() {
-      return blue;
-   }
+	/**
+	 * @param references
+	 *            the references to set
+	 */
+	public void setReferences(int references) {
+		this.references = references;
+	}
 
-   /**
-    * @param blue the blue to set
-    */
-   public void setBlue(int blue) {
-      this.blue = blue;
-   }
+	/**
+	 * @return the red
+	 */
+	public int getRed() {
+		return red;
+	}
 
-   /* (non-Javadoc)
-    * @see java.lang.Object#toString()
-    */
-   @Override
-   public String toString() {
-      return "Node \n[references=" + references + ", red=" + red + ", green=" + green + ", blue=" + blue + ", nodes=" + Arrays.toString(nodes) + "]";
-   }
-   
-   
-   
+	/**
+	 * @param red
+	 *            the red to set
+	 */
+	public void setRed(int red) {
+		this.red = red;
+	}
+
+	/**
+	 * @return the green
+	 */
+	public int getGreen() {
+		return green;
+	}
+
+	/**
+	 * @param green
+	 *            the green to set
+	 */
+	public void setGreen(int green) {
+		this.green = green;
+	}
+
+	/**
+	 * @return the blue
+	 */
+	public int getBlue() {
+		return blue;
+	}
+
+	/**
+	 * @param blue
+	 *            the blue to set
+	 */
+	public void setBlue(int blue) {
+		this.blue = blue;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Node \n[references=" + references + ", red=" + red + ", green="
+				+ green + ", blue=" + blue + ", nodes="
+				+ Arrays.toString(nodes) + "]";
+	}
+
 }
