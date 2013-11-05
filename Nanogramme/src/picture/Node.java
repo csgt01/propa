@@ -107,10 +107,10 @@ public class Node {
 	 */
 	@Override
 	public String toString() {
-		return "Node \n[references=" + references + ", red=" + red + ", green="
+		return "Node \n{references=" + references + ", red=" + red + ", green="
 				+ green + ", blue=" + blue + ", referencesOfChilds="
-				+ referencesOfChilds + ", nodes=" + Arrays.toString(nodes)
-				+ "]";
+				+ referencesOfChilds + ", \nnodes=" + Arrays.toString(nodes)
+				+ "}";
 	}
 
 	
