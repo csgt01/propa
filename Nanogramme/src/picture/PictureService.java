@@ -158,7 +158,28 @@ public class PictureService {
    }
 
    public void cluster(Node less) {
-      
+      Node similiar1 = null;
+      Node similiar2 = null;
+      double distance = 0.0;
+      for (int i = 0; i < less.getNodes().length; i++) {
+         Node node1 = less.getNode(i);
+         for (int j = (i + 1); j < less.getNodes().length; j++) {
+            Node node2 = less.getNode(j);
+            Double newDistance = getDistance(node1, node2);
+            System.out.println(newDistance);
+         }
+      }
+   }
+
+   private Double getDistance(Node node1, Node node2) {
+      float r1 = node1.red / node1.getReferences();
+      float g1 = node1.green / node1.getReferences();
+      float b1 = node1.blue / node1.getReferences();
+      float r2 = node2.red / node1.getReferences();
+      float g2 = node2.green / node1.getReferences();
+      float b2 = node2.blue / node1.getReferences();
+     
+      return  Math.sqrt(( Math.pow((r2 - r1), 2.0)+ Math.pow((g2 - g1), 2.0) +Math.pow((b2 - b1), 2.0)));
    }
 
 }

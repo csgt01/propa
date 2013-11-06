@@ -64,6 +64,7 @@ public class PictureTestClass {
          System.out.println("&/&$§§§$%%%§$%");
          if (less.children > (ps.getNumbersOfLeafs(root) - 4)) {
             System.out.println("break");
+            ps.cluster(less);
             break;
          } else {
             ps.reduceColors(less);
