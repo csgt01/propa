@@ -43,7 +43,9 @@ public class PictureTestClass {
 		// ps.insertNode(colorDrei, root);
 		// ps.insertNode(color, root);
 		ps.insertNode(color, root);
+		ps.insertNode(color, root);
 		ps.insertNode(colorZwei, root);
+		ps.insertNode(colorDrei, root);
 		ps.insertNode(colorDrei, root);
 		// ps.insertNode(colorZwei, root);
 
@@ -70,7 +72,10 @@ public class PictureTestClass {
 		Node less = ps.findNodeWithLessChildsReferences(root);
 		System.out.println(less);
 		System.out.println("&/&$§§§$%%%§$%");
-		ps.reduceColors(less);
+		while (ps.getNumbersOfLeafs(root) < 2) {
+			less = ps.findNodeWithLessChildsReferences(root);
+			ps.reduceColors(less);
+		}
 		System.out.println(root);
 		System.out.println("!!!!!!!!!!!!!!!");
 		System.out.println(ps.getNumbersOfLeafs(root));
