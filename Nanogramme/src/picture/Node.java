@@ -14,6 +14,8 @@ public class Node {
 	int redSum;
 	int greenSum;
 	int blueSum;
+	
+	int children;
 
 	Integer referencesOfChilds = 0;
 
@@ -25,6 +27,7 @@ public class Node {
 		greenSum = 0;
 		blueSum = 0;
 		references = 0;
+		children = 0;
 		for (int i = 0; i < nodes.length; i++) {
 			Node child = nodes[i];
 			if (child != null) {
@@ -37,6 +40,7 @@ public class Node {
 				if (child.getReferencesOfChilds() != null) {
 					referencesOfChilds += child.getReferencesOfChilds();
 				}
+				children++;
 			}
 		}
 	}
@@ -146,7 +150,7 @@ public class Node {
 	 */
 	@Override
 	public String toString() {
-		return "Node \n{references=" + references + ", red=" + red + ", green="
+		return "Node \n{references=" + references + ", children=" + children + ", red=" + red + ", green="
 				+ green + ", blue=" + blue + ", referencesOfChilds="
 				+ referencesOfChilds + ", \nnodes=" + Arrays.toString(nodes)
 				+ "}";
