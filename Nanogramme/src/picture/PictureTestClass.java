@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 
@@ -40,16 +41,6 @@ public class PictureTestClass {
       Color colorVier = new Color(color11, color12, (color13 - 2));
       Node root = new Node();
 
-      // ps.insertNode(colorDrei, root);
-      // ps.insertNode(color, root);
-//      ps.insertNode(color, root);
-//      ps.insertNode(color, root);
-//      ps.insertNode(colorZwei, root);
-//      ps.insertNode(colorDrei, root);
-//      ps.insertNode(colorDrei, root);
-//      ps.insertNode(colorVier, root);
-      // ps.insertNode(colorZwei, root);
-
       for (int i = 0; i < resizedImage.getHeight(); i++) {
          for (int j = 0; j < resizedImage.getWidth(); j++) {
             ps.insertNode(new Color(resizedImage.getRGB(j, i)), root);
@@ -65,35 +56,15 @@ public class PictureTestClass {
          if (less.children > (ps.getNumbersOfLeafs(root) - 4)) {
             System.out.println("break");
             ps.cluster(less);
-            break;
          } else {
             ps.reduceColors(less);
-           
          }
       }
-//      System.out.println(ps.getNumbersOfLeafs(root));
-//      // System.out.println("last:" + root);
-//      root.copyChildSums();
-//      System.out.println("-------\n" + root);
-//      System.out.println("%%%%%%%%%%");
-//      Node less = ps.findNodeWithLessChildsReferences(root);
-//      System.out.println(less);
-//      System.out.println("&/&$§§§$%%%§$%");
-//      ps.reduceColors(less);
-//      System.out.println("-------\n" + root);
-//      System.out.println("%%%%%%%%%%");
-//      less = ps.findNodeWithLessChildsReferences(root);
-//      System.out.println(less);
-//      System.out.println("&/&$§§§$%%%§$%");
-      // while (ps.getNumbersOfLeafs(root) > 3) {
-      // System.out.println("%%%%%%%%%%");
-      // less = ps.findNodeWithLessChildsReferences(root);
-      // System.out.println(less);
-      // System.out.println("&/&$§§§$%%%§$%");
-      // }
-      // System.out.println("!!!!!!!!!!!!!!!");
       System.out.println(ps.getNumbersOfLeafs(root));
       System.out.println(root);
+      LinkedList<Color> colors = new LinkedList<Color>();
+      colors = ps.getColorsOfLeafs(root, colors);
+      System.out.println(colors);
    }
 
 }
