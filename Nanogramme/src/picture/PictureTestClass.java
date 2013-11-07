@@ -65,6 +65,9 @@ public class PictureTestClass {
       LinkedList<Color> colors = new LinkedList<Color>();
       colors = ps.getColorsOfLeafs(root, colors);
       System.out.println(colors);
+      
+      ps.mapPictureToColors(resizedImage, colors);
+      
    }
 
 }
