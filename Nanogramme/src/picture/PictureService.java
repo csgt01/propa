@@ -17,6 +17,49 @@ import javax.imageio.ImageIO;
  * 
  */
 public class PictureService {
+   
+   public BufferedImage getDownColoredPicture(BufferedImage resizedImage, int numberOfColors) {
+      Node root = new Node();
+
+      for (int i = 0; i < resizedImage.getHeight(); i++) {
+         for (int j = 0; j < resizedImage.getWidth(); j++) {
+            insertNode(new Color(resizedImage.getRGB(j, i)), root);
+         }
+      }
+//      System.out.println(root);
+      root.copyChildSums();
+      while (getNumbersOfLeafs(root) > numberOfColors) {
+//         System.out.println("%%%%%%%%%%");
+         Node less = findNodeWithLessChildsReferences(root);
+//         System.out.println(less);
+//         System.out.println("&/&$§§§$%%%§$%");
+         if (less.children > (getNumbersOfLeafs(root) - numberOfColors)) {
+//            System.out.println("break");
+            cluster(less);
+         } else {
+            reduceColors(less);
+         }
+      }
+      LinkedList<Color> colors = new LinkedList<Color>();
+      colors = getColorsOfLeafs(root, colors);
+      System.out.println(colors);
+      
+      return mapPictureToColors(resizedImage, colors);
+   }
+   
+   public BufferedImage loadAndResizeImage(String file, int height, int width) {
+      BufferedImage resizedImage = null;
+      try {
+         BufferedImage oi = ImageIO.read(new File(file));
+         int type = oi.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : oi.getType();
+         resizedImage = scalePicture(width, height, oi, type);
+         ImageIO.write(resizedImage, "jpg", new File("test2.jpg"));
+//         resizedImage = oi;
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+      return resizedImage;
+   }
 
    /**
     * Fügt einen Pixel (Farbe) dem root Element hinzu. Dies muss für alle Pixel
@@ -229,7 +272,7 @@ public class PictureService {
       return Math.sqrt((Math.pow((color2.getRed() - color1.getRed()), 2.0) + Math.pow((color2.getGreen() - color1.getGreen()), 2.0) + Math.pow((color2.getBlue() - color2.getBlue()), 2.0)));
    }
 
-   public void mapPictureToColors(BufferedImage resizedImage, LinkedList<Color> colors) {
+   public BufferedImage mapPictureToColors(BufferedImage resizedImage, LinkedList<Color> colors) {
       for (int i = 0; i < resizedImage.getHeight(); i++) {
          for (int j = 0; j < resizedImage.getWidth(); j++) {
             resizedImage.setRGB(j, i, getBestColor(resizedImage.getRGB(j, i), colors));
@@ -241,6 +284,7 @@ public class PictureService {
          // TODO Auto-generated catch block
          e.printStackTrace();
       }
+      return resizedImage;
    }
 
    private int getBestColor(int rgb, LinkedList<Color> colors) {

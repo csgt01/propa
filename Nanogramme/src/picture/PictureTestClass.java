@@ -19,7 +19,7 @@ public class PictureTestClass {
          int type = oi.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : oi.getType();
          resizedImage = ps.scalePicture(60, 60, oi, type);
          ImageIO.write(resizedImage, "jpg", new File("test2.jpg"));
-         resizedImage = oi;
+//         resizedImage = oi;
 
       } catch (IOException e) {
          e.printStackTrace();
