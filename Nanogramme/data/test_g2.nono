@@ -1,0 +1,22 @@
+title Ein Nonogramm
+by "ProPra-Team - FernUni Hagen"
+# Anmerkung: Dieses Rätsel hat keine Lösung.
+
+width 4
+height 4
+numberofcolors 1
+
+colors
+A 0,65,143
+
+rows
+1A
+0
+0
+0
+
+columns
+0
+0
+0
+0

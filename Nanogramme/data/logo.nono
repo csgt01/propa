@@ -1,0 +1,90 @@
+title Ein Nonogramm
+by "ProPra-Team - FernUni Hagen"
+
+# Anmerkung: Bei diesem Rtsel entsteht whrend des Lsungsvorgangs eine 
+# Situation, in der mit Logik keine weitere sichere Entscheidung getroffen 
+# werden kann. Trotzdem gibt es fr dieses Rtsel eine eindeutige Lsung.
+# Fr die Implementierung des Lsungsalgorithmus knnte es hilfreich sein,
+# sich weitere Literatur zu den Themen Backtracking oder 8-Damenproblem 
+# anzuschauen (s. auch die Hinweise in den Vortragsfolien).
+
+width 36
+height 33
+numberofcolors 1
+
+colors
+A 14,62,146
+#  0xe3e92
+
+rows
+2A,1A
+2A,2A
+2A,2A
+1A,2A,2A,1A
+2A,2A,2A,2A
+2A,2A,2A,2A
+2A,2A,2A,2A
+2A,2A,2A,2A
+2A,2A,4A,2A,2A
+2A,2A,8A,2A,2A
+1A,2A,2A,10A,2A,2A,1A
+1A,2A,2A,12A,2A,2A,1A
+1A,2A,2A,13A,2A,2A,1A
+1A,2A,2A,14A,2A,2A,1A
+1A,2A,2A,14A,2A,2A,1A
+1A,2A,2A,14A,2A,2A,1A
+1A,1A,2A,14A,2A,1A,1A
+1A,1A,2A,14A,2A,1A,1A
+2A,1A,1A,12A,1A,1A,2A
+2A,2A,2A,12A,2A,2A,2A
+1A,1A,1A,10A,1A,1A,1A
+1A,2A,2A,6A,2A,2A,1A
+2A,2A,2A,2A,2A,2A
+1A,2A,3A,3A,2A,1A
+2A,2A,10A,2A,2A
+2A,2A,6A,2A,2A
+2A,3A,3A,2A
+2A,4A,4A,2A
+2A,12A,2A
+2A,3A,2A
+3A,3A
+5A,5A
+10A
+
+columns
+10A
+5A
+3A
+12A,2A
+17A,2A
+4A,2A
+3A,2A
+18A,2A,2A
+20A,2A,2A
+3A,2A,1A
+2A,2A,2A
+6A,2A,2A,1A
+9A,1A,2A,1A
+11A,2A,2A,2A
+12A,1A,1A,2A
+13A,2A,1A,1A
+14A,2A,2A,1A
+14A,2A,2A,1A
+14A,2A,2A,1A
+14A,2A,1A,1A
+13A,2A,1A,1A
+12A,1A,1A,2A
+11A,2A,2A,2A
+9A,1A,2A,1A
+5A,2A,2A,1A
+2A,2A,2A
+3A,2A,1A
+20A,2A,2A
+17A,2A,2A
+3A,2A
+4A,2A
+17A,2A
+12A,2A
+3A
+5A
+10A
