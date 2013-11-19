@@ -117,7 +117,7 @@ public class RiddleService {
             }
             break;
          case 3:
-            if (str.startsWith("bliblablub")) {
+            if (str.startsWith("content")) {
                state = 4;
             } else {
                str = str.trim();
@@ -128,6 +128,8 @@ public class RiddleService {
                   String block = blocks[i];
                   block = block.trim();
                   if (!block.equals("0") && !block.equals("")) {
+                	  System.out.println(block);
+                	  System.out.println(riddle.getColourByName(block.substring(block.length() - 1)));
                      cb.setColour(riddle.getColourByName(block.substring(block.length() - 1)));
                      cb.setHowMany(Integer.valueOf(block.substring(0, (block.length() - 1))));
                      column.addBlock(cb);

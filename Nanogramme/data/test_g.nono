@@ -8,7 +8,7 @@ height 4
 numberofcolors 1
 
 colors
-A 0,65,143
+A 1,65,143
 
 rows
 0
@@ -25,5 +25,5 @@ columns
 content
 ****
 *A**
-****
+**A*
 ****
