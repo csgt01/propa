@@ -22,8 +22,10 @@ public class NonoSolver3 implements INonogramSolver {
 	private static long possibillities = 0;
 	private static long checkedPossibillities = 0;
 	private static long timeFor;
+	private int solveState = 0;
 
 	ArrayList<ArrayList<ArrayList<String>>> loesungenVonBrutForce = new ArrayList<ArrayList<ArrayList<String>>>();
+
 	/**
 	 * Konstruktor. Er kann mit einer bereits gefüllten matrix aufgerufen
 	 * werden. Sonst wird eine matrix initialisiert.
@@ -31,7 +33,6 @@ public class NonoSolver3 implements INonogramSolver {
 	 * @param matrix
 	 */
 	public NonoSolver3(char[][] matrix, Riddle riddle) {
-		
 
 		if (matrix == null) {
 
@@ -68,6 +69,7 @@ public class NonoSolver3 implements INonogramSolver {
 		// System.out.println(methodName);
 		riddleLoader = new RiddleService();
 		riddle = riddleLoader.readFile(arg0);
+		matrix = riddleLoader.matrix;
 	}
 
 	@Override
@@ -82,7 +84,11 @@ public class NonoSolver3 implements INonogramSolver {
 		solve();
 		System.out.println("Time for " + methodName + ": "
 				+ (new Date().getTime() - startTime) + " ms");
-		return matrix;
+		if (solveState == 1) {
+			return matrix;
+		} else {
+			return null;
+		}
 	}
 
 	private void findDuplicatePossInColumn() {
@@ -94,7 +100,7 @@ public class NonoSolver3 implements INonogramSolver {
 	/**
     * 
     */
-	private void solve() {
+	private int solve() {
 		try {
 			boolean run1 = true;
 			while (run1) {
@@ -132,14 +138,19 @@ public class NonoSolver3 implements INonogramSolver {
 					}
 					if (loesungenSize == 1) {
 						System.out.println("solved!");
+						solveState = 1;
 					} else {
+						solveState = 2;
 						System.out.println("many possibilities");
 					}
 				} else {
+					solveState = 3;
 					System.out.println("Not solveable");
 				}
-				
+
 				System.out.println("-----------------");
+			} else {
+				solveState = 1;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -150,6 +161,7 @@ public class NonoSolver3 implements INonogramSolver {
 			System.out.println(riddle);
 			showMatrix();
 		}
+		return solveState;
 	}
 
 	/**
@@ -790,6 +802,7 @@ public class NonoSolver3 implements INonogramSolver {
 						fillColumnWithFree(column);
 					}
 				} else {
+					solveState = 3;
 					throw new DataCollisionException("char "
 							+ matrix[getIndexOfColumn(column)][rowInt]
 							+ " ungleich " + colourBlock.getColour().getName());
@@ -881,6 +894,7 @@ public class NonoSolver3 implements INonogramSolver {
 					} else {
 						if ((rowInt + colourBlock.getHowMany()) < riddle
 								.getHeight()) {
+							solveState = 3;
 							throw new DataCollisionException("char "
 									+ matrix[rowInt][getIndexOfColumn(column)]
 									+ " at" + rowInt + "/"
@@ -963,6 +977,7 @@ public class NonoSolver3 implements INonogramSolver {
 						fillRowWithFree(row);
 					}
 				} else {
+					solveState = 3;
 					throw new DataCollisionException("char "
 							+ matrix[getIndexOfRow(row)][columnInt]
 							+ " ungleich " + colourBlock.getColour().getName());
@@ -1054,6 +1069,7 @@ public class NonoSolver3 implements INonogramSolver {
 					} else {
 						if ((columnInt + colourBlock.getHowMany()) < riddle
 								.getWidth()) {
+							solveState = 3;
 							throw new DataCollisionException("char "
 									+ matrix[columnInt][getIndexOfRow(row)]
 									+ " at" + columnInt + "/"
@@ -2014,6 +2030,7 @@ public class NonoSolver3 implements INonogramSolver {
 		long startTime = new Date().getTime();
 		if (matrix[rowIndex][columnIndex] != '*'
 				&& matrix[rowIndex][columnIndex] != c) {
+			solveState = 3;
 			throw new DataCollisionException("Fehler: row:" + rowIndex
 					+ " column:" + columnIndex + " " + c + " ungleich "
 					+ matrix[rowIndex][columnIndex]);

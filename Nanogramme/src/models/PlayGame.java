@@ -44,8 +44,6 @@ public class PlayGame implements ActionListener, MouseListener {
 		backGroundColour.setGreen(Color.WHITE.getGreen());
 		backGroundColour.setBlue(Color.WHITE.getBlue());
 		setupMatrix();
-		listener.setupMatrix(riddle.getHeight(), riddle.getWidth(),
-				riddle.getRows(), riddle.getColumns());
 		char[][] matrixNeu = new char[riddle.getHeight()][riddle.getWidth()];
 		for (int i = 0; i < riddle.getHeight(); i++) {
 			for (int j = 0; j < riddle.getWidth(); j++) {
@@ -54,19 +52,26 @@ public class PlayGame implements ActionListener, MouseListener {
 		}
 		NonoSolver3 solver = new NonoSolver3(matrixNeu, riddle);
 		solutions = solver.getSolution();
-		listener.setColours(riddle.getColours());
-		matrix = riddleLoader.matrix;
-		for (int i = 0; i < riddle.getHeight(); i++) {
-			for (int j = 0; j < riddle.getWidth(); j++) {
-				if (matrix[i][j] != '*' && matrix[i][j] != '-') {
-					listener.placeAField(i, j, riddle.getColourByName(String
-							.valueOf(matrix[i][j])));
-				} else if (matrix[i][j] == '-') {
-					listener.placeAField(i, j, backGroundColour);
+		if (solutions != null) {
+			listener.setupMatrix(riddle.getHeight(), riddle.getWidth(),
+					riddle.getRows(), riddle.getColumns());
+			listener.setColours(riddle.getColours());
+			matrix = riddleLoader.matrix;
+			for (int i = 0; i < riddle.getHeight(); i++) {
+				for (int j = 0; j < riddle.getWidth(); j++) {
+					if (matrix[i][j] != '*' && matrix[i][j] != '-') {
+						listener.placeAField(i, j, riddle
+								.getColourByName(String.valueOf(matrix[i][j])));
+					} else if (matrix[i][j] == '-') {
+						listener.placeAField(i, j, backGroundColour);
+					}
 				}
 			}
+			// listener.setLeftPAnel(riddle.getRows());
+		} else {
+			// TODO: anpassen
+			listener.showAlert("Nicht lösbar");
 		}
-		// listener.setLeftPAnel(riddle.getRows());
 	}
 
 	@Override

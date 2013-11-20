@@ -425,4 +425,10 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 		}
 
 	}
+
+	@Override
+	public void showAlert(String string) {
+		System.out.println("showAlert");
+		JOptionPane.showMessageDialog(applikation, string, string, JOptionPane.WARNING_MESSAGE);
+	}
 }

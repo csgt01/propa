@@ -12,5 +12,6 @@ public interface IPlayGame {
    void setTopPanel(List<Column> columns);
    void wasRight(boolean isRight);
    void setupMatrix(int rowInt, int columnInt, List<Row> rows, List<Column> columns);
+   void showAlert(String string);
    
 }
