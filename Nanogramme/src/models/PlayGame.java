@@ -55,6 +55,17 @@ public class PlayGame implements ActionListener, MouseListener {
 		NonoSolver3 solver = new NonoSolver3(matrixNeu, riddle);
 		solutions = solver.getSolution();
 		listener.setColours(riddle.getColours());
+		matrix = riddleLoader.matrix;
+		for (int i = 0; i < riddle.getHeight(); i++) {
+			for (int j = 0; j < riddle.getWidth(); j++) {
+				if (matrix[i][j] != '*' && matrix[i][j] != '-') {
+					listener.placeAField(i, j, riddle.getColourByName(String
+							.valueOf(matrix[i][j])));
+				} else if (matrix[i][j] == '-') {
+					listener.placeAField(i, j, backGroundColour);
+				}
+			}
+		}
 		// listener.setLeftPAnel(riddle.getRows());
 	}
 
@@ -66,10 +77,10 @@ public class PlayGame implements ActionListener, MouseListener {
 			boolean isRight = checkSolution();
 			listener.wasRight(isRight);
 		} else if (actionCommand.equals("Reset")) {
-         currentColor = null;
-      } else if (actionCommand.equals("Speichern")) {
-         riddleLoader.save(matrix);
-      } else if (actionCommand.equals("-")) {
+			currentColor = null;
+		} else if (actionCommand.equals("Speichern")) {
+			riddleLoader.save(matrix);
+		} else if (actionCommand.equals("-")) {
 			currentColor = backGroundColour;
 		} else {
 			currentColor = riddle.getColourByName(actionCommand);
