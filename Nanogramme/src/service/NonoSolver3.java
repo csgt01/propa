@@ -179,7 +179,7 @@ public class NonoSolver3 implements INonogramSolver {
 	private ArrayList<ArrayList<String>> solveByBrutForceByRow(
 			ArrayList<ArrayList<String>> listFromBefore, int rowInt,
 			int possibilityInt) {
-		// System.out.println("solveByBrutForce");
+		 System.out.println("solveByBrutForce");
 		// // System.out.println("solveByBrutForce");
 		Integer rowIndex = new Integer(rowInt);
 
@@ -325,7 +325,7 @@ public class NonoSolver3 implements INonogramSolver {
 	private ArrayList<ArrayList<String>> solveByBrutForceByColumn(
 			ArrayList<ArrayList<String>> listFromBefore, int coInt,
 			int possibilityInt) {
-		// System.out.println("solveByBrutForceC");
+		 System.out.println("solveByBrutForceC");
 		Integer columnInt = new Integer(coInt);
 		Integer possibilityIndex = new Integer(possibilityInt);
 		ArrayList<ArrayList<String>> returnList = new ArrayList<ArrayList<String>>(
@@ -412,7 +412,7 @@ public class NonoSolver3 implements INonogramSolver {
 							// + columnInt);
 							checkedPossibillities++;
 							if ((possibillities - checkedPossibillities) % 100000000 == 0) {
-								System.gc();
+								// System.gc();
 								// System.out
 								// .println("False1:"
 								// + (possibillities - checkedPossibillities));
@@ -433,7 +433,7 @@ public class NonoSolver3 implements INonogramSolver {
 									// + " column: " + columnInt);
 									checkedPossibillities++;
 									if ((possibillities - checkedPossibillities) % 100000000 == 0) {
-										System.gc();
+										// System.gc();
 										long time = new Date().getTime();
 										// System.out.println("Time:"
 										// + (time - timeFor));
@@ -455,7 +455,7 @@ public class NonoSolver3 implements INonogramSolver {
 								// + " column: " + columnInt);
 								checkedPossibillities++;
 								if ((possibillities - checkedPossibillities) % 100000000 == 0) {
-									System.gc();
+									// System.gc();
 									long time = new Date().getTime();
 									// System.out.println("Time:"
 									// + (time - timeFor));
@@ -475,7 +475,7 @@ public class NonoSolver3 implements INonogramSolver {
 						// + " column: " + columnInt);
 						checkedPossibillities++;
 						if ((possibillities - checkedPossibillities) % 100000000 == 0) {
-							System.gc();
+							// System.gc();
 						}
 						return false;
 					}
@@ -490,7 +490,7 @@ public class NonoSolver3 implements INonogramSolver {
 		// Date().getTime() - startTime.getTime()) + " ms");
 		checkedPossibillities++;
 		if ((possibillities - checkedPossibillities) % 100000000 == 0) {
-			System.gc();
+			// System.gc();
 			// System.out.println((possibillities - checkedPossibillities));
 			long time = new Date().getTime();
 			// System.out.println("Time:" + (time - timeFor));
@@ -500,8 +500,8 @@ public class NonoSolver3 implements INonogramSolver {
 	}
 
 	private void solveIterative() throws Exception {
-		// String methodName = "solveIterative()";
-		// System.out.println(methodName);
+		 String methodName = "solveIterative()";
+		 System.out.println(methodName);
 		// long startTime = new Date().getTime();
 		boolean run = true;
 		while (run) {
@@ -1102,8 +1102,8 @@ public class NonoSolver3 implements INonogramSolver {
 	 * @throws Throwable
 	 */
 	private void solveRecursive() throws Exception {
-		// String methodName = "solveRecursive()";
-		// System.out.println(methodName);
+		 String methodName = "solveRecursive()";
+		 System.out.println(methodName);
 		showMatrix();
 		// long startTime = new Date().getTime();
 		boolean run = true;
@@ -1127,10 +1127,10 @@ public class NonoSolver3 implements INonogramSolver {
 				column.setPossibilities(possibilities);
 			}
 			possibilities = null;
-			System.gc();
+			// System.gc();
 		}
 		// läuft, bis keine Änderungen mehr vorkommen
-		System.gc();
+		// System.gc();
 		// System.out.println("after first poss");
 		while (run) {
 			run = false;
@@ -1162,7 +1162,7 @@ public class NonoSolver3 implements INonogramSolver {
 					possibilities = erasePossibilitiesInRow(row,
 							row.getPossibilities());
 					row.setPossibilities(possibilities);
-					System.gc();
+					// System.gc();
 					System.out.println("Pos2 size:" + possibilities.size());
 					int posibillitiesAfter = possibilities.size();
 					if (possibilities.size() > 0) {
@@ -1189,7 +1189,7 @@ public class NonoSolver3 implements INonogramSolver {
 					fillRowWithFree(row);
 				}
 				possibilities = null;
-				System.gc();
+				// System.gc();
 			}
 			for (Column column : getColumns()) {
 				System.out.println("Column:" + getIndexOfColumn(column));
@@ -1216,6 +1216,7 @@ public class NonoSolver3 implements INonogramSolver {
 							column.getPossibilities());
 					column.setPossibilities(possibilities);
 					System.out.println("Pos2 size:" + possibilities.size());
+					// System.gc();
 					int posibillitiesAfter = possibilities.size();
 					if (possibilities.size() > 0) {
 						if (possibilities.size() == 1) {
@@ -1240,13 +1241,13 @@ public class NonoSolver3 implements INonogramSolver {
 					// // System.out.println("+++++++++++++++++++++");
 				}
 				possibilities = null;
-				System.gc();
+				// System.gc();
 			}
 			showMatrix();
 		}
 		// System.out.println("Time for " + methodName + ": "
 		// + (new Date().getTime() - startTime) + " ms");
-		System.gc();
+		// System.gc();
 	}
 
 	/**
@@ -1270,13 +1271,18 @@ public class NonoSolver3 implements INonogramSolver {
 		}
 		// wenn strings an derselben Stelle nicht übereinstimmen herausstreichen
 		// aus results
+		Integer o;
 		for (LinkedList<String> list : possibilities) {
 			for (int i = 0; i < riddle.getWidth(); i++) {
-				if (!firstLinkedList.get(i).equals(list.get(i))) {
-					results.remove(new Integer(i));
-				}
+				o = new Integer(i);
+            if (results.contains(o)) {
+               if (!firstLinkedList.get(i).equals(list.get(i))) {
+                  results.remove(o);
+               }
+            }
 			}
 		}
+		o = null;
 		for (Integer index : results) {
 			writeCharInMatrix(indexOfRow, firstLinkedList.get(index).charAt(0),
 					index);
@@ -1306,13 +1312,18 @@ public class NonoSolver3 implements INonogramSolver {
 		}
 		// wenn strings an derselben Stelle nicht übereinstimmen herausstreichen
 		// aus results
+		Integer o;
 		for (LinkedList<String> list : possibilities) {
 			for (int i = 0; i < riddle.getHeight(); i++) {
-				if (!firstLinkedList.get(i).equals(list.get(i))) {
-					results.remove(new Integer(i));
-				}
+				o = new Integer(i);
+            if (results.contains(o)) {
+               if (!firstLinkedList.get(i).equals(list.get(i))) {
+                  results.remove(o);
+               }
+            }
 			}
 		}
+		o = null;
 		for (Integer index : results) {
 			writeCharInMatrix(index, firstLinkedList.get(index).charAt(0),
 					indexOfColumn);
@@ -1746,7 +1757,7 @@ public class NonoSolver3 implements INonogramSolver {
 				out += matrix[i][j];
 				out += "  ";
 			}
-			// System.out.println(out);
+			 System.out.println(out);
 		}
 		// System.out.println();
 		// showBlockGoneTrue(matrix);
