@@ -105,6 +105,12 @@ public class PlayGame implements ActionListener, MouseListener {
 		}
 	}
 
+	/**
+	 * Prüft, ob das vom User gelöste Rätsel mit der Lösung übereinstimmt.
+	 * TODO: Zwischenprüfung! und vielleicht Fehler anzeigen
+	 * 
+	 * @return
+	 */
 	private boolean checkSolution() {
 		boolean isRight = true;
 		for (int row = 0; row < riddle.getHeight(); row++) {
@@ -158,25 +164,21 @@ public class PlayGame implements ActionListener, MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
