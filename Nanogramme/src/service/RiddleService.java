@@ -219,7 +219,12 @@ public class RiddleService {
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter("save.nono"));
-			writer.write(riddle.getNono());
+			String nono = riddle.getNono();
+			if (nono.contains("content")) {
+				String[] nonoSplit = nono.split("content");
+				nono = nonoSplit[0];
+			}
+			writer.write(nono);
 			writer.write("content\n");
 			for (int row = 0; row < riddle.getHeight(); row++) {
 				String rowString = "";
