@@ -2238,4 +2238,18 @@ public class NonoSolver3 implements INonogramSolver {
 		return rowPosSize;
 	}
 
+	/**
+	 * @return the solveState
+	 */
+	public int getSolveState() {
+		return solveState;
+	}
+
+	/**
+	 * @param solveState the solveState to set
+	 */
+	public void setSolveState(int solveState) {
+		this.solveState = solveState;
+	}
+
 }

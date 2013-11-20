@@ -35,7 +35,7 @@ public class PlayGame implements ActionListener, MouseListener {
 
 	public void openFile(String arg0) throws IOException {
 		String methodName = "openFile(" + arg0 + ")";
-		// // System.out.println(methodName);
+		System.out.println(methodName);
 		riddleLoader = new RiddleService();
 		riddle = riddleLoader.readFile(arg0);
 		backGroundColour = new Colour();
@@ -69,8 +69,20 @@ public class PlayGame implements ActionListener, MouseListener {
 			}
 			// listener.setLeftPAnel(riddle.getRows());
 		} else {
-			// TODO: anpassen
-			listener.showAlert("Nicht lösbar");
+			switch (solver.getSolveState()) {
+			case 0:
+				listener.showAlert("Fehler beim Laden");
+				break;
+			case 2:
+				listener.showAlert("Dieses Rätsel hat mehr als eine Lösung!");
+				break;
+			case 3:
+				listener.showAlert("Dieses Rätsel hat keine Lösung!");
+				break;
+			default:
+				listener.showAlert("Fehler beim Laden");
+				break;
+			}
 		}
 	}
 
