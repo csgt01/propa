@@ -5,6 +5,27 @@ import java.util.LinkedList;
 
 public class Column {
 
+	/**
+	 * @return the maxEntries
+	 */
+	public int getMaxEntries() {
+		return maxEntries;
+	}
+
+	/**
+	 * @param maxEntries the maxEntries to set
+	 */
+	public void setMaxEntries(int maxEntries) {
+		this.maxEntries = maxEntries;
+	}
+
+	/**
+	 * @param entriesSet the entriesSet to set
+	 */
+	public void setEntriesSet(int entriesSet) {
+		this.entriesSet = entriesSet;
+	}
+
 	private LinkedList<Block> blocks;
 
 	private boolean isGone = false;

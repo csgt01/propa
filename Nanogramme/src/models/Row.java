@@ -10,7 +10,22 @@ public class Row {
     private boolean isGone = false;
     private int entriesSet = 0;
     private int maxEntries = 0;
-    private  ArrayList<LinkedList<String>> possibilities;
+    /**
+	 * @return the maxEntries
+	 */
+	public int getMaxEntries() {
+		return maxEntries;
+	}
+
+	/**
+	 * @param maxEntries the maxEntries to set
+	 */
+	public void setMaxEntries(int maxEntries) {
+		this.maxEntries = maxEntries;
+	}
+
+
+	private  ArrayList<LinkedList<String>> possibilities;
     
     public Row () {
        blocks = new LinkedList<>();
