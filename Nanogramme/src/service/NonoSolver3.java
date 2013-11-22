@@ -108,8 +108,6 @@ public class NonoSolver3 implements INonogramSolver {
 			while (run1) {
 				int starCount = getStarCountInRiddle();
 				solveIterative();
-//				showMatrix();
-				showBlockGoneTrue();
 				solveRecursive();
 				if (starCount <= getStarCountInRiddle()) {
 					run1 = false;
@@ -121,6 +119,8 @@ public class NonoSolver3 implements INonogramSolver {
 					checkStarBelongingToBlockForColumn(column);
 				}
 			}
+			showMatrix();
+			showBlockGoneTrue();
 			if (getStarCountInRiddle() > 0) {
 				getSizesOfPossibilities();
 				ArrayList<ArrayList<String>> theMatrix;
@@ -176,6 +176,10 @@ public class NonoSolver3 implements INonogramSolver {
 			showMatrix();
 		}
 		return solveState;
+	}
+	
+	private void checkBlockpartsBelongingToOneBlock() {
+		
 	}
 	
 	private void checkStarBelongingToBlockForRow(Row row) throws Exception {
@@ -1193,7 +1197,7 @@ public class NonoSolver3 implements INonogramSolver {
 	private void solveRecursive() throws Exception {
 		 String methodName = "solveRecursive()";
 		 System.out.println(methodName);
-		showMatrix();
+		
 		// long startTime = new Date().getTime();
 		boolean run = true;
 		for (Column column : getColumns()) {
