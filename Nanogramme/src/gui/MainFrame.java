@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -285,6 +286,7 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 			System.out.println(colors.size());
 			LinkedList<Colour> col = new LinkedList<Colour>();
 			int co = 0;
+			HashMap<Color, Colour> colarMap = new HashMap<Color, Colour>();
 			for (Color color : colors) {
 				Colour colour = new Colour();
 				colour.setRed(color.getRed());
@@ -293,16 +295,106 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 				colour.setName(mapping.get(co).charAt(0));
 				co++;
 				col.add(colour);
+				colarMap.put(color, colour);
 			}
 			riddle.setColours(col);
-
+			LinkedList<Row> rows = new LinkedList<Row>();
+			LinkedList<Column> columns = new LinkedList<Column>();
+			Colour backgroundCol = col.get(0);
 			for (int i = 0; i < image.getHeight(); i++) {
+				Row row = new Row();
+				LinkedList<Block> blocks = new LinkedList<Block>();
+				Block block = null;
+				Integer blockSize = null;
 				for (int j = 0; j < image.getWidth(); j++) {
-					System.out.println(j + "/" + i + ":"
-							+ new Color(image.getRGB(j, i)));
-
+					Color c = new Color(image.getRGB(j, i));
+					System.out.println(i + "/" + j + ":"
+							+ c);
+					Colour currentColour = colarMap.get(c);
+					System.out.println(currentColour);
+					if (block == null) {
+						if (!currentColour.equals(backgroundCol)) {
+							block = new Block();
+							block.setColour(currentColour);
+							blockSize = 1;
+						}
+					} else {
+						if (!currentColour.equals(backgroundCol)) {
+							if (currentColour.equals(block.getColour())) {
+								blockSize++;
+							} else {
+								block.setHowMany(blockSize);
+								blocks.add(block);
+								
+								block = new Block();
+								block.setColour(currentColour);
+								blockSize = 1;
+							}
+						} else {
+							block.setHowMany(blockSize);
+							blocks.add(block);
+							blockSize = null;
+							block = null;
+						}
+					}
 				}
+				if (block != null) {
+					block.setHowMany(blockSize);
+					blocks.add(block);
+					block = null;
+				}
+				row.setBlocks(blocks);
+				rows.add(row);
 			}
+			riddle.setRows(rows);
+			
+			for (int i = 0; i < image.getWidth(); i++) {
+				Column column = new Column();
+				LinkedList<Block> blocks = new LinkedList<Block>();
+				Block block = null;
+				Integer blockSize = null;
+				for (int j = 0; j < image.getHeight(); j++) {
+					Color c = new Color(image.getRGB(i, j));
+					System.out.println(i + "/" + j + ":"
+							+ c);
+					Colour currentColour = colarMap.get(c);
+					System.out.println(currentColour);
+					if (block == null) {
+						if (!currentColour.equals(backgroundCol)) {
+							block = new Block();
+							block.setColour(currentColour);
+							blockSize = 1;
+						}
+					} else {
+						if (!currentColour.equals(backgroundCol)) {
+							if (currentColour.equals(block.getColour())) {
+								blockSize++;
+							} else {
+								block.setHowMany(blockSize);
+								blocks.add(block);
+								
+								block = new Block();
+								block.setColour(currentColour);
+								blockSize = 1;
+							}
+						} else {
+							block.setHowMany(blockSize);
+							blocks.add(block);
+							blockSize = null;
+							block = null;
+						}
+					}
+				}
+				if (block != null) {
+					block.setHowMany(blockSize);
+					blocks.add(block);
+					block = null;
+				}
+				column.setBlocks(blocks);
+				columns.add(column);
+			}
+			riddle.setColumns(columns);
+			System.out.println(riddle);
 		}
 
 		// String eingabe =

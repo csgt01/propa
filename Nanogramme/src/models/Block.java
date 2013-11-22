@@ -10,6 +10,8 @@ public class Block {
     private boolean gone;
     private Integer minStartIndex;
     private Integer maxEndIndex;
+    private Integer minStartIndexNew;
+    private Integer maxEndIndexNew;
     private String color;
     private Integer colorInt;
     private char colorChar;
@@ -92,6 +94,7 @@ public class Block {
     */
    public void setStartIndex(Integer startIndex) {
       this.startIndex = startIndex;
+      this.minStartIndexNew = startIndex;
    }
 
 
@@ -110,6 +113,7 @@ public class Block {
     */
    public void setEndIndex(Integer endIndex) {
       this.endIndex = endIndex;
+      this.maxEndIndexNew = endIndex;
    }
 
 
@@ -132,6 +136,7 @@ public class Block {
       this.gone = gone;
       setStartIndex(startIndex);
       setEndIndex(startIndex + howMany - 1);
+      
    }
    
    /**
@@ -168,6 +173,7 @@ public class Block {
       } else {
          this.minStartIndex = minStartIndex;
       }
+      this.minStartIndexNew = this.minStartIndex;
    }
 
 
@@ -192,11 +198,48 @@ public class Block {
       } else {
          this.maxEndIndex = maxEndIndex;
       }
+      this.maxEndIndexNew = this.maxEndIndex;
    }
 
 
 
    /**
+ * @return the minStartIndexNew
+ */
+public Integer getMinStartIndexNew() {
+	return minStartIndexNew;
+}
+
+
+
+/**
+ * @param minStartIndexNew the minStartIndexNew to set
+ */
+public void setMinStartIndexNew(Integer minStartIndexNew) {
+	this.minStartIndexNew = minStartIndexNew;
+}
+
+
+
+/**
+ * @return the maxEndIndexNew
+ */
+public Integer getMaxEndIndexNew() {
+	return maxEndIndexNew;
+}
+
+
+
+/**
+ * @param maxEndIndexNew the maxEndIndexNew to set
+ */
+public void setMaxEndIndexNew(Integer maxEndIndexNew) {
+	this.maxEndIndexNew = maxEndIndexNew;
+}
+
+
+
+/**
  * @return the color
  */
 public String getColor() {
@@ -209,7 +252,8 @@ public String getColor() {
    @Override
    public String toString() {
       return "Block [howMany=" + howMany + ", colour=" + colour + ", startIndex=" + startIndex + ", endIndex=" + endIndex + ", gone=" + gone + ", minStartIndex=" + minStartIndex + ", maxEndIndex="
-            + maxEndIndex + "]\n";
+              + maxEndIndex + ", minStartIndexNew=" + minStartIndexNew + ", maxEndIndexNew="
+              + maxEndIndexNew + "]\n";
    }
 
    
