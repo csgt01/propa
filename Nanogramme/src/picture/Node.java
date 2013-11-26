@@ -7,6 +7,8 @@ public class Node implements Comparable<Node> {
 	private Node[] nodes = new Node[8];
 
 	Integer references = 0;
+	
+	private Integer count = 0;
 
 	int red;
 	int green;
@@ -159,6 +161,14 @@ public class Node implements Comparable<Node> {
 		this.blue = blue;
 	}
 
+	public Integer getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -166,7 +176,7 @@ public class Node implements Comparable<Node> {
 	 */
 	@Override
 	public String toString() {
-		return "Node \n{references=" + references + ", children=" + children + ", red=" + red + ", green="
+		return "Node \n{count=" + count + ", references=" + references + ", children=" + children + ", red=" + red + ", green="
 				+ green + ", blue=" + blue + ", referencesOfChilds="
 				+ referencesOfChilds + ", \nnodes=" + Arrays.toString(nodes)
 				+ "}";
@@ -176,7 +186,7 @@ public class Node implements Comparable<Node> {
 	public int compareTo(Node arg0) {
 		int returnInt = this.references.compareTo(arg0.getReferences());
 		if (returnInt == 0) {
-			
+			returnInt = this.count.compareTo(arg0.getCount());
 		}
 		return returnInt;
 	}
@@ -211,8 +221,6 @@ public class Node implements Comparable<Node> {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
