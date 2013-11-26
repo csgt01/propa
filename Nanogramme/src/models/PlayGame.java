@@ -38,11 +38,16 @@ public class PlayGame implements ActionListener, MouseListener {
 		System.out.println(methodName);
 		riddleLoader = new RiddleService();
 		riddle = riddleLoader.readFile(arg0);
+		setupIt(riddle);
+	}
+
+	public void setupIt(Riddle riddle) {
 		backGroundColour = new Colour();
 		backGroundColour.setName('-');
 		backGroundColour.setRed(Color.WHITE.getRed());
 		backGroundColour.setGreen(Color.WHITE.getGreen());
 		backGroundColour.setBlue(Color.WHITE.getBlue());
+		this.riddle = riddle;
 		setupMatrix();
 		char[][] matrixNeu = new char[riddle.getHeight()][riddle.getWidth()];
 		for (int i = 0; i < riddle.getHeight(); i++) {

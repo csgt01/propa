@@ -2,11 +2,11 @@ package picture;
 
 import java.util.Arrays;
 
-public class Node {
+public class Node implements Comparable<Node> {
 	
 	private Node[] nodes = new Node[8];
 
-	int references = 0;
+	Integer references = 0;
 
 	int red;
 	int green;
@@ -16,6 +16,22 @@ public class Node {
 	int blueSum;
 	
 	int children;
+	
+	Node father;
+
+	/**
+	 * @return the father
+	 */
+	public Node getFather() {
+		return father;
+	}
+
+	/**
+	 * @param father the father to set
+	 */
+	public void setFather(Node father) {
+		this.father = father;
+	}
 
 	Integer referencesOfChilds = 0;
 
@@ -86,7 +102,7 @@ public class Node {
 	/**
 	 * @return the references
 	 */
-	public int getReferences() {
+	public Integer getReferences() {
 		return references;
 	}
 
@@ -155,5 +171,87 @@ public class Node {
 				+ referencesOfChilds + ", \nnodes=" + Arrays.toString(nodes)
 				+ "}";
 	}
+
+	@Override
+	public int compareTo(Node arg0) {
+		int returnInt = this.references.compareTo(arg0.getReferences());
+		if (returnInt == 0) {
+			
+		}
+		return returnInt;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + blue;
+		result = prime * result + blueSum;
+		result = prime * result + children;
+		result = prime * result + ((father == null) ? 0 : father.hashCode());
+		result = prime * result + green;
+		result = prime * result + greenSum;
+		result = prime * result + Arrays.hashCode(nodes);
+		result = prime * result + red;
+		result = prime * result + redSum;
+		result = prime * result
+				+ ((references == null) ? 0 : references.hashCode());
+		result = prime
+				* result
+				+ ((referencesOfChilds == null) ? 0 : referencesOfChilds
+						.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Node other = (Node) obj;
+		if (blue != other.blue)
+			return false;
+		if (blueSum != other.blueSum)
+			return false;
+		if (children != other.children)
+			return false;
+		if (father == null) {
+			if (other.father != null)
+				return false;
+		} else if (!father.equals(other.father))
+			return false;
+		if (green != other.green)
+			return false;
+		if (greenSum != other.greenSum)
+			return false;
+		if (!Arrays.equals(nodes, other.nodes))
+			return false;
+		if (red != other.red)
+			return false;
+		if (redSum != other.redSum)
+			return false;
+		if (references == null) {
+			if (other.references != null)
+				return false;
+		} else if (!references.equals(other.references))
+			return false;
+		if (referencesOfChilds == null) {
+			if (other.referencesOfChilds != null)
+				return false;
+		} else if (!referencesOfChilds.equals(other.referencesOfChilds))
+			return false;
+		return true;
+	}
+	
+	
 
 }

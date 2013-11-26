@@ -104,6 +104,7 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 	@Override
 	public void setupMatrix(int rowInt, int columnInt, List<Row> rows,
 			List<Column> columns) {
+		System.out.println("setupMatrix in MainFrame");
 		labels = new JLabel[rowInt][columnInt];
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -395,6 +396,11 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 			}
 			riddle.setColumns(columns);
 			System.out.println(riddle);
+//			setupMatrix(riddle.getHeight(), riddle.getWidth(), riddle.getRows(), riddle.getColumns());
+			backgroungColor = null;
+			toolbar = new JToolBar();
+			applikation.add(toolbar, BorderLayout.SOUTH);
+			playGame.setupIt(riddle);
 		}
 
 		// String eingabe =

@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
 
@@ -29,12 +30,13 @@ public class PictureService {
 		}
 		// System.out.println(root);
 		root.copyChildSums();
-		while (getNumbersOfLeafs(root) > numberOfColors) {
+		while (getNumbersOfLeafs(root, false) > numberOfColors) {
 			// System.out.println("%%%%%%%%%%");
 			Node less = findNodeWithLessChildsReferences(root);
 			// System.out.println(less);
 			// System.out.println("&/&$§§§$%%%§$%");
-			if (less.children > (getNumbersOfLeafs(root) - numberOfColors)) {
+			if (less.children > (getNumbersOfLeafs(root, false) - numberOfColors)) {
+				//  System.out.println("number of leafs:" + getNumbersOfLeafs(root));
 				// System.out.println("break");
 				cluster(less);
 			} else {
@@ -43,7 +45,7 @@ public class PictureService {
 		}
 		LinkedList<Color> colors = new LinkedList<Color>();
 		colors = getColorsOfLeafs(root, colors);
-		System.out.println(colors);
+		//  System.out.println(colors);
 
 		return mapPictureToColors(resizedImage, colors);
 	}
@@ -54,8 +56,11 @@ public class PictureService {
 			BufferedImage oi = ImageIO.read(new File(file));
 			int type = oi.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : oi
 					.getType();
-			resizedImage = scalePicture(width, height, oi, type);
-			ImageIO.write(resizedImage, "jpg", new File("test2.jpg"));
+			// TODO: resize, but when
+//			resizedImage = scalePicture(width, height, oi, type);
+//			ImageIO.write(resizedImage, "jpg", new File("test2.jpg"));
+			ImageIO.write(oi, "jpg", new File("test2.jpg"));
+			resizedImage = oi;
 			// resizedImage = oi;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -76,7 +81,7 @@ public class PictureService {
 		int red = color.getRed();
 		int green = color.getGreen();
 		int blue = color.getBlue();
-
+		root.setReferences(root.getReferences() + 1);
 		String binary11 = Integer.toBinaryString(red);
 		String binary12 = Integer.toBinaryString(green);
 		String binary13 = Integer.toBinaryString(blue);
@@ -115,14 +120,15 @@ public class PictureService {
 				node.setNode(index, new Node());
 			}
 			// lastNode = node;
+			node.getNode(index).setFather(node);
 			node = node.getNode(index);
+			node.setReferences(node.getReferences() + 1);
 		}
 		// lastNode.setReferencesOfChilds();
+		
 		node.setRed(node.getRed() + red);
 		node.setGreen(node.getGreen() + green);
 		node.setBlue(node.getBlue() + blue);
-		node.setReferences(node.getReferences() + 1);
-
 	}
 
 	/**
@@ -164,6 +170,7 @@ public class PictureService {
 	// }
 
 	public void reduceColors(Node root) {
+//		System.out.println("reduceColors()");
 		root.setReferences(root.getReferencesOfChilds());
 		root.setReferencesOfChilds(0);
 		root.children = 0;
@@ -193,8 +200,29 @@ public class PictureService {
 		}
 		return node;
 	}
+	
+	public TreeSet<Node> getFathersOfLeafs(Node root, boolean debug, TreeSet<Node> fathers) {
 
-	public int getNumbersOfLeafs(Node root) {
+		Node[] nodes = root.getNodes();
+		boolean isLeaf = true;
+		for (int i = 0; i < nodes.length; i++) {
+			if (nodes[i] != null) {
+				isLeaf = false;
+				fathers.addAll(getFathersOfLeafs(nodes[i], debug, fathers));
+			}
+		}
+		if (isLeaf) {
+			if (debug) {
+				System.out.println("Father:" + root.getFather());
+				fathers.add(root.getFather());
+				System.out.println("Size:" + fathers.size());
+				System.out.println("YYYYYYYYYYYYYYYY:");
+			}
+		}
+		return fathers;
+	}
+
+	public int getNumbersOfLeafs(Node root, boolean debug) {
 		int result = 0;
 
 		Node[] nodes = root.getNodes();
@@ -202,10 +230,14 @@ public class PictureService {
 		for (int i = 0; i < nodes.length; i++) {
 			if (nodes[i] != null) {
 				isLeaf = false;
-				result += getNumbersOfLeafs(nodes[i]);
+				result += getNumbersOfLeafs(nodes[i], debug);
 			}
 		}
 		if (isLeaf) {
+			if (debug) {
+				System.out.println("Father:" + root.getFather());
+				System.out.println("YYYYYYYYYYYYYYYY:");
+			}
 			result = 1;
 		}
 		return result;
@@ -230,13 +262,14 @@ public class PictureService {
 	}
 
 	public void cluster(Node less) {
-		System.out.println("cluster");
+		//  System.out.println("cluster");
+		//  System.out.println(less);
 		Node similiar1 = null;
 		Node similiar2 = null;
 		int sim1 = 0;
 		int sim2 = 0;
 		double distance = 800.0;
-		System.out.println(less.getNodes().length);
+		//  System.out.println(less.getNodes().length);
 		for (int i = 0; i < less.getNodes().length; i++) {
 			Node node1 = less.getNode(i);
 			if (node1 != null) {
@@ -244,7 +277,7 @@ public class PictureService {
 					Node node2 = less.getNode(j);
 					if (node2 != null) {
 						Double newDistance = getDistance(node1, node2);
-						System.out.println(newDistance);
+						//  System.out.println(newDistance);
 						if (newDistance != null && newDistance < distance) {
 							distance = newDistance;
 							similiar1 = node1;
