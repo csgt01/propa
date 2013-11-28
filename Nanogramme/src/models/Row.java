@@ -76,6 +76,18 @@ public class Row {
          setGone(true);
          return true;
       }
+      ArrayList<Integer> indeces = new ArrayList<Integer>();
+      if (blocks != null && blocks.size() > 0) {
+    	  for (Block block : blocks) {
+    		  if (column >= block.getMinStartIndexNew() && column <= block.getMaxEndIndexNew()) {
+    			  indeces.add(blocks.indexOf(block));
+    		  }
+    	  }
+    	  if (indeces.size() == 1) {
+    		  blocks.get(indeces.get(0)).increaseEntriesSet(column);
+    	  }
+      }
+     
       return false;
    }
    

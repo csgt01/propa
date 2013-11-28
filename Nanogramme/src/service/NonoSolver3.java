@@ -112,7 +112,7 @@ public class NonoSolver3 implements INonogramSolver {
 			while (run1) {
 				int starCount = getStarCountInRiddle();
 				solveIterative();
-//				 solveRecursive();
+				// solveRecursive();
 				if (starCount <= getStarCountInRiddle()) {
 					run1 = false;
 				}
@@ -248,9 +248,9 @@ public class NonoSolver3 implements INonogramSolver {
 
 					}
 				}
-				System.out.println("KKKKKKKKKKKKKKKKKKK");
-				System.out.println("row:" + rowInt + "columnInt: " + columnInt
-						+ "\n" + blockInts.size() + " " + blockInts);
+//				System.out.println("KKKKKKKKKKKKKKKKKKK");
+//				System.out.println("row:" + rowInt + "columnInt: " + columnInt
+//						+ "\n" + blockInts.size() + " " + blockInts);
 				if (blockInts.size() == 1) {
 					// TODO overlapping with it!
 					int starCount = 0;
@@ -260,8 +260,8 @@ public class NonoSolver3 implements INonogramSolver {
 						}
 					}
 					if ((column.getMaxEntries() - column.getEntriesSet() - starCount) == 0) {
-						System.out.println("QQQQQrow:" + rowInt + "columnInt: "
-								+ columnInt);
+//						System.out.println("QQQQQrow:" + rowInt + "columnInt: "
+//								+ columnInt);
 						fillAreaInColumnWithChar(
 								columnInt,
 								rowInt,
@@ -270,10 +270,10 @@ public class NonoSolver3 implements INonogramSolver {
 										.charAt(0));
 					}
 				} else if (blockInts.size() == 0) {
-					System.out.println("EMPTYEMPTYEMPTY");
+//					System.out.println("EMPTYEMPTYEMPTY");
 					fillAreaInColumnWithChar(columnInt, rowInt, rowInt + 1, '-');
 				}
-				System.out.println("LLLLLLLLLLLLLLLLL");
+//				System.out.println("LLLLLLLLLLLLLLLLL");
 			}
 		}
 	}
@@ -674,16 +674,7 @@ public class NonoSolver3 implements INonogramSolver {
 			// showMatrix();
 			checkRowsAndColumnsForGone();
 			// showMatrix();
-			for (Row row : getRows()) {
-				checkStarBelongingToBlockForRow(row);
-				checkEmptyBelongingToBlockForRow(row);
-				overlapBlocksInRow(row);
-			}
-			for (Column column : getColumns()) {
-				checkStarBelongingToBlockForColumn(column);
-				checkEmptyBelongingToBlockForColumn(column);
-				overlapBlocksInColumn(column);
-			}
+			checkByBlock();
 			if (starCountInRiddle <= getStarCountInRiddle()) {
 				run = false;
 			}
@@ -692,7 +683,87 @@ public class NonoSolver3 implements INonogramSolver {
 		// + (new Date().getTime() - startTime) + " ms");
 	}
 
+	private void checkByBlock() throws Exception {
+		for (Row row : getRows()) {
+			updateMinAndMaxIndexOfBlocks(row);
+			checkStarBelongingToBlockForRow(row);
+			checkEmptyBelongingToBlockForRow(row);
+			overlapBlocksInRow(row);
+		}
+		for (Column column : getColumns()) {
+			updateMinAndMaxIndexOfBlocks(column);
+			checkStarBelongingToBlockForColumn(column);
+			checkEmptyBelongingToBlockForColumn(column);
+			overlapBlocksInColumn(column);
+		}
+	}
+
+	/**
+	 * Setzt Min/MaxIndex von Blöcken neu, falls der vorherige oder nachfolgende
+	 * gone ist.
+	 * 
+	 * @param row
+	 */
+	private void updateMinAndMaxIndexOfBlocks(Row row) {
+		System.out.println("updateMinAndMaxIndexOfBlocks:" + getIndexOfRow(row));
+		showBlockGoneTrue();
+		LinkedList<Block> blocks = row.getBlocks();
+		if (blocks != null && blocks.size() > 1) {
+			for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
+				Block block = blocks.get(blockIndex);
+				if (block.isGone()) {
+					int minIndex = block.getMinStartIndexNew();
+					int maxIndex = block.getMaxEndIndexNew();
+					// erster Block, also nur nachfolgende updaten!
+					if (blockIndex == 0) {
+						for (int newIndex = (blockIndex + 1); newIndex < blocks
+								.size(); newIndex++) {
+							Block checkBlock = blocks.get(newIndex);
+							if (!checkBlock.isGone()) {
+								if (checkBlock.getMinStartIndexNew() <= maxIndex) {
+									checkBlock
+											.setMinStartIndexNew(maxIndex + 1);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		System.out.println("bliblarow2:" + getIndexOfRow(row));
+		showBlockGoneTrue();
+	}
+	
+	private void updateMinAndMaxIndexOfBlocks(Column column) {
+		LinkedList<Block> blocks = column.getBlocks();
+		if (blocks != null && blocks.size() > 1) {
+			for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
+				Block block = blocks.get(blockIndex);
+				if (block.isGone()) {
+					int minIndex = block.getMinStartIndexNew();
+					int maxIndex = block.getMaxEndIndexNew();
+					// erster Block, also nur nachfolgende updaten!
+					if (blockIndex == 0) {
+						for (int newIndex = (blockIndex + 1); newIndex < blocks
+								.size(); newIndex++) {
+							Block checkBlock = blocks.get(newIndex);
+							if (!checkBlock.isGone()) {
+								if (checkBlock.getMinStartIndexNew() <= maxIndex) {
+									checkBlock
+											.setMinStartIndexNew(maxIndex + 1);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	private void overlapBlocksInRow(Row row) throws Exception {
+		System.out.println("Row:" + getIndexOfRow(row));
+		showMatrix();
+		showBlockGoneTrue();
 		LinkedList<Block> blocks = row.getBlocks();
 		if (blocks != null && blocks.size() > 0) {
 			for (Block block : blocks) {
@@ -718,8 +789,10 @@ public class NonoSolver3 implements INonogramSolver {
 							result.add(i);
 						}
 					}
+					System.out.println(result);
 					String removed;
-					// so lange nach rechts verschieben, bis Ende erreicht und zu
+					// so lange nach rechts verschieben, bis Ende erreicht und
+					// zu
 					// asd hinzufügen.
 					while (workingList.getLast().equals("-")) {
 						removed = workingList.removeLast();
@@ -727,20 +800,23 @@ public class NonoSolver3 implements INonogramSolver {
 						int size = result.size();
 						for (int i = size - 1; i > -1; i--) {
 							Integer index = result.get(i);
-							if (!first.get(index).equals(workingList.get(index))) {
-								result.remove(index);
+							if (!first.get(index)
+									.equals(workingList.get(index))) {
+								result.remove(result.get(i));
 							}
 						}
 					}
+					System.out.println(result);
 					for (Integer column : result) {
 						char charAt = first.get(column).charAt(0);
-						writeCharInMatrix(getIndexOfRow(row), charAt, (column + start));
+						writeCharInMatrix(getIndexOfRow(row), charAt,
+								(column + start));
 					}
 				}
 			}
 		}
 	}
-	
+
 	private void overlapBlocksInColumn(Column column) throws Exception {
 		LinkedList<Block> blocks = column.getBlocks();
 		if (blocks != null && blocks.size() > 0) {
@@ -768,7 +844,8 @@ public class NonoSolver3 implements INonogramSolver {
 						}
 					}
 					String removed;
-					// so lange nach rechts verschieben, bis Ende erreicht und zu
+					// so lange nach rechts verschieben, bis Ende erreicht und
+					// zu
 					// asd hinzufügen.
 					while (workingList.getLast().equals("-")) {
 						removed = workingList.removeLast();
@@ -776,14 +853,16 @@ public class NonoSolver3 implements INonogramSolver {
 						int size = result.size();
 						for (int i = size - 1; i > -1; i--) {
 							Integer index = result.get(i);
-							if (!first.get(index).equals(workingList.get(index))) {
+							if (!first.get(index)
+									.equals(workingList.get(index))) {
 								result.remove(index);
 							}
 						}
 					}
 					for (Integer row : result) {
 						char charAt = first.get(row).charAt(0);
-						writeCharInMatrix((row + start), charAt, getIndexOfColumn(column));
+						writeCharInMatrix((row + start), charAt,
+								getIndexOfColumn(column));
 					}
 				}
 			}
@@ -2326,23 +2405,25 @@ public class NonoSolver3 implements INonogramSolver {
 			if (matrix[rowIndex][columnIndex] != '-') {
 				if (getRows().get(rowIndex).setEntriesSet(columnIndex)) {
 					fillRowWithFree(getRows().get(rowIndex));
-					LinkedList<String> list = new LinkedList<String>();
-					ArrayList<LinkedList<String>> list2 = new ArrayList<LinkedList<String>>();
-					for (int column = 0; column < riddle.getWidth(); column++) {
-						list.add(String.valueOf(matrix[rowIndex][column]));
-					}
-					list2.add(list);
-					getRows().get(rowIndex).setPossibilities(list2);
+					// TODO vieleicht noch benötigt
+//					LinkedList<String> list = new LinkedList<String>();
+//					ArrayList<LinkedList<String>> list2 = new ArrayList<LinkedList<String>>();
+//					for (int column = 0; column < riddle.getWidth(); column++) {
+//						list.add(String.valueOf(matrix[rowIndex][column]));
+//					}
+//					list2.add(list);
+//					getRows().get(rowIndex).setPossibilities(list2);
 				}
 				if (getColumns().get(columnIndex).setEntriesSet(rowIndex)) {
 					fillColumnWithFree(getColumns().get(columnIndex));
-					LinkedList<String> list = new LinkedList<String>();
-					ArrayList<LinkedList<String>> list2 = new ArrayList<LinkedList<String>>();
-					for (int row = 0; row < riddle.getHeight(); row++) {
-						list.add(String.valueOf(matrix[row][columnIndex]));
-					}
-					list2.add(list);
-					getColumns().get(columnIndex).setPossibilities(list2);
+					// TODO vieleicht noch benötigt
+//					LinkedList<String> list = new LinkedList<String>();
+//					ArrayList<LinkedList<String>> list2 = new ArrayList<LinkedList<String>>();
+//					for (int row = 0; row < riddle.getHeight(); row++) {
+//						list.add(String.valueOf(matrix[row][columnIndex]));
+//					}
+//					list2.add(list);
+//					getColumns().get(columnIndex).setPossibilities(list2);
 				}
 			}
 		}
