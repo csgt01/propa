@@ -238,15 +238,12 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 			String width = JOptionPane.showInputDialog(null, "Breite",
 					"Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
 
-			BufferedImage image = ps.loadAndResizeImage(file.getAbsoluteFile()
-					.toString(), Integer.valueOf(height), Integer
-					.valueOf(width));
-			System.out.println(image.getRaster().getHeight());
 			String numberOfColors = JOptionPane.showInputDialog(null,
 					"Anzahl der Farben", "Eine Eingabeaufforderung",
 					JOptionPane.PLAIN_MESSAGE);
-			image = ps.getDownColoredPicture(image,
-					Integer.valueOf(numberOfColors));
+			BufferedImage image = ps.loadAndDowColorPicture(file.getAbsoluteFile()
+					.toString(), Integer.valueOf(height), Integer
+					.valueOf(width), Integer.valueOf(numberOfColors));
 			JDialog dialog = new JDialog(applikation);
 			dialog.setTitle("Bild");
 			ImageIcon ii = new ImageIcon(image);

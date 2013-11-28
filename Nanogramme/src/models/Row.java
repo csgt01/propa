@@ -70,7 +70,7 @@ public class Row {
 	 * 
 	 * @return true wenn alle Felder gesetzt sind.
 	 */
-   public boolean setEntriesSet() {
+   public boolean setEntriesSet(int column) {
       entriesSet++;
       if (entriesSet == maxEntries) {
          setGone(true);

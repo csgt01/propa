@@ -13,17 +13,11 @@ public class Column {
 	}
 
 	/**
-	 * @param maxEntries the maxEntries to set
+	 * @param maxEntries
+	 *            the maxEntries to set
 	 */
 	public void setMaxEntries(int maxEntries) {
 		this.maxEntries = maxEntries;
-	}
-
-	/**
-	 * @param entriesSet the entriesSet to set
-	 */
-	public void setEntriesSet(int entriesSet) {
-		this.entriesSet = entriesSet;
 	}
 
 	private LinkedList<Block> blocks;
@@ -55,9 +49,9 @@ public class Column {
 
 	public void setGone(boolean isGone) {
 		this.isGone = isGone;
-		 for (Block block : blocks) {
-          block.setGone(true);
-       }
+		for (Block block : blocks) {
+			block.setGone(true);
+		}
 	}
 
 	public LinkedList<Block> getBlocks() {
@@ -73,9 +67,23 @@ public class Column {
 	 * 
 	 * @return true wenn alle Felder gesetzt sind.
 	 */
-	public boolean setEntriesSet() {
+	public boolean setEntriesSet(int row) {
 		entriesSet++;
-
+		if (blocks != null) {
+			if (blocks.size() == 1) {
+				blocks.get(0).increaseEntriesSet(row);
+			} else if (blocks.size() > 1) {
+				ArrayList<Integer> indeces = new ArrayList<Integer>();
+				for (Block block : blocks) {
+					if (row >= block.getMinStartIndexNew() &&  row <= block.getMaxEndIndexNew()) {
+						indeces.add(blocks.indexOf(block));
+					}
+				}
+				if (indeces.size() == 1) {
+					blocks.get(indeces.get(0)).increaseEntriesSet(row);
+				}
+			}
+		}
 		if (entriesSet == maxEntries) {
 			setGone(true);
 			return true;

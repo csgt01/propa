@@ -4,8 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
+import java.util.LinkedList;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
@@ -13,15 +12,10 @@ import javax.imageio.ImageIO;
 public class PictureTestClass {
 
 	public static void main(String[] args) {
-		Date date = new Date();
 		PictureService ps = new PictureService();
 		BufferedImage resizedImage = null;
 		try {
-			BufferedImage oi = ImageIO.read(new File("test22.jpg"));
-			int type = oi.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : oi
-					.getType();
-			// resizedImage = ps.scalePicture(60, 60, oi, type);
-			// ImageIO.write(resizedImage, "jpg", new File("test2.jpg"));
+			BufferedImage oi = ImageIO.read(new File("test.jpg"));
 			resizedImage = oi;
 
 		} catch (IOException e) {
@@ -35,35 +29,35 @@ public class PictureTestClass {
 				ps.insertNode(new Color(resizedImage.getRGB(j, i)), root);
 			}
 		}
-//		System.out.println(root);
-		System.out.println(ps.getNumbersOfLeafs(root, false));
 		TreeSet<Node> fathers = new TreeSet<Node>();
 		fathers = ps.getFathersOfLeafs(root, true, fathers);
-		System.out.println("GGGGGGGGGGGG");
-		System.out.println(fathers.size());
-		
+
 		while (fathers.size() > 7) {
 			fathers = ps.reduceColorsInFathers(fathers);
 		}
-		System.out.println("RRRRRRRRRRRRRR");
-		System.out.println(fathers.size());
-		System.out.println("SSSSSSSSSSSSSS");
 		TreeSet<Node> fathersOfLeafs = new TreeSet<Node>();
 		fathersOfLeafs = ps.getFathersOfLeafs(root, true, fathersOfLeafs);
 		System.out.println(fathersOfLeafs.size());
-		while (fathersOfLeafs.size() > 4) {
+		while (fathersOfLeafs.size() > 6) {
 			fathersOfLeafs = ps.reduceColorsInFathers(fathersOfLeafs);
 		}
-		System.out.println("RRRRRRRRRRRRRR");
-		System.out.println(fathersOfLeafs.size());
-		System.out.println("SSSSSSSSSSSSSS");
 		while (ps.getNumbersOfLeafs(root, false) > 4) {
-			fathersOfLeafs = ps.reduceColorsInFathers(fathersOfLeafs);
+			if (ps.getChildrenOfNode(fathersOfLeafs.first()) > (ps.getNumbersOfLeafs(
+					root, false) - 4)) {
+//				System.out.println(root);
+				ps.cluster(fathersOfLeafs.first());
+			} else {
+				fathersOfLeafs = ps.reduceColorsInFathers(fathersOfLeafs);
+			}
 		}
-		System.out.println("RRRRRRRRRRRRRR");
-		System.out.println(fathersOfLeafs.size());
-		System.out.println(ps.getNumbersOfLeafs(root, false));
-		System.out.println("SSSSSSSSSSSSSS");
+		LinkedList<Color> colors = new LinkedList<Color>();
+		colors = ps.getColorsOfLeafs(root, colors);
+		resizedImage = ps.mapPictureToColors(resizedImage, colors);
+		try {
+			ImageIO.write(resizedImage, "jpg", new File("testBla.jpg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-
+	
 }

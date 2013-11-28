@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
  * 
  */
 public class PictureService {
-	
+
 	int count = 0;
 
 	public BufferedImage getDownColoredPicture(BufferedImage resizedImage,
@@ -39,20 +39,54 @@ public class PictureService {
 		return mapPictureToColors(resizedImage, colors);
 	}
 
-	public BufferedImage loadAndResizeImage(String file, int height, int width) {
+	public BufferedImage loadAndDowColorPicture(String file, int height, int width, int numberOfColors) {
 		BufferedImage resizedImage = null;
 		try {
 			BufferedImage oi = ImageIO.read(new File(file));
 			int type = oi.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : oi
 					.getType();
-			// TODO: resize, but when
-			// resizedImage = scalePicture(width, height, oi, type);
-			// ImageIO.write(resizedImage, "jpg", new File("test2.jpg"));
-			ImageIO.write(oi, "jpg", new File("test2.jpg"));
+			
 			resizedImage = oi;
-			// resizedImage = oi;
+			
+			Node root = new Node();
+
+			for (int i = 0; i < resizedImage.getHeight(); i++) {
+				for (int j = 0; j < resizedImage.getWidth(); j++) {
+					insertNode(new Color(resizedImage.getRGB(j, i)), root);
+				}
+			}
+			TreeSet<Node> fathers = new TreeSet<Node>();
+			fathers = getFathersOfLeafs(root, true, fathers);
+
+			while (fathers.size() > 7) {
+				fathers = reduceColorsInFathers(fathers);
+			}
+			TreeSet<Node> fathersOfLeafs = new TreeSet<Node>();
+			fathersOfLeafs = getFathersOfLeafs(root, true, fathersOfLeafs);
+			System.out.println(fathersOfLeafs.size());
+			while (fathersOfLeafs.size() > 15) {
+				fathersOfLeafs = reduceColorsInFathers(fathersOfLeafs);
+			}
+			while (getNumbersOfLeafs(root, false) > numberOfColors) {
+				if (getChildrenOfNode(fathersOfLeafs.first()) > (getNumbersOfLeafs(
+						root, false) - 4)) {
+					cluster(fathersOfLeafs.first());
+				} else {
+					fathersOfLeafs = reduceColorsInFathers(fathersOfLeafs);
+				}
+			}
+			LinkedList<Color> colors = new LinkedList<Color>();
+			colors = getColorsOfLeafs(root, colors);
+			resizedImage = mapPictureToColors(resizedImage, colors);
+			ImageIO.write(resizedImage, "jpg", new File("testBla.jpg"));
+			// TODO: resize, but when
+			resizedImage = scalePicture(width, height, resizedImage, type);
+			ImageIO.write(resizedImage, "jpg", new File("testResi.jpg"));
+						
+			
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
 		}
 		return resizedImage;
 	}
@@ -135,61 +169,23 @@ public class PictureService {
 		return bi;
 	}
 
-	// public void setReferenceChilds(Node root) {
-	// boolean mustDo = false;
-	// for (int i = 0; i < root.getNodes().length; i++) {
-	// if (root.getNode(i) != null) {
-	// if (root.getNode(i).getReferences() == 0) {
-	// setReferenceChilds(root.getNode(i));
-	// } else {
-	// if (root.getReferencesOfChilds() == null) {
-	// mustDo = true;
-	// }
-	// }
-	// }
-	// }
-	// if (mustDo) {
-	// int childsReferences = 0;
-	// for (int i = 0; i < root.getNodes().length; i++) {
-	// if (root.getNode(i) != null) {
-	// childsReferences += root.getNode(i).getReferences();
-	// }
-	// }
-	// root.setReferencesOfChilds(childsReferences);
-	// }
-	// }
-
-//	public void reduceColors(Node root) {
-		// System.out.println("reduceColors()");
-//		root.setReferences(root.getReferencesOfChilds());
-//		root.setReferencesOfChilds(0);
-//		root.children = 0;
-//		Node[] nodes = root.getNodes();
-//		for (int i = 0; i < nodes.length; i++) {
+//	public Node findNodeWithLessChildsReferences(Node root) {
+//		Node node = root;
+//		for (int i = 0; i < root.getNodes().length; i++) {
 //			if (root.getNode(i) != null) {
-//				reduceColors(root.getNode(i));
-//				root.setNode(i, null);
+//				Node node2 = findNodeWithLessChildsReferences(root.getNode(i));
+//				// if (node == null && ) {
+//				//
+//				// }
+//				// else
+//				if (node2.getReferencesOfChilds() <= node
+//						.getReferencesOfChilds() && node2.children > 1) {
+//					node = node2;
+//				}
 //			}
 //		}
+//		return node;
 //	}
-
-	public Node findNodeWithLessChildsReferences(Node root) {
-		Node node = root;
-		for (int i = 0; i < root.getNodes().length; i++) {
-			if (root.getNode(i) != null) {
-				Node node2 = findNodeWithLessChildsReferences(root.getNode(i));
-				// if (node == null && ) {
-				//
-				// }
-				// else
-				if (node2.getReferencesOfChilds() <= node
-						.getReferencesOfChilds() && node2.children > 1) {
-					node = node2;
-				}
-			}
-		}
-		return node;
-	}
 
 	public TreeSet<Node> getFathersOfLeafs(Node root, boolean debug,
 			TreeSet<Node> fathers) {
@@ -203,9 +199,7 @@ public class PictureService {
 		}
 		if (isLeaf) {
 			if (root.getFather() != null) {
-				if (fathers.add(root.getFather()) && debug) {
-					System.out.println("Father:" + root.getFather().getCount() + " of " + root.getCount());
-				}
+				fathers.add(root.getFather());				
 			}
 		}
 		return fathers;
@@ -224,8 +218,8 @@ public class PictureService {
 		}
 		if (isLeaf) {
 			if (debug) {
-//				System.out.println("Father:" + root.getFather());
-//				System.out.println("YYYYYYYYYYYYYYYY:");
+				// System.out.println("Father:" + root.getFather());
+				// System.out.println("YYYYYYYYYYYYYYYY:");
 			}
 			result = 1;
 		}
@@ -251,8 +245,6 @@ public class PictureService {
 	}
 
 	public void cluster(Node less) {
-		// System.out.println("cluster");
-		// System.out.println(less);
 		Node similiar1 = null;
 		Node similiar2 = null;
 		int sim1 = 0;
@@ -324,7 +316,6 @@ public class PictureService {
 		try {
 			ImageIO.write(resizedImage, "jpg", new File("test3.jpg"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return resizedImage;
@@ -345,36 +336,50 @@ public class PictureService {
 		return color.getRGB();
 	}
 
+	public int getChildrenOfNode(Node node) {
+		int children = 0;
+		for (Node child : node.getNodes()) {
+			if (null != child) {
+				children++;
+			}
+		}
+		return children;
+	}
+
 	public TreeSet<Node> reduceColorsInFathers(TreeSet<Node> fathers) {
 		Node node = fathers.first();
 		fathers.remove(node);
 		int red = 0;
 		int green = 0;
 		int blue = 0;
-//		System.out.println(node);
-		for (int i = 0; i < node.getNodes().length; i++) {
-			Node child = node.getNode(i);
-			if (null != child) {
-				red += child.getRed();
-				green += child.getGreen();
-				blue += child.getBlue();
-				node.setNode(i, null);
-				System.out.println("aaaaaaaaaaaaaaaaaaaaa");
+		if (getChildrenOfNode(node) > 0) {
+			// System.out.println(node);
+			for (int i = 0; i < node.getNodes().length; i++) {
+				Node child = node.getNode(i);
+				if (null != child) {
+					red += child.getRed();
+					green += child.getGreen();
+					blue += child.getBlue();
+					node.setNode(i, null);
+				}
 			}
-		}
-		Node father = node.getFather();
-		boolean isGood = true;
-		for (Node child : father.getNodes()) {
-			if (null != child) {
-				for (Node childsChild : child.getNodes()) {
-					if (childsChild != null) {
-						isGood = false;
+			node.setBlue(blue);
+			node.setRed(red);
+			node.setGreen(green);
+			Node father = node.getFather();
+			boolean isGood = true;
+			for (Node child : father.getNodes()) {
+				if (null != child) {
+					for (Node childsChild : child.getNodes()) {
+						if (childsChild != null) {
+							isGood = false;
+						}
 					}
 				}
 			}
-		}
-		if (isGood) {
-			fathers.add(father);
+			if (isGood) {
+				fathers.add(father);
+			}
 		}
 		return fathers;
 	}
