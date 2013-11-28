@@ -121,7 +121,8 @@ public class Block {
 	public void setGone(boolean gone, int startIndex) {
 		this.gone = gone;
 		setStartIndex(startIndex);
-		setEndIndex(startIndex + howMany - 1);
+		int endIndex2 = startIndex + howMany - 1;
+		setEndIndex(endIndex2);
 
 	}
 
@@ -232,11 +233,14 @@ public class Block {
 	 * @return true if the Block is gone after set.
 	 */
 	public boolean increaseEntriesSet(int index) {
+		System.out.println("increaseEntriesSet()");
 		this.entriesSet++;
 		indeces.add(index);
 		Collections.sort(indeces);
 		if (howMany == entriesSet) {
+			// TODO: wann diese?
 			setGone(true, indeces.get(0));
+			setGone(true);
 			return true;
 		}
 		return false;
