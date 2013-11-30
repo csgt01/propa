@@ -26,7 +26,28 @@ public class Riddle {
     
     
 
-    /**
+    public Riddle(List<Colour> colours, int width, int height,
+			LinkedList<Row> rows, LinkedList<Column> columns, String nono) {
+		super();
+		this.colours = colours;
+		this.width = width;
+		this.height = height;
+		this.rows = rows;
+//				new LinkedList<Row>();
+//		for (Row row : rows) {
+//			this.rows.add(row);
+//		}
+		this.columns = columns;
+//				new LinkedList<Column>();
+//		for (Column column : columns) {
+//			this.columns.add(column);
+//		}
+		this.nono = nono;
+	}
+
+
+
+	/**
 	 * @return the nono
 	 */
 	public String getNono() {

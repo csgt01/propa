@@ -2,6 +2,8 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.TreeSet;
 
 public class Block {
 
@@ -19,7 +21,21 @@ public class Block {
 	private Integer colorInt;
 	private char colorChar;
 	private int entriesSet = 0;
-	private ArrayList<Integer> indeces = new ArrayList<Integer>();
+	private TreeSet<Integer> indeces = new TreeSet<Integer>();
+
+	/**
+	 * @return the indeces
+	 */
+	public TreeSet<Integer> getIndeces() {
+		return indeces;
+	}
+
+	/**
+	 * @param indeces the indeces to set
+	 */
+	public void setIndeces(TreeSet<Integer> indeces) {
+		this.indeces = indeces;
+	}
 
 	public Block() {
 		startIndex = null;
@@ -233,26 +249,21 @@ public class Block {
 	 * @return true if the Block is gone after set.
 	 */
 	public boolean increaseEntriesSet(int index) {
-		System.out.println("increaseEntriesSet()");
-		this.entriesSet++;
-		indeces.add(index);
-		Collections.sort(indeces);
+//		System.out.println("increaseEntriesSet()");
+		
+		if (!indeces.add(index)) {
+			this.entriesSet++;
+		}
 		if (howMany == entriesSet) {
 			// TODO: wann diese?
-			setGone(true, indeces.get(0));
+			setGone(true, indeces.first());
 			setGone(true);
 			return true;
 		}
 		return false;
 	}
 
-	// public void setEntriesSet(int entriesSet) {
-	// this.entriesSet = entriesSet;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -262,7 +273,15 @@ public class Block {
 				+ ", gone=" + gone + ", minStartIndex=" + minStartIndex
 				+ ", maxEndIndex=" + maxEndIndex + ", minStartIndexNew="
 				+ minStartIndexNew + ", maxEndIndexNew=" + maxEndIndexNew
-				+ ", entriesSet=" + entriesSet +"]\n";
+				+ ", color=" + color + ", colorInt=" + colorInt
+				+ ", colorChar=" + colorChar + ", entriesSet=" + entriesSet
+				+ ", indeces=" + indeces + "]\n";
 	}
+
+	// public void setEntriesSet(int entriesSet) {
+	// this.entriesSet = entriesSet;
+	// }
+
+	
 
 }

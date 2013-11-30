@@ -20,24 +20,24 @@ public class Column {
 		this.maxEntries = maxEntries;
 	}
 
-	private LinkedList<Block> blocks;
+	private ArrayList<Block> blocks;
 
 	private boolean isGone = false;
 
 	private int entriesSet = 0;
-
+	
 	private int maxEntries = 0;
 
 	private ArrayList<LinkedList<String>> possibilities;
 
 	public Column() {
-		blocks = new LinkedList<>();
+		blocks = new ArrayList<>();
 		possibilities = new ArrayList<LinkedList<String>>();
 	}
 
 	public void addBlock(Block block) {
 		if (null == blocks) {
-			blocks = new LinkedList<Block>();
+			blocks = new ArrayList<Block>();
 		}
 		blocks.add(block);
 		maxEntries += block.getHowMany();
@@ -54,7 +54,7 @@ public class Column {
 		}
 	}
 
-	public LinkedList<Block> getBlocks() {
+	public ArrayList<Block> getBlocks() {
 		return blocks;
 	}
 
@@ -99,7 +99,7 @@ public class Column {
 		return blockCount;
 	}
 
-	public void setBlocks(LinkedList<Block> blocks) {
+	public void setBlocks(ArrayList<Block> blocks) {
 		this.blocks = blocks;
 	}
 
@@ -124,6 +124,22 @@ public class Column {
 				+ entriesSet + ", isGone=" + isGone + ", blocks=" + blocks
 				+ "]";
 
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((blocks == null) ? 0 : blocks.hashCode());
+		result = prime * result + entriesSet;
+		result = prime * result + (isGone ? 1231 : 1237);
+		result = prime * result + maxEntries;
+		result = prime * result
+				+ ((possibilities == null) ? 0 : possibilities.hashCode());
+		return result;
 	}
 
 }

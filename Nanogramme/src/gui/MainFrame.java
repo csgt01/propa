@@ -301,7 +301,7 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 			Colour backgroundCol = col.get(0);
 			for (int i = 0; i < image.getHeight(); i++) {
 				Row row = new Row();
-				LinkedList<Block> blocks = new LinkedList<Block>();
+				ArrayList<Block> blocks = new ArrayList<Block>();
 				Block block = null;
 				Integer blockSize = null;
 				for (int j = 0; j < image.getWidth(); j++) {
@@ -348,7 +348,7 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 			
 			for (int i = 0; i < image.getWidth(); i++) {
 				Column column = new Column();
-				LinkedList<Block> blocks = new LinkedList<Block>();
+				ArrayList<Block> blocks = new ArrayList<Block>();
 				Block block = null;
 				Integer blockSize = null;
 				for (int j = 0; j < image.getHeight(); j++) {
