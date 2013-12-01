@@ -84,7 +84,13 @@ public class NonoSolver3 implements INonogramSolver {
          setupMatrix();
       }
       setupBlocks();
-      solve();
+      while (solveState != 1) {
+         if (solveState == 2) {
+            changeLastStacksMember();
+         }
+         solveState = 0;
+         solve();
+      }
       // System.out.println("Time for " + methodName + ": "
       // + (new Date().getTime() - startTime) + " ms");
       // if (solveState == 1) {
@@ -94,12 +100,6 @@ public class NonoSolver3 implements INonogramSolver {
       // System.out.println("Bad");
       // return null;
       // }
-   }
-
-   private void findDuplicatePossInColumn() {
-      for (Column column : getColumns()) {
-         // column.getPossibilities().get(0).
-      }
    }
 
    /*
@@ -142,61 +142,51 @@ public class NonoSolver3 implements INonogramSolver {
             int starCount = getStarCountInRiddle();
             solveIterative();
             if (starCount <= getStarCountInRiddle()) {
-               System.out.println("QWQQWQWQWWWWWQQQQQQQ");
-               // showMatrix();
-               // showBlockGoneTrue();
-               // setFirstStarToSomething();
-               // showMatrix();
-               run1 = false;
+               setFirstStarToSomething();
             }
             if (getStarCountInRiddle() == 0) {
+               solveState = 1;
                run1 = false;
             }
          }
-      }
-      // catch (IndexOutOfBoundsException b) {
-      // System.out.println("OUTPUTPITJSDFADSFASF");
-      // showBlockGoneTrue();
-      // }
-      catch (Exception e) {
+      } catch (Exception e) {
          e.printStackTrace();
-         showBlockGoneTrue();
          showMatrix();
-         // changeLastStacksMember();
-         // solve();
+         System.out.println(stacks.size());
+         solveState = 2;
       } finally {
-         showBlockGoneTrue();
-         showMatrix();
-         // System.out.println(stacks.size());
+
       }
       return solveState;
    }
 
    private void changeLastStacksMember() {
       StackHolder lastStackHolder = stacks.get(stacks.size() - 1);
+      System.out.println("dfsaasdfdasdfa:" + stacks.size() + " colors:" + riddle.getColours().size() + " indexOfCo:" + lastStackHolder.getIndexOfColor());
       int indexOfColor = lastStackHolder.getIndexOfColor();
       System.out.println(indexOfColor);
       indexOfColor++;
       if (indexOfColor >= riddle.getColours().size()) {
-         System.out.println("Matrix old:");
-         showBlockGoneTrue();
          riddle = new Riddle(lastStackHolder.getRiddle().getColours(), lastStackHolder.getRiddle().getWidth(), lastStackHolder.getRiddle().getHeight(), lastStackHolder.getRiddle().getRows(),
                lastStackHolder.getRiddle().getColumns(), lastStackHolder.getRiddle().getNono());
          matrix = lastStackHolder.getMatrix();
-         System.out.println("Matrix new:");
+         // System.out.println("Matrix new:");
          stacks.removeLast();
          showMatrix();
          changeLastStacksMember();
       } else {
          lastStackHolder.setIndexOfColor(indexOfColor);
-         System.out.println("Matrix old:");
+         System.out.println("Matrix old2:");
          showMatrix();
          riddle = new Riddle(lastStackHolder.getRiddle().getColours(), lastStackHolder.getRiddle().getWidth(), lastStackHolder.getRiddle().getHeight(), lastStackHolder.getRiddle().getRows(),
                lastStackHolder.getRiddle().getColumns(), lastStackHolder.getRiddle().getNono());
          matrix = lastStackHolder.getMatrix();
-         System.out.println("Matrix new:");
+         System.out.println("Matrix new2:");
          try {
             writeCharInMatrix(lastStackHolder.getRow(), riddle.getColours().get(indexOfColor).getName(), lastStackHolder.getColumn());
+            String out = "FKGKGLDLDSKGKHKKH\n" ;
+            System.out.println(out);
+            		out = showRow(out, lastStackHolder.getRow());
          } catch (Exception e) {
             System.out.println("OHNOOHNO");
             e.printStackTrace();
@@ -207,6 +197,7 @@ public class NonoSolver3 implements INonogramSolver {
 
    private void setFirstStarToSomething() throws Exception {
       System.out.println("dsafsdfassaffdsfdasfdfadsafsd");
+      System.out.println(stacks.size());
       for (int row = 0; row < riddle.getHeight(); row++) {
          for (int column = 0; column < riddle.getWidth(); column++) {
             if (matrix[row][column] == '*') {
@@ -2291,18 +2282,27 @@ public class NonoSolver3 implements INonogramSolver {
       // String methodName = "showMatrix()";
       // System.out.println(methodName);
       // long startTime = new Date().getTime();
+      String out = "\n";
       for (int i = 0; i < riddle.getHeight(); i++) {
-         String out = "";
-         for (int j = 0; j < riddle.getWidth(); j++) {
-            out += matrix[i][j];
-            out += "  ";
-         }
-         System.out.println(out);
+         out = showRow(out, i);
       }
-      // System.out.println();
-      // showBlockGoneTrue(matrix);
+      System.out.println(out);
       // System.out.println("Time for " + methodName + ": "
       // + (new Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * @param out
+    * @param i
+    * @return
+    */
+   private String showRow(String out, int i) {
+      for (int j = 0; j < riddle.getWidth(); j++) {
+         out += matrix[i][j];
+         out += "  ";
+      }
+      out += "\n";
+      return out;
    }
 
    private void showBlockGoneTrue() {

@@ -61,7 +61,7 @@ public class StackHolder {
 				this.matrix[i][j] = matrix[i][j];
 			}
 		}
-		System.out.println(str);
+//		System.out.println(str);
 	}
 
 }
