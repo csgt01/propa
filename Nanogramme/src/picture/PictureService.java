@@ -58,21 +58,15 @@ public class PictureService {
 			TreeSet<Node> fathers = new TreeSet<Node>();
 			fathers = getFathersOfLeafs(root, true, fathers);
 
-			while (fathers.size() > 7) {
-				fathers = reduceColorsInFathers(fathers);
-			}
-			TreeSet<Node> fathersOfLeafs = new TreeSet<Node>();
-			fathersOfLeafs = getFathersOfLeafs(root, true, fathersOfLeafs);
-			System.out.println(fathersOfLeafs.size());
-			while (fathersOfLeafs.size() > 15) {
-				fathersOfLeafs = reduceColorsInFathers(fathersOfLeafs);
+			while (fathers.size() > 15) {
+			   fathers = reduceColorsInFathers(fathers);
 			}
 			while (getNumbersOfLeafs(root, false) > numberOfColors) {
-				if (getChildrenOfNode(fathersOfLeafs.first()) > (getNumbersOfLeafs(
+				if (getChildrenOfNode(fathers.first()) > (getNumbersOfLeafs(
 						root, false) - 4)) {
-					cluster(fathersOfLeafs.first());
+					cluster(fathers.first());
 				} else {
-					fathersOfLeafs = reduceColorsInFathers(fathersOfLeafs);
+				   fathers = reduceColorsInFathers(fathers);
 				}
 			}
 			LinkedList<Color> colors = new LinkedList<Color>();
