@@ -150,9 +150,9 @@ public class NonoSolver3 implements INonogramSolver {
             }
          }
       } catch (Exception e) {
-         e.printStackTrace();
-         showMatrix();
-         System.out.println(stacks.size());
+//         e.printStackTrace();
+//         showMatrix();
+//         System.out.println(stacks.size());
          solveState = 2;
       } finally {
 
@@ -162,46 +162,49 @@ public class NonoSolver3 implements INonogramSolver {
 
    private void changeLastStacksMember() {
       StackHolder lastStackHolder = stacks.get(stacks.size() - 1);
-      System.out.println("dfsaasdfdasdfa:" + stacks.size() + " colors:" + riddle.getColours().size() + " indexOfCo:" + lastStackHolder.getIndexOfColor());
+      System.out.println("changeLastStacksMember():" + stacks.size() + " colors:" + riddle.getColours().size() + " indexOfCo:" + lastStackHolder.getIndexOfColor());
       int indexOfColor = lastStackHolder.getIndexOfColor();
-      System.out.println(indexOfColor);
+      System.out.println("Index:" + indexOfColor);
+      String out = "";
+      out = showRow(out, lastStackHolder.getRow());
+      System.out.println("row " + lastStackHolder.getRow() + " before change:\n" + out);
       indexOfColor++;
       if (indexOfColor >= riddle.getColours().size()) {
          riddle = new Riddle(lastStackHolder.getRiddle().getColours(), lastStackHolder.getRiddle().getWidth(), lastStackHolder.getRiddle().getHeight(), lastStackHolder.getRiddle().getRows(),
                lastStackHolder.getRiddle().getColumns(), lastStackHolder.getRiddle().getNono());
          matrix = lastStackHolder.getMatrix();
-         // System.out.println("Matrix new:");
+          System.out.println("removed");
          stacks.removeLast();
-         showMatrix();
          changeLastStacksMember();
       } else {
          lastStackHolder.setIndexOfColor(indexOfColor);
-         System.out.println("Matrix old2:");
-         showMatrix();
+         if (lastStackHolder.getRow() == 1 && lastStackHolder.getColumn() == 17) {
+        	 System.out.println("ssss");
+         }
          riddle = new Riddle(lastStackHolder.getRiddle().getColours(), lastStackHolder.getRiddle().getWidth(), lastStackHolder.getRiddle().getHeight(), lastStackHolder.getRiddle().getRows(),
                lastStackHolder.getRiddle().getColumns(), lastStackHolder.getRiddle().getNono());
          matrix = lastStackHolder.getMatrix();
-         System.out.println("Matrix new2:");
+         System.out.println("changed");
          try {
             writeCharInMatrix(lastStackHolder.getRow(), riddle.getColours().get(indexOfColor).getName(), lastStackHolder.getColumn());
-            String out = "FKGKGLDLDSKGKHKKH\n" ;
-            System.out.println(out);
-            		out = showRow(out, lastStackHolder.getRow());
+            out = "";
+            		out = "after change:\n"+showRow(out, lastStackHolder.getRow());
+            		System.out.println(out);
          } catch (Exception e) {
             System.out.println("OHNOOHNO");
             e.printStackTrace();
          }
-         showMatrix();
+         System.out.println("endchangeLastStacksMember()");
       }
    }
 
    private void setFirstStarToSomething() throws Exception {
-      System.out.println("dsafsdfassaffdsfdasfdfadsafsd");
-      System.out.println(stacks.size());
+      System.out.println("setFirstStarToSomething()");
+      System.out.println("stacks size:" + stacks.size());
       for (int row = 0; row < riddle.getHeight(); row++) {
          for (int column = 0; column < riddle.getWidth(); column++) {
             if (matrix[row][column] == '*') {
-               System.out.println("new Stack:" + row + "   " + column);
+               System.out.println("new Stack:" + row + "/" + column);
                StackHolder stack = new StackHolder();
                stack.setRiddle(riddle);
                stack.setMatrix(matrix, riddle.getHeight(), riddle.getWidth());
@@ -210,7 +213,11 @@ public class NonoSolver3 implements INonogramSolver {
                stack.setIndexOfColor(-1);
                stacks.add(stack);
                writeCharInMatrix(row, '-', column);
+               String out = "";
+               out = showRow(out, row);
+               System.out.println("new row:" + row + "\n" + out + "\n");
                System.out.println("Stacks:" + stacks.size());
+               System.out.println("setFirstStarToSomething() end");
                return;
             }
          }
@@ -732,6 +739,7 @@ public class NonoSolver3 implements INonogramSolver {
    private void solveIterative() throws Exception {
       String methodName = "solveIterative()";
       System.out.println(methodName);
+      System.out.println("stacks size:" + stacks.size());
       // long startTime = new Date().getTime();
       boolean run = true;
       while (run) {
