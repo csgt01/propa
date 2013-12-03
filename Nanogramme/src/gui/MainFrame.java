@@ -8,6 +8,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.ScrollPane;
+import java.awt.Scrollbar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -29,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
@@ -106,7 +109,9 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 			List<Column> columns) {
 		System.out.println("setupMatrix in MainFrame");
 		labels = new JLabel[rowInt][columnInt];
+		
 		JPanel panel = new JPanel(new GridBagLayout());
+		
 		panel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		GridBagConstraints c = new GridBagConstraints();
 		// We need to define the GridBagConstraints.
@@ -120,7 +125,6 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 
 		c.fill = GridBagConstraints.NONE;
 		for (int i = 0; i < rowInt; i++) {
-
 			if (i == 0) {
 				c.gridy = 0;
 				JLabel leer = new JLabel("Anzahl");
@@ -208,7 +212,8 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 				labels[i][j] = button;
 			}
 		}
-		container.add(panel, BorderLayout.CENTER);
+		JScrollPane scrollbar = new JScrollPane(panel);
+		container.add(scrollbar, BorderLayout.CENTER);
 	}
 
 	@Override
