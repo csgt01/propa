@@ -58,7 +58,7 @@ public class PictureService {
 			TreeSet<Node> fathers = new TreeSet<Node>();
 			fathers = getFathersOfLeafs(root, true, fathers);
 
-			while (fathers.size() > 15) {
+			while (fathers.size() > numberOfColors) {
 			   fathers = reduceColorsInFathers(fathers);
 			}
 			while (getNumbersOfLeafs(root, false) > numberOfColors) {

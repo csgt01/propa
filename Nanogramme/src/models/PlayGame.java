@@ -31,6 +31,7 @@ public class PlayGame implements ActionListener, MouseListener {
 
 	public PlayGame(IPlayGame listener) {
 		this.listener = listener;
+		riddleLoader = new RiddleService();
 	}
 
 	public void openFile(String arg0) throws IOException {

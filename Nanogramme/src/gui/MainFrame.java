@@ -249,12 +249,14 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 			BufferedImage image = ps.loadAndDowColorPicture(file.getAbsoluteFile()
 					.toString(), Integer.valueOf(height), Integer
 					.valueOf(width), Integer.valueOf(numberOfColors));
-			JDialog dialog = new JDialog(applikation);
-			dialog.setTitle("Bild");
-			ImageIcon ii = new ImageIcon(image);
-			JLabel label = new JLabel("", ii, JLabel.CENTER);
-			dialog.add(label, BorderLayout.CENTER);
-			dialog.setVisible(true);
+//			JDialog dialog = new JDialog(applikation);
+//			dialog.setTitle("Bild");
+//			ImageIcon ii = new ImageIcon(image);
+//			JLabel label = new JLabel("", ii, JLabel.CENTER);
+//			label.setSize(100, 100);
+//			dialog.add(label, BorderLayout.CENTER);
+//			dialog.setSize(200, 200);
+//			dialog.setVisible(true);
 			System.out.println(image.getHeight());
 			System.out.println(image.getData().getHeight());
 			System.out.println(image.getTileHeight());
@@ -270,6 +272,9 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 					colors.add(new Color(image.getRGB(j, i)));
 				}
 			}
+			System.out.println(colors.size());
+			
+			JOptionPane.showOptionDialog(null, "Message", "Title", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, colors.toArray(), colors.toArray()[0]);
 			HashMap<Integer, String> mapping = new HashMap<Integer, String>();
 			mapping.put(0, "A");
 			mapping.put(1, "B");
