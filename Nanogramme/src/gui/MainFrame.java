@@ -222,7 +222,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 		for (Block block : rows.get(i).getBlocks()) {
 
 			JLabel comp = new JLabel(block.getHowMany() + " "
-					+ block.getColor());
+					+ block.getColourString());
 			comp.setForeground(new Color(block.getColour().getRed(), block
 					.getColour().getGreen(), block.getColour().getBlue()));
 			comp.setBorder(border);
@@ -245,7 +245,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 			GridBagConstraints c1, Column column, JPanel rowPanel) {
 		for (Block block : column.getBlocks()) {
 			JLabel comp = new JLabel(block.getHowMany() + " "
-					+ block.getColor());
+					+ block.getColourString());
 			comp.setForeground(new Color(block.getColour().getRed(), block
 					.getColour().getGreen(), block.getColour().getBlue()));
 			// rowPanel.add(comp);

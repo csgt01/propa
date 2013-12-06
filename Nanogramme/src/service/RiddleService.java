@@ -26,8 +26,6 @@ public class RiddleService {
 
 	private int state = 0;
 
-	private static int colorInt = 0;
-
 	private int contentRow;
 	private int contentColumn;
 
@@ -126,8 +124,6 @@ public class RiddleService {
 					colour.setRed(Integer.valueOf(rgbs[0]));
 					colour.setGreen(Integer.valueOf(rgbs[1]));
 					colour.setBlue(Integer.valueOf(rgbs[2]));
-					colour.setNameInt(RiddleService.colorInt);
-					colorInt++;
 					riddle.addColour(colour);
 				}
 				break;

@@ -23,7 +23,7 @@ public class Block {
 	private Integer maxEndIndex;
 	private Integer minStartIndexNew;
 	private Integer maxEndIndexNew;
-	private String color;
+	private String colorString;
 	private Integer colorInt;
 	private char colorChar;
 	private int entriesSet = 0;
@@ -92,7 +92,7 @@ public class Block {
 	 */
 	public void setColour(Colour colour) {
 		this.colour = colour;
-		this.color = String.valueOf(colour.getName());
+		this.colorString = String.valueOf(colour.getName());
 		this.colorChar = colour.getName();
 	}
 
@@ -242,8 +242,8 @@ public class Block {
 	/**
 	 * @return the color
 	 */
-	public String getColor() {
-		return color;
+	public String getColourString() {
+		return colorString;
 	}
 
 	public int getEntriesSet() {
@@ -282,7 +282,7 @@ public class Block {
 				+ ", gone=" + gone + ", minStartIndex=" + minStartIndex
 				+ ", maxEndIndex=" + maxEndIndex + ", minStartIndexNew="
 				+ minStartIndexNew + ", maxEndIndexNew=" + maxEndIndexNew
-				+ ", color=" + color + ", colorInt=" + colorInt
+				+ ", color=" + colorString + ", colorInt=" + colorInt
 				+ ", colorChar=" + colorChar + ", entriesSet=" + entriesSet
 				+ ", indeces=" + indeces + "]\n";
 	}
