@@ -1,12 +1,18 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.TreeSet;
 
+/**
+ * Farbblock in einer Reihe oder Spalte.
+ * 
+ * @author cschulte
+ * 
+ */
 public class Block {
 
+	/**
+	 * Größe des Blocks.
+	 */
 	private Integer howMany;
 
 	private Colour colour;
@@ -31,7 +37,8 @@ public class Block {
 	}
 
 	/**
-	 * @param indeces the indeces to set
+	 * @param indeces
+	 *            the indeces to set
 	 */
 	public void setIndeces(TreeSet<Integer> indeces) {
 		this.indeces = indeces;
@@ -249,8 +256,8 @@ public class Block {
 	 * @return true if the Block is gone after set.
 	 */
 	public boolean increaseEntriesSet(int index) {
-//		System.out.println("increaseEntriesSet()");
-		
+		// System.out.println("increaseEntriesSet()");
+
 		if (!indeces.add(index)) {
 			this.entriesSet++;
 		}
@@ -263,7 +270,9 @@ public class Block {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -281,7 +290,5 @@ public class Block {
 	// public void setEntriesSet(int entriesSet) {
 	// this.entriesSet = entriesSet;
 	// }
-
-	
 
 }

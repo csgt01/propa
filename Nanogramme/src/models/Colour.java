@@ -10,24 +10,7 @@ public class Colour {
     
     private char name;
     
-    private Integer nameInt;
-    
-    
-
-    /**
-	 * @param nameInt the nameInt to set
-	 */
-	public void setNameInt(Integer nameInt) {
-		this.nameInt = nameInt;
-	}
-
-	/**
-	 * @return the nameInt
-	 */
-	public Integer getNameInt() {
-		return nameInt;
-	}
-
+   
 	public int getRed() {
         return red;
     }
@@ -75,8 +58,6 @@ public class Colour {
 		int result = 1;
 		result = prime * result + blue;
 		result = prime * result + green;
-		result = prime * result + name;
-		result = prime * result + ((nameInt == null) ? 0 : nameInt.hashCode());
 		result = prime * result + red;
 		return result;
 	}
@@ -96,13 +77,6 @@ public class Colour {
 		if (blue != other.blue)
 			return false;
 		if (green != other.green)
-			return false;
-		if (name != other.name)
-			return false;
-		if (nameInt == null) {
-			if (other.nameInt != null)
-				return false;
-		} else if (!nameInt.equals(other.nameInt))
 			return false;
 		if (red != other.red)
 			return false;

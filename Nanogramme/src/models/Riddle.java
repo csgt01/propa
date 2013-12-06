@@ -12,9 +12,6 @@ public class Riddle {
     private int width;
     private int height;
     
-//    private int rowCount = 0;
-//    private int columnCount = 0;
-    
     private LinkedList<Row> rows;
     private LinkedList<Column> columns;
     

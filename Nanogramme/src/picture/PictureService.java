@@ -45,8 +45,9 @@ public class PictureService {
 			BufferedImage oi = ImageIO.read(new File(file));
 			int type = oi.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : oi
 					.getType();
-			
-			resizedImage = oi;
+			ImageIO.write(oi, "jpg", new File("testBla.jpg"));
+			resizedImage = scalePicture(width, height, oi, type);
+			ImageIO.write(resizedImage, "jpg", new File("testResi.jpg"));
 			
 			Node root = new Node();
 
@@ -58,12 +59,9 @@ public class PictureService {
 			TreeSet<Node> fathers = new TreeSet<Node>();
 			fathers = getFathersOfLeafs(root, true, fathers);
 
-			while (fathers.size() > numberOfColors) {
-			   fathers = reduceColorsInFathers(fathers);
-			}
 			while (getNumbersOfLeafs(root, false) > numberOfColors) {
 				if (getChildrenOfNode(fathers.first()) > (getNumbersOfLeafs(
-						root, false) - 4)) {
+						root, false) - numberOfColors)) {
 					cluster(fathers.first());
 				} else {
 				   fathers = reduceColorsInFathers(fathers);
@@ -72,10 +70,7 @@ public class PictureService {
 			LinkedList<Color> colors = new LinkedList<Color>();
 			colors = getColorsOfLeafs(root, colors);
 			resizedImage = mapPictureToColors(resizedImage, colors);
-			ImageIO.write(resizedImage, "jpg", new File("testBla.jpg"));
-			// TODO: resize, but when
-			resizedImage = scalePicture(width, height, resizedImage, type);
-			ImageIO.write(resizedImage, "jpg", new File("testResi.jpg"));
+			
 						
 			
 		} catch (IOException e) {

@@ -7,24 +7,14 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.ScrollPane;
-import java.awt.Scrollbar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -40,45 +30,45 @@ import javax.swing.filechooser.FileFilter;
 import models.Block;
 import models.Colour;
 import models.Column;
-import models.IPlayGame;
+import models.IPlaygame;
+import models.IUIListener;
 import models.PlayGame;
 import models.Riddle;
 import models.Row;
 import picture.PictureService;
+import service.RiddleService;
 
-public class MainFrame extends JFrame implements ActionListener, IPlayGame {
+/**
+ * Das MainFraim der App.
+ * @author cschulte
+ *
+ */
+public class MainFrame extends JFrame implements ActionListener, IUIListener {
 
-	/**
-    * 
-    */
 	private static final long serialVersionUID = -8026416994513756565L;
 
-	private MyMenuBar menuBar = new MyMenuBar();
+	private Border border = LineBorder.createGrayLineBorder();
 	public JFrame applikation;
 	public Container container;
 	public JMenuBar menueLeiste;
-
+	private JToolBar toolbar;
+	private JLabel[][] labels;
+	
 	private static File lastSelectedDir = null;
 
-	private JPanel panelTop;
-
-	private PlayGame playGame;
-
-	private JToolBar toolbar;
-
-	private JLabel[][] labels;
-
-	private JPanel panelLeft;
-
-	private Color backgroungColor = Color.WHITE;
-
+	// Services und Listener
 	private PictureService ps = new PictureService();
+	private RiddleService riddleService = new RiddleService();
+	private IPlaygame playGame;
 
 	public MainFrame() {
 		playGame = new PlayGame(this);
 		init();
 	}
 
+	/**
+	 * Lädt den JFrame.
+	 */
 	private void init() {
 
 		applikation = new JFrame("Main");
@@ -99,31 +89,43 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 		applikation.setVisible(true);
 	}
 
-	Border border = LineBorder.createGrayLineBorder();
-
-	/**
-    * 
-    */
 	@Override
-	public void setupMatrix(int rowInt, int columnInt, List<Row> rows,
+	public void setupUIMatrix(int rowInt, int columnInt, List<Row> rows,
 			List<Column> columns) {
 		System.out.println("setupMatrix in MainFrame");
 		labels = new JLabel[rowInt][columnInt];
-		
+
 		JPanel panel = new JPanel(new GridBagLayout());
-		
+
 		panel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		GridBagConstraints c = new GridBagConstraints();
-		// We need to define the GridBagConstraints.
-		// This defines the widget to go in grid (0,0)
-
 		c.gridx = 0;
 		c.gridy = 0;
 
-		// This tells the widget not to change size
-		// to fit the cell.
-
 		c.fill = GridBagConstraints.NONE;
+		setupRowAndColumns(rowInt, columnInt, rows, columns, panel, c);
+		JScrollPane scrollbar = new JScrollPane(panel);
+		container.add(scrollbar, BorderLayout.CENTER);
+	}
+
+	/**
+	 * Erstellt und füllt die Matrix des UI.
+	 * 
+	 * @param rowInt
+	 *            Anzahl der Reihen
+	 * @param columnInt
+	 *            Anzahl der Spalten
+	 * @param rows
+	 *            Liste der Reihen
+	 * @param columns
+	 *            Liste der Spalten
+	 * @param panel
+	 *            das Panel, in das die MAtrix geschrieben wird
+	 * @param c
+	 *            GridConstraints
+	 */
+	private void setupRowAndColumns(int rowInt, int columnInt, List<Row> rows,
+			List<Column> columns, JPanel panel, GridBagConstraints c) {
 		for (int i = 0; i < rowInt; i++) {
 			if (i == 0) {
 				c.gridy = 0;
@@ -135,279 +137,179 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 				c1.gridx = 0;
 				c1.gridy = 0;
 				c1.fill = GridBagConstraints.NONE;
-				for (Column column : columns) {
-					c1.gridx = 0;
-					c1.gridy = 0;
-					JPanel rowPanel = new JPanel(new GridBagLayout());
-					rowPanel.setBorder(border);
-					if (column.getBlocks() != null
-							&& column.getBlocks().size() > 0) {
-						for (Block block : column.getBlocks()) {
-							JLabel comp = new JLabel(block.getHowMany() + " "
-									+ block.getColor());
-							comp.setForeground(new Color(block.getColour()
-									.getRed(), block.getColour().getGreen(),
-									block.getColour().getBlue()));
-							// rowPanel.add(comp);
-							comp.setSize(30, 30);
-							comp.setBorder(border);
-							comp.setSize(170, 30);
-							rowPanel.add(comp, c1);
-							c1.gridy += 1;
-						}
-						panel.add(rowPanel, c);
-					} else {
-						JLabel jLabel = new JLabel("Leer");
-						jLabel.setSize(30, 170);
-						panel.add(jLabel, c);
-					}
-					c.gridx += 1;
-				}
+				insertColumns(columns, panel, c, c1);
 			}
 			c.gridy = (i + 1);
 			GridBagConstraints c2 = new GridBagConstraints();
 			c2.gridx = 0;
 			c2.gridy = 0;
 			c2.fill = GridBagConstraints.NONE;
-			for (int j = 0; j < columnInt; j++) {
-				if (j == 0) {
-					JPanel rowPanel = new JPanel(new GridBagLayout());
-					rowPanel.setBorder(border);
-					c.gridx = 0;
-					// JPanel rowPanel = new JPanel();
-					// rowPanel.setBorder(border);
-					JPanel columnPanel = new JPanel(new GridBagLayout());
-					columnPanel.setBorder(border);
-					if (rows.get(i).getBlocks() != null
-							&& rows.get(i).getBlocks().size() > 0) {
-						for (Block block : rows.get(i).getBlocks()) {
-
-							JLabel comp = new JLabel(block.getHowMany() + " "
-									+ block.getColor());
-							comp.setForeground(new Color(block.getColour()
-									.getRed(), block.getColour().getGreen(),
-									block.getColour().getBlue()));
-							comp.setBorder(border);
-							comp.setSize(170, 30);
-							columnPanel.add(comp, c2);
-							c2.gridx += 1;
-						}
-
-					} else {
-						JLabel jLabel = new JLabel("Leer");
-						jLabel.setSize(170, 30);
-						columnPanel.add(jLabel, c2);
-					}
-					panel.add(columnPanel, c);
-				}
-				c.gridx = (j + 1);
-				JLabel button = new JLabel("" + i + "--" + j);
-				button.addMouseListener(playGame);
-				button.setOpaque(true);
-				button.setForeground(Color.LIGHT_GRAY);
-				button.setBackground(Color.LIGHT_GRAY);
-				button.setBorder(border);
-				button.setPreferredSize(new Dimension(30, 30));
-				panel.add(button, c);
-				labels[i][j] = button;
-			}
+			insertRows(columnInt, rows, panel, c, i, c2);
 		}
-		JScrollPane scrollbar = new JScrollPane(panel);
-		container.add(scrollbar, BorderLayout.CENTER);
+	}
+
+	/**
+	 * Erstellt die Spalten der Matrix.
+	 * @param columns
+	 * @param panel
+	 * @param c
+	 * @param c1
+	 */
+	private void insertColumns(List<Column> columns, JPanel panel,
+			GridBagConstraints c, GridBagConstraints c1) {
+		for (Column column : columns) {
+			c1.gridx = 0;
+			c1.gridy = 0;
+			JPanel rowPanel = new JPanel(new GridBagLayout());
+			rowPanel.setBorder(border);
+			if (column.getBlocks() != null && column.getBlocks().size() > 0) {
+				insertColumnInUIMatrix(panel, c, c1, column, rowPanel);
+			} else {
+				JLabel jLabel = new JLabel("Leer");
+				jLabel.setSize(30, 170);
+				panel.add(jLabel, c);
+			}
+			c.gridx += 1;
+		}
+	}
+
+	/**
+	 * Erstellt eine Reihe in der UI-MAtrix.
+	 * 
+	 * @param columnInt
+	 * @param rows
+	 * @param panel
+	 * @param c
+	 * @param i
+	 * @param c2
+	 */
+	private void insertRows(int columnInt, List<Row> rows, JPanel panel,
+			GridBagConstraints c, int i, GridBagConstraints c2) {
+		for (int j = 0; j < columnInt; j++) {
+			if (j == 0) {
+				JPanel rowPanel = new JPanel(new GridBagLayout());
+				rowPanel.setBorder(border);
+				c.gridx = 0;
+				// JPanel rowPanel = new JPanel();
+				// rowPanel.setBorder(border);
+				JPanel columnPanel = new JPanel(new GridBagLayout());
+				columnPanel.setBorder(border);
+				if (rows.get(i).getBlocks() != null
+						&& rows.get(i).getBlocks().size() > 0) {
+					insertRowInUIMatrix(rows, i, c2, columnPanel);
+				} else {
+					JLabel jLabel = new JLabel("Leer");
+					jLabel.setSize(170, 30);
+					columnPanel.add(jLabel, c2);
+				}
+				panel.add(columnPanel, c);
+			}
+			c.gridx = (j + 1);
+			JLabel button = new JLabel("" + i + "--" + j);
+			button.addMouseListener(playGame);
+			button.setOpaque(true);
+			button.setForeground(Color.LIGHT_GRAY);
+			button.setBackground(Color.LIGHT_GRAY);
+			button.setBorder(border);
+			button.setPreferredSize(new Dimension(30, 30));
+			panel.add(button, c);
+			labels[i][j] = button;
+		}
+	}
+
+	private void insertRowInUIMatrix(List<Row> rows, int i,
+			GridBagConstraints c2, JPanel columnPanel) {
+		for (Block block : rows.get(i).getBlocks()) {
+
+			JLabel comp = new JLabel(block.getHowMany() + " "
+					+ block.getColor());
+			comp.setForeground(new Color(block.getColour().getRed(), block
+					.getColour().getGreen(), block.getColour().getBlue()));
+			comp.setBorder(border);
+			comp.setSize(170, 30);
+			columnPanel.add(comp, c2);
+			c2.gridx += 1;
+		}
+	}
+
+	/**
+	 * Erstellt eine Spalte in der Matrix der UI.
+	 * 
+	 * @param panel
+	 * @param c
+	 * @param c1
+	 * @param column
+	 * @param rowPanel
+	 */
+	private void insertColumnInUIMatrix(JPanel panel, GridBagConstraints c,
+			GridBagConstraints c1, Column column, JPanel rowPanel) {
+		for (Block block : column.getBlocks()) {
+			JLabel comp = new JLabel(block.getHowMany() + " "
+					+ block.getColor());
+			comp.setForeground(new Color(block.getColour().getRed(), block
+					.getColour().getGreen(), block.getColour().getBlue()));
+			// rowPanel.add(comp);
+			comp.setSize(30, 30);
+			comp.setBorder(border);
+			comp.setSize(170, 30);
+			rowPanel.add(comp, c1);
+			c1.gridy += 1;
+		}
+		panel.add(rowPanel, c);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("Action");
 		System.out.println(e.getActionCommand());
+		// Ein Rätsel soll geladen werden.
 		if (e.getActionCommand().equalsIgnoreCase("Rätsel laden")) {
-
+			// Datei auswählen.
 			File file = getFileOrDirectryFromChooser(applikation,
 					JFileChooser.OPEN_DIALOG);
-			System.out.println(file.getAbsoluteFile());
-			backgroungColor = null;
-			toolbar = new JToolBar();
-			applikation.add(toolbar, BorderLayout.SOUTH);
-			try {
-				playGame.openFile(file.getAbsoluteFile().toString());
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			if (file != null && file.getAbsoluteFile() != null) {
+				System.out.println(file.getAbsoluteFile());
+				toolbar = new JToolBar();
+				applikation.add(toolbar, BorderLayout.SOUTH);
+
+				if (!playGame.openRiddleFromFile(file.getAbsoluteFile().toString())) {
+					showAlert("Fehler beim Laden!");
+				}
+
+			} else {
+				// Cancelled!
 			}
+			// nicht Laden, also Erstellen!
 		} else {
 			File file = getFileOrDirectryFromChooser(applikation,
 					JFileChooser.OPEN_DIALOG);
-			System.out.println(file.getAbsoluteFile());
-			String height = JOptionPane.showInputDialog(null, "Höhe:",
-					"Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
-			String width = JOptionPane.showInputDialog(null, "Breite",
-					"Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
+			if (file != null && file.getAbsoluteFile() != null) {
+				System.out.println(file.getAbsoluteFile());
 
-			String numberOfColors = JOptionPane.showInputDialog(null,
-					"Anzahl der Farben", "Eine Eingabeaufforderung",
-					JOptionPane.PLAIN_MESSAGE);
-			BufferedImage image = ps.loadAndDowColorPicture(file.getAbsoluteFile()
-					.toString(), Integer.valueOf(height), Integer
-					.valueOf(width), Integer.valueOf(numberOfColors));
-//			JDialog dialog = new JDialog(applikation);
-//			dialog.setTitle("Bild");
-//			ImageIcon ii = new ImageIcon(image);
-//			JLabel label = new JLabel("", ii, JLabel.CENTER);
-//			label.setSize(100, 100);
-//			dialog.add(label, BorderLayout.CENTER);
-//			dialog.setSize(200, 200);
-//			dialog.setVisible(true);
-			System.out.println(image.getHeight());
-			System.out.println(image.getData().getHeight());
-			System.out.println(image.getTileHeight());
-			Riddle riddle = new Riddle();
-			riddle.setHeight(image.getHeight());
-			riddle.setWidth(image.getWidth());
-			LinkedHashSet<Color> colors = new LinkedHashSet<Color>();
-			// TODO: eine Farbe als Hintergrund!!!!!
-			for (int i = 0; i < image.getHeight(); i++) {
-				for (int j = 0; j < image.getWidth(); j++) {
-					System.out.println(j + "/" + i + ":"
-							+ new Color(image.getRGB(j, i)));
-					colors.add(new Color(image.getRGB(j, i)));
-				}
+				// Abfrage der Größe
+				String height = JOptionPane.showInputDialog(null, "Höhe:",
+						"Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
+				String width = JOptionPane.showInputDialog(null, "Breite",
+						"Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
+				String numberOfColors = JOptionPane.showInputDialog(null,
+						"Anzahl der Farben", "Eine Eingabeaufforderung",
+						JOptionPane.PLAIN_MESSAGE);
+
+				// Laden, Verkleinern und Farben herrunterrechnen
+				BufferedImage image = ps
+						.loadAndDowColorPicture(file.getAbsoluteFile()
+								.toString(), Integer.valueOf(height), Integer
+								.valueOf(width), Integer
+								.valueOf(numberOfColors));
+
+				// Das Rätsel aufbauen
+				Riddle riddle = riddleService.createRiddle(image);
+				toolbar = new JToolBar();
+				applikation.add(toolbar, BorderLayout.SOUTH);
+				System.out.println("colors:");
+				System.out.println(riddle.getColours());
+				playGame.setupIt(riddle);
 			}
-			System.out.println(colors.size());
-			
-			JOptionPane.showOptionDialog(null, "Message", "Title", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, colors.toArray(), colors.toArray()[0]);
-			HashMap<Integer, String> mapping = new HashMap<Integer, String>();
-			mapping.put(0, "A");
-			mapping.put(1, "B");
-			mapping.put(2, "C");
-			mapping.put(3, "D");
-			mapping.put(4, "E");
-			mapping.put(5, "F");
-			mapping.put(6, "G");
-			mapping.put(7, "H");
-			mapping.put(8, "I");
-			mapping.put(9, "J");
-			mapping.put(10, "K");
-			mapping.put(11, "L");
-			mapping.put(12, "M");
-			mapping.put(13, "N");
-			mapping.put(14, "O");
-			System.out.println(colors.size());
-			LinkedList<Colour> col = new LinkedList<Colour>();
-			int co = 0;
-			HashMap<Color, Colour> colarMap = new HashMap<Color, Colour>();
-			for (Color color : colors) {
-				Colour colour = new Colour();
-				colour.setRed(color.getRed());
-				colour.setGreen(color.getGreen());
-				colour.setBlue(color.getBlue());
-				colour.setName(mapping.get(co).charAt(0));
-				co++;
-				col.add(colour);
-				colarMap.put(color, colour);
-			}
-			riddle.setColours(col);
-			LinkedList<Row> rows = new LinkedList<Row>();
-			LinkedList<Column> columns = new LinkedList<Column>();
-			Colour backgroundCol = col.get(0);
-			for (int i = 0; i < image.getHeight(); i++) {
-				Row row = new Row();
-				ArrayList<Block> blocks = new ArrayList<Block>();
-				Block block = null;
-				Integer blockSize = null;
-				for (int j = 0; j < image.getWidth(); j++) {
-					Color c = new Color(image.getRGB(j, i));
-					System.out.println(i + "/" + j + ":"
-							+ c);
-					Colour currentColour = colarMap.get(c);
-					System.out.println(currentColour);
-					if (block == null) {
-						if (!currentColour.equals(backgroundCol)) {
-							block = new Block();
-							block.setColour(currentColour);
-							blockSize = 1;
-						}
-					} else {
-						if (!currentColour.equals(backgroundCol)) {
-							if (currentColour.equals(block.getColour())) {
-								blockSize++;
-							} else {
-								block.setHowMany(blockSize);
-								blocks.add(block);
-								
-								block = new Block();
-								block.setColour(currentColour);
-								blockSize = 1;
-							}
-						} else {
-							block.setHowMany(blockSize);
-							blocks.add(block);
-							blockSize = null;
-							block = null;
-						}
-					}
-				}
-				if (block != null) {
-					block.setHowMany(blockSize);
-					blocks.add(block);
-					block = null;
-				}
-				row.setBlocks(blocks);
-				rows.add(row);
-			}
-			riddle.setRows(rows);
-			
-			for (int i = 0; i < image.getWidth(); i++) {
-				Column column = new Column();
-				ArrayList<Block> blocks = new ArrayList<Block>();
-				Block block = null;
-				Integer blockSize = null;
-				for (int j = 0; j < image.getHeight(); j++) {
-					Color c = new Color(image.getRGB(i, j));
-					System.out.println(i + "/" + j + ":"
-							+ c);
-					Colour currentColour = colarMap.get(c);
-					System.out.println(currentColour);
-					if (block == null) {
-						if (!currentColour.equals(backgroundCol)) {
-							block = new Block();
-							block.setColour(currentColour);
-							blockSize = 1;
-						}
-					} else {
-						if (!currentColour.equals(backgroundCol)) {
-							if (currentColour.equals(block.getColour())) {
-								blockSize++;
-							} else {
-								block.setHowMany(blockSize);
-								blocks.add(block);
-								
-								block = new Block();
-								block.setColour(currentColour);
-								blockSize = 1;
-							}
-						} else {
-							block.setHowMany(blockSize);
-							blocks.add(block);
-							blockSize = null;
-							block = null;
-						}
-					}
-				}
-				if (block != null) {
-					block.setHowMany(blockSize);
-					blocks.add(block);
-					block = null;
-				}
-				column.setBlocks(blocks);
-				columns.add(column);
-			}
-			riddle.setColumns(columns);
-			System.out.println(riddle);
-//			setupMatrix(riddle.getHeight(), riddle.getWidth(), riddle.getRows(), riddle.getColumns());
-			backgroungColor = null;
-			toolbar = new JToolBar();
-			applikation.add(toolbar, BorderLayout.SOUTH);
-			playGame.setupIt(riddle);
 		}
 
 		// String eingabe =
@@ -416,6 +318,13 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 		// JOptionPane.PLAIN_MESSAGE);
 	}
 
+	/**
+	 * Erstellt einen Filechooser-Dialog und gibt das ausgewählte File zurück.
+	 * 
+	 * @param parent
+	 * @param type
+	 * @return
+	 */
 	public File getFileOrDirectryFromChooser(Component parent, int type) {
 		JFileChooser chooser = null;
 		if (lastSelectedDir != null) {
@@ -428,7 +337,6 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 
 			@Override
 			public String getDescription() {
-				// TODO Auto-generated method stub
 				return null;
 			}
 
@@ -493,36 +401,6 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 	}
 
 	@Override
-	public void setLeftPAnel(List<Row> rows) {
-		panelLeft = new JPanel(new GridLayout(rows.size(), 1));
-		for (Row row : rows) {
-			JPanel rowPanel = new JPanel();
-			rowPanel.setBorder(border);
-			if (row.getBlocks() != null && row.getBlocks().size() > 0) {
-				for (Block block : row.getBlocks()) {
-					JLabel comp = new JLabel(block.getHowMany() + " "
-							+ block.getColor());
-					comp.setForeground(new Color(block.getColour().getRed(),
-							block.getColour().getGreen(), block.getColour()
-									.getBlue()));
-					rowPanel.add(comp);
-				}
-			} else {
-				rowPanel.add(new JLabel("Leer"));
-			}
-			panelLeft.add(rowPanel);
-		}
-
-		applikation.add(panelLeft, BorderLayout.WEST);
-	}
-
-	@Override
-	public void setTopPanel(List<Column> columns) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void wasRight(boolean isRight) {
 		System.out.println("wasRight:" + isRight);
 		if (isRight) {
@@ -534,6 +412,7 @@ public class MainFrame extends JFrame implements ActionListener, IPlayGame {
 	@Override
 	public void showAlert(String string) {
 		System.out.println("showAlert");
-		JOptionPane.showMessageDialog(applikation, string, string, JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(applikation, string, string,
+				JOptionPane.WARNING_MESSAGE);
 	}
 }

@@ -2,18 +2,14 @@ package models;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.IOException;
 import java.util.Date;
 
 import javax.swing.JLabel;
 
-import service.NonoSolver3;
 import service.RiddleService;
 
-public class PlayGame implements ActionListener, MouseListener {
+public class PlayGame implements IPlaygame {
 
 	private char[][] matrix;
 
@@ -25,23 +21,31 @@ public class PlayGame implements ActionListener, MouseListener {
 
 	private Riddle riddle;
 
-	private IPlayGame listener;
+	private IUIListener listener;
 
 	private char[][] solutions;
 
-	public PlayGame(IPlayGame listener) {
+	public PlayGame(IUIListener listener) {
 		this.listener = listener;
 		riddleLoader = new RiddleService();
 	}
 
-	public void openFile(String arg0) throws IOException {
-		String methodName = "openFile(" + arg0 + ")";
-		System.out.println(methodName);
-		riddleLoader = new RiddleService();
-		riddle = riddleLoader.readFile(arg0);
-		setupIt(riddle);
+	@Override
+	public boolean openRiddleFromFile(String arg0) {
+		try {
+			String methodName = "openFile(" + arg0 + ")";
+			System.out.println(methodName);
+			riddleLoader = new RiddleService();
+			riddle = riddleLoader.readFile(arg0);
+			setupIt(riddle);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
+	@Override
 	public void setupIt(Riddle riddle) {
 		backGroundColour = new Colour();
 		backGroundColour.setName('-');
@@ -56,39 +60,46 @@ public class PlayGame implements ActionListener, MouseListener {
 				matrixNeu[i][j] = matrix[i][j];
 			}
 		}
-		NonoSolver3 solver = new NonoSolver3(matrixNeu, riddle);
-		solutions = solver.getSolution();
-		if (solutions != null) {
-			listener.setupMatrix(riddle.getHeight(), riddle.getWidth(),
+		// NonoSolver3 solver = new NonoSolver3(matrixNeu, riddle);
+		// solutions = solver.getSolution();
+		// TODO nur für debuggen!!!
+		// if (solutions != null) {
+		if (true) {
+			listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(),
 					riddle.getRows(), riddle.getColumns());
 			listener.setColours(riddle.getColours());
 			matrix = riddleLoader.matrix;
-			for (int i = 0; i < riddle.getHeight(); i++) {
-				for (int j = 0; j < riddle.getWidth(); j++) {
-					if (matrix[i][j] != '*' && matrix[i][j] != '-') {
-						listener.placeAField(i, j, riddle
-								.getColourByName(String.valueOf(matrix[i][j])));
-					} else if (matrix[i][j] == '-') {
-						listener.placeAField(i, j, backGroundColour);
+			// ist nur ungleich null, wenn ein Rätsel neu erstellt wird!
+			if (matrix != null) {
+				for (int i = 0; i < riddle.getHeight(); i++) {
+					for (int j = 0; j < riddle.getWidth(); j++) {
+						if (matrix[i][j] != '*' && matrix[i][j] != '-') {
+							listener.placeAField(i, j, riddle
+									.getColourByName(String
+											.valueOf(matrix[i][j])));
+						} else if (matrix[i][j] == '-') {
+							listener.placeAField(i, j, backGroundColour);
+						}
 					}
 				}
+			} else {
+				setupMatrix();
 			}
-			// listener.setLeftPAnel(riddle.getRows());
 		} else {
-			switch (solver.getSolveState()) {
-			case 0:
-				listener.showAlert("Fehler beim Laden");
-				break;
-			case 2:
-				listener.showAlert("Dieses Rätsel hat mehr als eine Lösung!");
-				break;
-			case 3:
-				listener.showAlert("Dieses Rätsel hat keine Lösung!");
-				break;
-			default:
-				listener.showAlert("Fehler beim Laden");
-				break;
-			}
+			// switch (solver.getSolveState()) {
+			// case 0:
+			// listener.showAlert("Fehler beim Laden");
+			// break;
+			// case 2:
+			// listener.showAlert("Dieses Rätsel hat mehr als eine Lösung!");
+			// break;
+			// case 3:
+			// listener.showAlert("Dieses Rätsel hat keine Lösung!");
+			// break;
+			// default:
+			// listener.showAlert("Fehler beim Laden");
+			// break;
+			// }
 		}
 	}
 
@@ -102,7 +113,10 @@ public class PlayGame implements ActionListener, MouseListener {
 		} else if (actionCommand.equals("Reset")) {
 			currentColor = null;
 		} else if (actionCommand.equals("Speichern")) {
-			riddleLoader.save(matrix);
+			boolean saved = riddleLoader.save(matrix);
+			if (!saved) {
+				listener.showAlert("Speichern fehlgeschlagen!");
+			}
 		} else if (actionCommand.equals("-")) {
 			currentColor = backGroundColour;
 		} else {
@@ -112,8 +126,8 @@ public class PlayGame implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Prüft, ob das vom User gelöste Rätsel mit der Lösung übereinstimmt.
-	 * TODO: Zwischenprüfung! und vielleicht Fehler anzeigen
+	 * Prüft, ob das vom User gelöste Rätsel mit der Lösung übereinstimmt. TODO:
+	 * Zwischenprüfung! und vielleicht Fehler anzeigen
 	 * 
 	 * @return
 	 */
@@ -158,6 +172,7 @@ public class PlayGame implements ActionListener, MouseListener {
 		int column = Integer.valueOf(splits[1]);
 		System.out.println(column);
 		if (null != currentColor) {
+			System.out.println(matrix[row][column]);
 			matrix[row][column] = currentColor.getName();
 			showMatrix();
 			listener.placeAField(row, column, currentColor);

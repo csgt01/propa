@@ -6,7 +6,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import models.PlayGame;
+import models.IPlaygame;
 
 public class MyMenuBar extends JMenuBar {
 
@@ -25,14 +25,14 @@ public class MyMenuBar extends JMenuBar {
    public JMenuItem check;
    public JMenuItem faq;
    public JMenuItem about;
-   private PlayGame playGame;
+   private IPlaygame playGame;
 
    public MyMenuBar() {
 
       init();
    }
 
-   public MyMenuBar(ActionListener mainFrame, PlayGame playGame) {
+   public MyMenuBar(ActionListener mainFrame, IPlaygame playGame) {
       this.mainFrame = mainFrame;
       this.playGame = playGame;
       init();
