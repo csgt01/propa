@@ -21,8 +21,6 @@ public class Riddle {
         colours = new ArrayList<Colour>();
     }
     
-    
-
     public Riddle(List<Colour> colours, int width, int height,
 			LinkedList<Row> rows, LinkedList<Column> columns, String nono) {
 		super();
@@ -30,19 +28,9 @@ public class Riddle {
 		this.width = width;
 		this.height = height;
 		this.rows = rows;
-//				new LinkedList<Row>();
-//		for (Row row : rows) {
-//			this.rows.add(row);
-//		}
 		this.columns = columns;
-//				new LinkedList<Column>();
-//		for (Column column : columns) {
-//			this.columns.add(column);
-//		}
 		this.nono = nono;
 	}
-
-
 
 	/**
 	 * @return the nono
@@ -51,16 +39,12 @@ public class Riddle {
 		return nono;
 	}
 
-
-
 	/**
 	 * @param nono the nono to set
 	 */
 	public void setNono(String nono) {
 		this.nono = nono;
 	}
-
-
 
 	public List<Colour> getColours() {
         return colours;
@@ -116,8 +100,6 @@ public class Riddle {
         }
         return returnColour;
     }
-    
-    
 
     public LinkedList<Row> getRows() {
         return rows;
@@ -141,7 +123,5 @@ public class Riddle {
                 + ", height=" + height + ", \nrows=" + rows
                 + ", \ncolumns=" + columns + "]";
     }
-    
-    
     
 }

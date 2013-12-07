@@ -143,7 +143,7 @@ public class NonoSolver3 implements INonogramSolver {
 				int starCount = getStarCountInRiddle();
 				solveIterative();
 				if (starCount <= getStarCountInRiddle()) {
-//					setFirstStarToSomething();
+					// setFirstStarToSomething();
 					solveState = 1;
 					run1 = false;
 				}
@@ -291,6 +291,14 @@ public class NonoSolver3 implements INonogramSolver {
 		}
 	}
 
+	/**
+	 * Prüft, ob eine gesetzte Farbe zu einem Block gehört. Wenn ja wird der
+	 * Index in indeces von Block geschrieben und die maximale und minimale
+	 * Ausdehnung geändert.
+	 * 
+	 * @param row
+	 * @throws Exception
+	 */
 	private void checkColorBelongingToBlockForRow(Row row) throws Exception {
 		ArrayList<Block> blocks = row.getBlocks();
 		if (blocks == null || blocks.size() == 0) {
@@ -333,6 +341,14 @@ public class NonoSolver3 implements INonogramSolver {
 		}
 	}
 
+	/**
+	 * Prüft, ob eine gesetzte Farbe zu einem Block gehört. Wenn ja wird der
+	 * Index in indeces von Block geschrieben und die maximale und minimale
+	 * Ausdehnung geändert.
+	 * 
+	 * @param column
+	 * @throws Exception
+	 */
 	private void checkColorBelongingToBlockForColumn(Column column)
 			throws Exception {
 		ArrayList<Block> blocks = column.getBlocks();
@@ -417,12 +433,22 @@ public class NonoSolver3 implements INonogramSolver {
 				} else if (blockInts.size() == 0) {
 					// System.out.println("EMPTYEMPTYEMPTY");
 					fillAreaInColumnWithChar(columnInt, rowInt, rowInt + 1, '-');
+				} else {
+
 				}
 				// System.out.println("LLLLLLLLLLLLLLLLL");
 			}
 		}
 	}
 
+	/**
+	 * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
+	 * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert.
+	 * TODO: Wenn in der Mitte prüfen, ob davor oder danach noch Platz für Block ist und gegebenfalls anpassen.
+	 * 
+	 * @param row
+	 * @throws Exception
+	 */
 	private void checkEmptyBelongingToBlockForRow(Row row) throws Exception {
 		ArrayList<Block> blocks = row.getBlocks();
 		if (blocks == null || blocks.size() == 0) {
@@ -444,6 +470,14 @@ public class NonoSolver3 implements INonogramSolver {
 		}
 	}
 
+	/**
+	 * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
+	 * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert.
+	 * TODO: Wenn in der Mitte prüfen, ob davor oder danach noch Platz für Block ist und gegebenfalls anpassen.
+	 * 
+	 * @param column
+	 * @throws Exception
+	 */
 	private void checkEmptyBelongingToBlockForColumn(Column column)
 			throws Exception {
 		ArrayList<Block> blocks = column.getBlocks();

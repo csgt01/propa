@@ -2,12 +2,24 @@ package models;
 
 public class Colour {
     
+	/**
+	 * Rotwert der Farbe.
+	 */
     private int red;
     
+    /**
+	 * Grünwert der Farbe.
+	 */
     private int green;
     
+    /**
+	 * Blauwert der Farbe.
+	 */
     private int blue;
     
+    /**
+	 * Name der Farbe.
+	 */
     private char name;
     
    

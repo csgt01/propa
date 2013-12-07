@@ -6,26 +6,23 @@ import java.util.LinkedList;
 public class Column {
 
 	/**
-	 * @return the maxEntries
+	 * Liste der Blöcke.
 	 */
-	public int getMaxEntries() {
-		return maxEntries;
-	}
-
-	/**
-	 * @param maxEntries
-	 *            the maxEntries to set
-	 */
-	public void setMaxEntries(int maxEntries) {
-		this.maxEntries = maxEntries;
-	}
-
 	private ArrayList<Block> blocks;
 
+	/**
+	 * Fertig gesetzt?
+	 */
 	private boolean isGone = false;
 
+	/**
+	 * Anzahl der gesetzten Felder.
+	 */
 	private int entriesSet = 0;
-	
+
+	/**
+	 * Maximale Anzahl der gesetzten Felder (Summe von howMany der Blöcke).
+	 */
 	private int maxEntries = 0;
 
 	private ArrayList<LinkedList<String>> possibilities;
@@ -61,9 +58,25 @@ public class Column {
 	public int getEntriesSet() {
 		return entriesSet;
 	}
+	
+	/**
+	 * @return the maxEntries
+	 */
+	public int getMaxEntries() {
+		return maxEntries;
+	}
 
 	/**
-	 * Inkrementiert die Anzahl der gesetzten Felder.
+	 * @param maxEntries
+	 *            the maxEntries to set
+	 */
+	public void setMaxEntries(int maxEntries) {
+		this.maxEntries = maxEntries;
+	}
+
+	/**
+	 * Inkrementiert die Anzahl der gesetzten Felder. Ausserdem wird auch beim
+	 * zugehörigen Block die entriesSet erhöht, falls der Block eindeutig ist.
 	 * 
 	 * @return true wenn alle Felder gesetzt sind.
 	 */
@@ -75,7 +88,8 @@ public class Column {
 			} else if (blocks.size() > 1) {
 				ArrayList<Integer> indeces = new ArrayList<Integer>();
 				for (Block block : blocks) {
-					if (row >= block.getMinStartIndexNew() &&  row <= block.getMaxEndIndexNew()) {
+					if (row >= block.getMinStartIndexNew()
+							&& row <= block.getMaxEndIndexNew()) {
 						indeces.add(blocks.indexOf(block));
 					}
 				}
@@ -126,7 +140,9 @@ public class Column {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

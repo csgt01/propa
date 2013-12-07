@@ -15,18 +15,54 @@ public class Block {
 	 */
 	private Integer howMany;
 
+	/**
+	 * Das Colourobjekt des Blocks.
+	 */
 	private Colour colour;
+	
+	/**
+	 * Wird gesetzt, wenn Block fertig gesetzt ist, also gone == true ist.
+	 */
 	private Integer startIndex;
+	/**
+	 * Wird gesetzt, wenn Block fertig gesetzt ist, also gone == true ist.
+	 */
 	private Integer endIndex;
+	/**
+	 * True wenn Block komplett gesetzt.
+	 */
 	private boolean gone;
+	/**
+	 * Wird nur noch am Anfang des Lösungsprozesses gebraucht.
+	 */
 	private Integer minStartIndex;
+	/**
+	 * Wird nur noch am Anfang des Lösungsprozesses gebraucht.
+	 */
 	private Integer maxEndIndex;
+	/**
+	 * Index wird im LAufe des Lösens angepasst.
+	 */
 	private Integer minStartIndexNew;
+	/**
+	 * Index wird im LAufe des Lösens angepasst.
+	 */
 	private Integer maxEndIndexNew;
+	/**
+	 * String der Farbe.
+	 */
 	private String colorString;
-	private Integer colorInt;
+	/**
+	 * Char der Farbe.
+	 */
 	private char colorChar;
+	/**
+	 * Anzahl der gesetzten Felder innerhalb des Blocks.
+	 */
 	private int entriesSet = 0;
+	/**
+	 * Alle gesetzten Felder des Blocks
+	 */
 	private TreeSet<Integer> indeces = new TreeSet<Integer>();
 
 	/**
@@ -50,12 +86,6 @@ public class Block {
 		gone = false;
 	}
 
-	/**
-	 * @return the colorInt
-	 */
-	public Integer getColorInt() {
-		return colorInt;
-	}
 
 	/**
 	 * @return the colorChar
@@ -146,20 +176,16 @@ public class Block {
 		setStartIndex(startIndex);
 		int endIndex2 = startIndex + howMany - 1;
 		setEndIndex(endIndex2);
-
 	}
 
 	/**
-	 * Gone is set and startIndex and endIndex.
+	 * Gone is set.
 	 * 
 	 * @param gone
 	 *            the gone to set
 	 */
 	public void setGone(boolean gone) {
 		this.gone = gone;
-		// TODO why nullpointer
-		// setStartIndex(startIndex);
-		// setEndIndex(startIndex + howMany - 1);
 	}
 
 	/**
@@ -282,8 +308,7 @@ public class Block {
 				+ ", gone=" + gone + ", minStartIndex=" + minStartIndex
 				+ ", maxEndIndex=" + maxEndIndex + ", minStartIndexNew="
 				+ minStartIndexNew + ", maxEndIndexNew=" + maxEndIndexNew
-				+ ", color=" + colorString + ", colorInt=" + colorInt
-				+ ", colorChar=" + colorChar + ", entriesSet=" + entriesSet
+				+ ", color=" + colorString + ", colorChar=" + colorChar + ", entriesSet=" + entriesSet
 				+ ", indeces=" + indeces + "]\n";
 	}
 
