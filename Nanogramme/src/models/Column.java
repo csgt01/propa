@@ -28,10 +28,16 @@ public class Column {
 	private ArrayList<LinkedList<String>> possibilities;
 
 	public Column() {
-		blocks = new ArrayList<>();
+		blocks = new ArrayList<Block>();
 		possibilities = new ArrayList<LinkedList<String>>();
 	}
 
+	/**
+	 * Fügt einen Block hinzu und erhöht maxEntries um die Blockgröße.
+	 * 
+	 * @param block
+	 *            Hinzuzufügende Block.
+	 */
 	public void addBlock(Block block) {
 		if (null == blocks) {
 			blocks = new ArrayList<Block>();
@@ -44,10 +50,18 @@ public class Column {
 		return isGone;
 	}
 
+	/**
+	 * Setzt isGone. Ausserdem werden alle Blöcke auch auf gone = true gesetzt
+	 * wenn isGone == true.
+	 * 
+	 * @param isGone
+	 */
 	public void setGone(boolean isGone) {
 		this.isGone = isGone;
-		for (Block block : blocks) {
-			block.setGone(true);
+		if (isGone) {
+			for (Block block : blocks) {
+				block.setGone(true);
+			}
 		}
 	}
 
@@ -58,7 +72,7 @@ public class Column {
 	public int getEntriesSet() {
 		return entriesSet;
 	}
-	
+
 	/**
 	 * @return the maxEntries
 	 */
@@ -105,6 +119,11 @@ public class Column {
 		return false;
 	}
 
+	/**
+	 * Gibt die Summe von howMany (Größe) der Blöcke zurück.
+	 * 
+	 * @return Summe der Blockgrößen
+	 */
 	protected int getBlockCount() {
 		int blockCount = 0;
 		for (Block block : blocks) {

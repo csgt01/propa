@@ -29,7 +29,7 @@ public class Row {
 	private ArrayList<LinkedList<String>> possibilities;
 
 	public Row() {
-		blocks = new ArrayList<>();
+		blocks = new ArrayList<Block>();
 		possibilities = new ArrayList<LinkedList<String>>();
 	}
 

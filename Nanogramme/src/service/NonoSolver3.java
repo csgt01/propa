@@ -87,6 +87,16 @@ public class NonoSolver3 implements INonogramSolver {
 		while (solveState != 1) {
 			if (solveState == 2) {
 				changeLastStacksMember();
+			} else if (solveState == 3) {
+				try {
+					setFirstStarToSomething();
+					solveState = 0;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else if (solveState == 4) {
+				changeLastStacksMember();
+				solveState = 0;
 			}
 			solveState = 0;
 			solve();
@@ -142,14 +152,20 @@ public class NonoSolver3 implements INonogramSolver {
 			while (run1) {
 				int starCount = getStarCountInRiddle();
 				solveIterative();
+//				solveWithPossibilities();
 				if (starCount <= getStarCountInRiddle()) {
 					// setFirstStarToSomething();
-					solveState = 1;
+					solveState = 3;
 					run1 = false;
 				}
 				if (getStarCountInRiddle() == 0) {
-					solveState = 1;
-					run1 = false;
+					if (stacks == null || stacks.size() == 0) {
+						solveState = 1;
+						run1 = false;
+					} else {
+						solveState = 4;
+						System.out.println("Found a solution!!!!!!s");
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -158,9 +174,33 @@ public class NonoSolver3 implements INonogramSolver {
 			// System.out.println(stacks.size());
 			solveState = 2;
 		} finally {
-
+			showMatrix();
+//			showBlockGoneTrue();
 		}
 		return solveState;
+	}
+
+	/**
+	 * TODO: zu langsam
+	 * @throws Exception
+	 */
+	private void solveWithPossibilities() throws Exception {
+		String methodName = "solveWithPossibilities()";
+		System.out.println(methodName);
+		long startTime = new Date().getTime();
+		for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+//			Row row = getRows().get(rowInt);
+//			System.out.println(row.getPossibilities().size());
+//			getPossibilitiesForRowOrColumn(getIndexOfRow(row), false,
+//					row.getBlocks(),
+//					getFirstConditionOfRow(row.getBlocks(), null, 0),
+//					row.getPossibilities(), 0, 0);
+//			erasePossibilitiesInRow(row, row.getPossibilities());
+//			System.out.println(row.getPossibilities().size());
+//			System.out.println(row.getPossibilities());
+//			schnittmengeFindenInReihe(rowInt, row.getPossibilities());
+		}
+		System.out.println(methodName + " in " + (new Date().getTime() - startTime) + " ms.");
 	}
 
 	private void changeLastStacksMember() {
@@ -267,7 +307,6 @@ public class NonoSolver3 implements INonogramSolver {
 				// columnInt
 				// + "\n" + blockInts.size() + " " + blockInts);
 				if (blockInts.size() == 1) {
-					// TODO overlapping with it!
 					int starCount = 0;
 					for (int i = 0; i < riddle.getWidth(); i++) {
 						if (matrix[getIndexOfRow(row)][i] == '*') {
@@ -464,9 +503,26 @@ public class NonoSolver3 implements INonogramSolver {
 					} else if (!block.isGone()
 							&& columnInt == block.getMaxEndIndexNew()) {
 						block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
+						// Leeres Feld innerhalb des möglichen Blocks.
+					} else if (block.getMinStartIndexNew() < columnInt && block.getMaxEndIndexNew() > columnInt) {
+						checkSizesBeforeAndAfterEmptyInBlockRange(block, columnInt);
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * TODO why not dom
+	 * @param block
+	 * @param columnInt
+	 */
+	private void checkSizesBeforeAndAfterEmptyInBlockRange(Block block,
+			int columnInt) {
+		if ((columnInt - block.getMinStartIndexNew()) < block.getHowMany()) {
+//			block.setMinStartIndexNew(columnInt +1);
+		} else if (block.getMaxEndIndexNew() - columnInt < block.getHowMany()) {
+//			block.setMaxEndIndexNew(columnInt - 1);
 		}
 	}
 
@@ -494,6 +550,8 @@ public class NonoSolver3 implements INonogramSolver {
 					} else if (!block.isGone()
 							&& rowInt == block.getMaxEndIndexNew()) {
 						block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
+					} else if (block.getMinStartIndexNew() < columnInt && block.getMaxEndIndexNew() > columnInt) {
+						checkSizesBeforeAndAfterEmptyInBlockRange(block, rowInt);
 					}
 				}
 			}
@@ -1146,6 +1204,13 @@ public class NonoSolver3 implements INonogramSolver {
 		// showBlockGoneTrue();
 	}
 
+	/**
+	 * Setzt MaxEndIndex der vorherigen Blöcke.
+	 * @param blocks
+	 * @param blockIndex
+	 * @param block
+	 * @param minIndex
+	 */
 	private void updateBlocksBeforeThisBlock(ArrayList<Block> blocks,
 			int blockIndex, Block block, int minIndex) {
 		for (int newIndex = (blockIndex - 1); newIndex > -1; newIndex--) {
@@ -1163,6 +1228,13 @@ public class NonoSolver3 implements INonogramSolver {
 		}
 	}
 
+	/**
+	 * Setzt MinStartIndexNew der folgenden Blöcke.
+	 * @param blocks
+	 * @param blockIndex
+	 * @param block
+	 * @param maxIndex
+	 */
 	private void updateBlocksAfterThisBlock(ArrayList<Block> blocks,
 			int blockIndex, Block block, int maxIndex) {
 		for (int newIndex = (blockIndex + 1); newIndex < blocks.size(); newIndex++) {

@@ -262,6 +262,8 @@ public class Block {
 		this.maxEndIndexNew = maxEndIndexNew;
 		if ((minStartIndexNew + howMany) == (maxEndIndexNew + 1) && !isGone()) {
 			System.out.println("Ready");
+			indeces.add(minStartIndexNew);
+			indeces.add(maxEndIndexNew);
 		}
 	}
 

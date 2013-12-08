@@ -5,6 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 
+/**
+ * @author cschulte
+ *
+ */
 public class Riddle {
 
     private List<Colour> colours;
@@ -100,7 +104,7 @@ public class Riddle {
         }
         return returnColour;
     }
-
+    
     public LinkedList<Row> getRows() {
         return rows;
     }
