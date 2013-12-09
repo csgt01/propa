@@ -26,6 +26,7 @@ public class NonoSolver3 implements INonogramSolver {
 	private static long checkedPossibillities = 0;
 	private static long timeFor;
 	private int solveState = 0;
+	ArrayList<char[][]> solutionsFromGuising = new ArrayList<char[][]>();
 
 	ArrayList<ArrayList<ArrayList<String>>> loesungenVonBrutForce = new ArrayList<ArrayList<ArrayList<String>>>();
 
@@ -86,15 +87,31 @@ public class NonoSolver3 implements INonogramSolver {
 		setupBlocks();
 		while (solveState != 1) {
 			if (solveState == 2) {
-				changeLastStacksMember();
+			   System.out.println("solveState:2");
+				if (stacks != null && stacks.size() > 0) {
+               changeLastStacksMember();
+            } else {
+               System.out.println("out");
+               if (solutionsFromGuising == null || solutionsFromGuising.size() != 1) {
+                  System.out.println(solutionsFromGuising);
+                  System.out.println("null");
+                  return null;
+               } else {
+                  System.out.println(matrix);
+                  return solutionsFromGuising.get(0);
+               }
+            }
 			} else if (solveState == 3) {
 				try {
+				   System.out.println("solveState:3");
 					setFirstStarToSomething();
 					solveState = 0;
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			} else if (solveState == 4) {
+			   System.out.println("solveState:4");
 				changeLastStacksMember();
 				solveState = 0;
 			}
@@ -145,6 +162,7 @@ public class NonoSolver3 implements INonogramSolver {
 	 * @return solveState:
 	 */
 	private int solve() {
+	   System.out.println("solve()");
 		try {
 			findOverlappingAreasInColumn();
 			findOverlappingAreasInRow();
@@ -158,13 +176,20 @@ public class NonoSolver3 implements INonogramSolver {
 					solveState = 3;
 					run1 = false;
 				}
+				// mögliche Lösung gefunden
 				if (getStarCountInRiddle() == 0) {
+				   // direkte Lösung, da vorher nicht geraten wurde
 					if (stacks == null || stacks.size() == 0) {
 						solveState = 1;
 						run1 = false;
+						// TODO: testen ob Möglichkeit ok!
+						solutionsFromGuising.add(matrix);
+						// andere Möglichkeiten beim Raten testen!
 					} else {
+						run1 = false;
+						// TODO: testen ob Möglichkeit ok!
+						solutionsFromGuising.add(matrix);
 						solveState = 4;
-						System.out.println("Found a solution!!!!!!s");
 					}
 				}
 			}
@@ -204,56 +229,43 @@ public class NonoSolver3 implements INonogramSolver {
 	}
 
 	private void changeLastStacksMember() {
-		StackHolder lastStackHolder = stacks.get(stacks.size() - 1);
-		System.out.println("changeLastStacksMember():" + stacks.size()
-				+ " colors:" + riddle.getColours().size() + " indexOfCo:"
-				+ lastStackHolder.getIndexOfColor());
-		int indexOfColor = lastStackHolder.getIndexOfColor();
-		System.out.println("Index:" + indexOfColor);
-		String out = "";
-		out = showRow(out, lastStackHolder.getRow());
-		System.out.println("row " + lastStackHolder.getRow()
-				+ " before change:\n" + out);
-		indexOfColor++;
-		if (indexOfColor >= riddle.getColours().size()) {
-			riddle = new Riddle(lastStackHolder.getRiddle().getColours(),
-					lastStackHolder.getRiddle().getWidth(), lastStackHolder
-							.getRiddle().getHeight(), lastStackHolder
-							.getRiddle().getRows(), lastStackHolder.getRiddle()
-							.getColumns(), lastStackHolder.getRiddle()
-							.getNono());
-			matrix = lastStackHolder.getMatrix();
-			System.out.println("removed");
-			stacks.removeLast();
-			changeLastStacksMember();
-		} else {
-			lastStackHolder.setIndexOfColor(indexOfColor);
-			if (lastStackHolder.getRow() == 1
-					&& lastStackHolder.getColumn() == 17) {
-				System.out.println("ssss");
-			}
-			riddle = new Riddle(lastStackHolder.getRiddle().getColours(),
-					lastStackHolder.getRiddle().getWidth(), lastStackHolder
-							.getRiddle().getHeight(), lastStackHolder
-							.getRiddle().getRows(), lastStackHolder.getRiddle()
-							.getColumns(), lastStackHolder.getRiddle()
-							.getNono());
-			matrix = lastStackHolder.getMatrix();
-			System.out.println("changed");
-			try {
-				writeCharInMatrix(lastStackHolder.getRow(), riddle.getColours()
-						.get(indexOfColor).getName(),
-						lastStackHolder.getColumn());
-				out = "";
-				out = "after change:\n"
-						+ showRow(out, lastStackHolder.getRow());
-				System.out.println(out);
-			} catch (Exception e) {
-				System.out.println("OHNOOHNO");
-				e.printStackTrace();
-			}
-			System.out.println("endchangeLastStacksMember()");
-		}
+		if (stacks != null && stacks.size() > 0) {
+         StackHolder lastStackHolder = stacks.get(stacks.size() - 1);
+         System.out.println("changeLastStacksMember():" + stacks.size() + " colors:" + riddle.getColours().size() + " indexOfCo:" + lastStackHolder.getIndexOfColor());
+         int indexOfColor = lastStackHolder.getIndexOfColor();
+         System.out.println("Index:" + indexOfColor);
+         String out = "";
+         out = showRow(out, lastStackHolder.getRow());
+         System.out.println("row " + lastStackHolder.getRow() + " before change:\n" + out);
+         indexOfColor++;
+         if (indexOfColor >= riddle.getColours().size()) {
+            riddle = new Riddle(lastStackHolder.getRiddle().getColours(), lastStackHolder.getRiddle().getWidth(), lastStackHolder.getRiddle().getHeight(), lastStackHolder.getRiddle().getRows(),
+                  lastStackHolder.getRiddle().getColumns(), lastStackHolder.getRiddle().getNono());
+            matrix = lastStackHolder.getMatrix();
+            System.out.println("removed");
+            stacks.removeLast();
+            changeLastStacksMember();
+         } else {
+            lastStackHolder.setIndexOfColor(indexOfColor);
+            if (lastStackHolder.getRow() == 1 && lastStackHolder.getColumn() == 17) {
+               System.out.println("ssss");
+            }
+            riddle = new Riddle(lastStackHolder.getRiddle().getColours(), lastStackHolder.getRiddle().getWidth(), lastStackHolder.getRiddle().getHeight(), lastStackHolder.getRiddle().getRows(),
+                  lastStackHolder.getRiddle().getColumns(), lastStackHolder.getRiddle().getNono());
+            matrix = lastStackHolder.getMatrix();
+            System.out.println("changed");
+            try {
+               writeCharInMatrix(lastStackHolder.getRow(), riddle.getColours().get(indexOfColor).getName(), lastStackHolder.getColumn());
+               out = "";
+               out = "after change:\n" + showRow(out, lastStackHolder.getRow());
+               System.out.println(out);
+            } catch (Exception e) {
+               System.out.println("OHNOOHNO");
+               e.printStackTrace();
+            }
+            System.out.println("endchangeLastStacksMember()");
+         }
+      }
 	}
 
 	private void setFirstStarToSomething() throws Exception {
@@ -894,7 +906,6 @@ public class NonoSolver3 implements INonogramSolver {
 	private void solveIterative() throws Exception {
 		String methodName = "solveIterative()";
 		System.out.println(methodName);
-		System.out.println("stacks size:" + stacks.size());
 		// long startTime = new Date().getTime();
 		boolean run = true;
 		while (run) {
