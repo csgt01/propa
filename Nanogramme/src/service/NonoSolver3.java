@@ -87,31 +87,32 @@ public class NonoSolver3 implements INonogramSolver {
 		setupBlocks();
 		while (solveState != 1) {
 			if (solveState == 2) {
-			   System.out.println("solveState:2");
+				System.out.println("solveState:2");
 				if (stacks != null && stacks.size() > 0) {
-               changeLastStacksMember();
-            } else {
-               System.out.println("out");
-               if (solutionsFromGuising == null || solutionsFromGuising.size() != 1) {
-                  System.out.println(solutionsFromGuising);
-                  System.out.println("null");
-                  return null;
-               } else {
-                  System.out.println(matrix);
-                  return solutionsFromGuising.get(0);
-               }
-            }
+					changeLastStacksMember();
+				} else {
+					System.out.println("out");
+					if (solutionsFromGuising == null
+							|| solutionsFromGuising.size() != 1) {
+						System.out.println(solutionsFromGuising);
+						System.out.println("null");
+						return null;
+					} else {
+						System.out.println(matrix);
+						return solutionsFromGuising.get(0);
+					}
+				}
 			} else if (solveState == 3) {
 				try {
-				   System.out.println("solveState:3");
+					System.out.println("solveState:3");
 					setFirstStarToSomething();
 					solveState = 0;
-					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			} else if (solveState == 4) {
-			   System.out.println("solveState:4");
+				System.out.println("solveState:4");
 				changeLastStacksMember();
 				solveState = 0;
 			}
@@ -162,7 +163,7 @@ public class NonoSolver3 implements INonogramSolver {
 	 * @return solveState:
 	 */
 	private int solve() {
-	   System.out.println("solve()");
+		System.out.println("solve()");
 		try {
 			findOverlappingAreasInColumn();
 			findOverlappingAreasInRow();
@@ -170,7 +171,7 @@ public class NonoSolver3 implements INonogramSolver {
 			while (run1) {
 				int starCount = getStarCountInRiddle();
 				solveIterative();
-//				solveWithPossibilities();
+				// solveWithPossibilities();
 				if (starCount <= getStarCountInRiddle()) {
 					// setFirstStarToSomething();
 					solveState = 3;
@@ -178,13 +179,15 @@ public class NonoSolver3 implements INonogramSolver {
 				}
 				// mögliche Lösung gefunden
 				if (getStarCountInRiddle() == 0) {
-				   // direkte Lösung, da vorher nicht geraten wurde
+					// direkte Lösung, da vorher nicht geraten wurde
 					if (stacks == null || stacks.size() == 0) {
 						solveState = 1;
 						run1 = false;
-						// TODO: testen ob Möglichkeit ok!
-						solutionsFromGuising.add(matrix);
-						// andere Möglichkeiten beim Raten testen!
+						if (solutionFromTryingOk()) {
+							// TODO: testen ob Möglichkeit ok!
+							solutionsFromGuising.add(matrix);
+							// andere Möglichkeiten beim Raten testen!
+						}
 					} else {
 						run1 = false;
 						// TODO: testen ob Möglichkeit ok!
@@ -200,13 +203,20 @@ public class NonoSolver3 implements INonogramSolver {
 			solveState = 2;
 		} finally {
 			showMatrix();
-//			showBlockGoneTrue();
+			// showBlockGoneTrue();
 		}
 		return solveState;
 	}
 
+	private boolean solutionFromTryingOk() {
+		System.out.println("solutionFromTryingOk()");
+		
+		return true;
+	}
+
 	/**
 	 * TODO: zu langsam
+	 * 
 	 * @throws Exception
 	 */
 	private void solveWithPossibilities() throws Exception {
@@ -214,58 +224,66 @@ public class NonoSolver3 implements INonogramSolver {
 		System.out.println(methodName);
 		long startTime = new Date().getTime();
 		for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-//			Row row = getRows().get(rowInt);
-//			System.out.println(row.getPossibilities().size());
-//			getPossibilitiesForRowOrColumn(getIndexOfRow(row), false,
-//					row.getBlocks(),
-//					getFirstConditionOfRow(row.getBlocks(), null, 0),
-//					row.getPossibilities(), 0, 0);
-//			erasePossibilitiesInRow(row, row.getPossibilities());
-//			System.out.println(row.getPossibilities().size());
-//			System.out.println(row.getPossibilities());
-//			schnittmengeFindenInReihe(rowInt, row.getPossibilities());
+			// Row row = getRows().get(rowInt);
+			// System.out.println(row.getPossibilities().size());
+			// getPossibilitiesForRowOrColumn(getIndexOfRow(row), false,
+			// row.getBlocks(),
+			// getFirstConditionOfRow(row.getBlocks(), null, 0),
+			// row.getPossibilities(), 0, 0);
+			// erasePossibilitiesInRow(row, row.getPossibilities());
+			// System.out.println(row.getPossibilities().size());
+			// System.out.println(row.getPossibilities());
+			// schnittmengeFindenInReihe(rowInt, row.getPossibilities());
 		}
-		System.out.println(methodName + " in " + (new Date().getTime() - startTime) + " ms.");
+		System.out.println(methodName + " in "
+				+ (new Date().getTime() - startTime) + " ms.");
 	}
 
 	private void changeLastStacksMember() {
 		if (stacks != null && stacks.size() > 0) {
-         StackHolder lastStackHolder = stacks.get(stacks.size() - 1);
-         System.out.println("changeLastStacksMember():" + stacks.size() + " colors:" + riddle.getColours().size() + " indexOfCo:" + lastStackHolder.getIndexOfColor());
-         int indexOfColor = lastStackHolder.getIndexOfColor();
-         System.out.println("Index:" + indexOfColor);
-         String out = "";
-         out = showRow(out, lastStackHolder.getRow());
-         System.out.println("row " + lastStackHolder.getRow() + " before change:\n" + out);
-         indexOfColor++;
-         if (indexOfColor >= riddle.getColours().size()) {
-            riddle = new Riddle(lastStackHolder.getRiddle().getColours(), lastStackHolder.getRiddle().getWidth(), lastStackHolder.getRiddle().getHeight(), lastStackHolder.getRiddle().getRows(),
-                  lastStackHolder.getRiddle().getColumns(), lastStackHolder.getRiddle().getNono());
-            matrix = lastStackHolder.getMatrix();
-            System.out.println("removed");
-            stacks.removeLast();
-            changeLastStacksMember();
-         } else {
-            lastStackHolder.setIndexOfColor(indexOfColor);
-            if (lastStackHolder.getRow() == 1 && lastStackHolder.getColumn() == 17) {
-               System.out.println("ssss");
-            }
-            riddle = new Riddle(lastStackHolder.getRiddle().getColours(), lastStackHolder.getRiddle().getWidth(), lastStackHolder.getRiddle().getHeight(), lastStackHolder.getRiddle().getRows(),
-                  lastStackHolder.getRiddle().getColumns(), lastStackHolder.getRiddle().getNono());
-            matrix = lastStackHolder.getMatrix();
-            System.out.println("changed");
-            try {
-               writeCharInMatrix(lastStackHolder.getRow(), riddle.getColours().get(indexOfColor).getName(), lastStackHolder.getColumn());
-               out = "";
-               out = "after change:\n" + showRow(out, lastStackHolder.getRow());
-               System.out.println(out);
-            } catch (Exception e) {
-               System.out.println("OHNOOHNO");
-               e.printStackTrace();
-            }
-            System.out.println("endchangeLastStacksMember()");
-         }
-      }
+			StackHolder lastStackHolder = stacks.get(stacks.size() - 1);
+			System.out.println("changeLastStacksMember():" + stacks.size()
+					+ " colors:" + riddle.getColours().size() + " indexOfCo:"
+					+ lastStackHolder.getIndexOfColor());
+			int indexOfColor = lastStackHolder.getIndexOfColor();
+			System.out.println("Index:" + indexOfColor);
+			String out = "";
+			out = showRow(out, lastStackHolder.getRow());
+			System.out.println("row " + lastStackHolder.getRow()
+					+ " before change:\n" + out);
+			indexOfColor++;
+			if (indexOfColor >= riddle.getColours().size()) {
+				riddle = lastStackHolder.getRiddle();
+				matrix = lastStackHolder.getMatrix();
+				System.out.println("removed");
+				stacks.removeLast();
+				changeLastStacksMember();
+			} else {
+				lastStackHolder.setIndexOfColor(indexOfColor);
+				riddle = lastStackHolder.getRiddle();
+//						new Riddle(lastStackHolder.getRiddle().getColours(),
+//						lastStackHolder.getRiddle().getWidth(), lastStackHolder
+//								.getRiddle().getHeight(), lastStackHolder
+//								.getRiddle().getRows(), lastStackHolder
+//								.getRiddle().getColumns(), lastStackHolder
+//								.getRiddle().getNono());
+				matrix = lastStackHolder.getMatrix();
+				System.out.println("changed");
+				try {
+					writeCharInMatrix(lastStackHolder.getRow(), riddle
+							.getColours().get(indexOfColor).getName(),
+							lastStackHolder.getColumn());
+					out = "";
+					out = "after change:\n"
+							+ showRow(out, lastStackHolder.getRow());
+					System.out.println(out);
+				} catch (Exception e) {
+					System.out.println("OHNOOHNO");
+					e.printStackTrace();
+				}
+				System.out.println("endchangeLastStacksMember()");
+			}
+		}
 	}
 
 	private void setFirstStarToSomething() throws Exception {
@@ -276,7 +294,9 @@ public class NonoSolver3 implements INonogramSolver {
 				if (matrix[row][column] == '*') {
 					System.out.println("new Stack:" + row + "/" + column);
 					StackHolder stack = new StackHolder();
-					stack.setRiddle(riddle);
+					stack.setRiddle(new Riddle(riddle.getColours(), riddle
+							.getWidth(), riddle.getHeight(), riddle.getRows(),
+							riddle.getColumns(), riddle.getNono()));
 					stack.setMatrix(matrix, riddle.getHeight(),
 							riddle.getWidth());
 					stack.setRow(row);
@@ -494,8 +514,9 @@ public class NonoSolver3 implements INonogramSolver {
 
 	/**
 	 * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
-	 * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert.
-	 * TODO: Wenn in der Mitte prüfen, ob davor oder danach noch Platz für Block ist und gegebenfalls anpassen.
+	 * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. TODO: Wenn
+	 * in der Mitte prüfen, ob davor oder danach noch Platz für Block ist und
+	 * gegebenfalls anpassen.
 	 * 
 	 * @param row
 	 * @throws Exception
@@ -516,8 +537,10 @@ public class NonoSolver3 implements INonogramSolver {
 							&& columnInt == block.getMaxEndIndexNew()) {
 						block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
 						// Leeres Feld innerhalb des möglichen Blocks.
-					} else if (block.getMinStartIndexNew() < columnInt && block.getMaxEndIndexNew() > columnInt) {
-						checkSizesBeforeAndAfterEmptyInBlockRange(block, columnInt);
+					} else if (block.getMinStartIndexNew() < columnInt
+							&& block.getMaxEndIndexNew() > columnInt) {
+						checkSizesBeforeAndAfterEmptyInBlockRange(block,
+								columnInt);
 					}
 				}
 			}
@@ -526,22 +549,24 @@ public class NonoSolver3 implements INonogramSolver {
 
 	/**
 	 * TODO why not dom
+	 * 
 	 * @param block
 	 * @param columnInt
 	 */
 	private void checkSizesBeforeAndAfterEmptyInBlockRange(Block block,
 			int columnInt) {
 		if ((columnInt - block.getMinStartIndexNew()) < block.getHowMany()) {
-//			block.setMinStartIndexNew(columnInt +1);
+			// block.setMinStartIndexNew(columnInt +1);
 		} else if (block.getMaxEndIndexNew() - columnInt < block.getHowMany()) {
-//			block.setMaxEndIndexNew(columnInt - 1);
+			// block.setMaxEndIndexNew(columnInt - 1);
 		}
 	}
 
 	/**
 	 * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
-	 * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert.
-	 * TODO: Wenn in der Mitte prüfen, ob davor oder danach noch Platz für Block ist und gegebenfalls anpassen.
+	 * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. TODO: Wenn
+	 * in der Mitte prüfen, ob davor oder danach noch Platz für Block ist und
+	 * gegebenfalls anpassen.
 	 * 
 	 * @param column
 	 * @throws Exception
@@ -562,7 +587,8 @@ public class NonoSolver3 implements INonogramSolver {
 					} else if (!block.isGone()
 							&& rowInt == block.getMaxEndIndexNew()) {
 						block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
-					} else if (block.getMinStartIndexNew() < columnInt && block.getMaxEndIndexNew() > columnInt) {
+					} else if (block.getMinStartIndexNew() < columnInt
+							&& block.getMaxEndIndexNew() > columnInt) {
 						checkSizesBeforeAndAfterEmptyInBlockRange(block, rowInt);
 					}
 				}
@@ -1217,6 +1243,7 @@ public class NonoSolver3 implements INonogramSolver {
 
 	/**
 	 * Setzt MaxEndIndex der vorherigen Blöcke.
+	 * 
 	 * @param blocks
 	 * @param blockIndex
 	 * @param block
@@ -1241,6 +1268,7 @@ public class NonoSolver3 implements INonogramSolver {
 
 	/**
 	 * Setzt MinStartIndexNew der folgenden Blöcke.
+	 * 
 	 * @param blocks
 	 * @param blockIndex
 	 * @param block
@@ -2614,6 +2642,8 @@ public class NonoSolver3 implements INonogramSolver {
 	}
 
 	/**
+	 * Returns the Row of the current mfatrix as String.
+	 * 
 	 * @param out
 	 * @param i
 	 * @return

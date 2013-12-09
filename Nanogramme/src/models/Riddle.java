@@ -31,8 +31,14 @@ public class Riddle {
 		this.colours = colours;
 		this.width = width;
 		this.height = height;
-		this.rows = rows;
-		this.columns = columns;
+		this.rows = new LinkedList<Row>();
+		for (Row row : rows) {
+			this.rows.add(new Row(row));
+		}
+		this.columns = new LinkedList<Column>();
+		for (Column column : columns) {
+			this.columns.add(new Column(column));	
+		}
 		this.nono = nono;
 	}
 

@@ -32,6 +32,16 @@ public class Column {
 		possibilities = new ArrayList<LinkedList<String>>();
 	}
 
+	public Column(Column column) {
+		this.blocks = new ArrayList<Block>();
+		for (Block block : column.getBlocks()) {
+			this.blocks.add(new Block(block));
+		}
+		this.entriesSet = column.entriesSet;
+		this.isGone = column.isGone;
+		this.possibilities = new ArrayList<LinkedList<String>>(column.getPossibilities());
+	}
+
 	/**
 	 * Fügt einen Block hinzu und erhöht maxEntries um die Blockgröße.
 	 * 

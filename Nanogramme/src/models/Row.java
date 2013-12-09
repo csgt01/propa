@@ -33,6 +33,17 @@ public class Row {
 		possibilities = new ArrayList<LinkedList<String>>();
 	}
 
+	public Row(Row row) {
+		this.entriesSet = row.entriesSet;
+		this.isGone = row.isGone;
+		this.maxEntries = row.maxEntries;
+		this.blocks = new ArrayList<Block>();
+		for (Block block : row.getBlocks()) {
+			this.blocks.add(new Block(block));
+		}
+		this.possibilities = new ArrayList<LinkedList<String>>(row.getPossibilities());
+	}
+
 	public void addBlock(Block block) {
 		if (null == blocks) {
 			blocks = new ArrayList<Block>();
