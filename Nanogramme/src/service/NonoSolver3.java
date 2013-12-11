@@ -1008,6 +1008,7 @@ public class NonoSolver3 implements INonogramSolver {
 			checkEmptyInBetweenBlock(column);
 			fillWithEmptyAfterGone(column);
 			fillIfMinMaxEqualToHowMany(column);
+			fillEntriesFromBlockIntoMatrix(column);
 		}
 	}
 
@@ -1373,17 +1374,26 @@ public class NonoSolver3 implements INonogramSolver {
 					if (block.getColourString().equals(
 							checkBlock.getColourString())) {
 						checkBlock.setMaxEndIndexNew(minIndex - 2);
+						if (block.getMinStartIndexNew() <= checkBlock.getMinStartIndexNew()) {
+							block.setMinStartIndexNew(checkBlock.getMinStartIndexNew() + checkBlock.getHowMany() - 1);
+						}
 					} else {
 						checkBlock.setMaxEndIndexNew(minIndex - 1);
+						if (block.getMinStartIndexNew() <= checkBlock.getMinStartIndexNew()) {
+							block.setMinStartIndexNew(checkBlock.getMinStartIndexNew() + checkBlock.getHowMany());
+						}
 					}
 				}
+			}
+			if (block.getMinStartIndexNew() <= checkBlock.getMinStartIndexNew()) {
+				block.setMinStartIndexNew(checkBlock.getMinStartIndexNew() + checkBlock.getHowMany() - 1);
 			}
 		}
 	}
 
 	/**
 	 * Setzt MinStartIndexNew der folgenden Blöcke.
-	 * 
+	 * TODO: max darf nur nächster.max - nächster.howmany sein!!
 	 * @param blocks
 	 * @param blockIndex
 	 * @param block
@@ -1398,10 +1408,19 @@ public class NonoSolver3 implements INonogramSolver {
 					if (block.getColourString().equals(
 							checkBlock.getColourString())) {
 						checkBlock.setMinStartIndexNew(maxIndex + 2);
+						if (block.getMaxEndIndexNew() >= checkBlock.getMaxEndIndexNew()) {
+							block.setMaxEndIndexNew(checkBlock.getMaxEndIndexNew() - checkBlock.getHowMany() - 1);
+						}
 					} else {
 						checkBlock.setMinStartIndexNew(maxIndex + 1);
+						if (block.getMaxEndIndexNew() >= checkBlock.getMaxEndIndexNew()) {
+							block.setMaxEndIndexNew(checkBlock.getMaxEndIndexNew() - checkBlock.getHowMany());
+						}
 					}
 				}
+			}
+			if (block.getMaxEndIndexNew() >= checkBlock.getMaxEndIndexNew()) {
+				block.setMaxEndIndexNew(checkBlock.getMaxEndIndexNew() - checkBlock.getHowMany() - 1);
 			}
 		}
 	}
