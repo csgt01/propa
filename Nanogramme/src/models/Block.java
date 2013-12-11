@@ -86,6 +86,24 @@ public class Block {
 		gone = false;
 	}
 
+	
+
+	public Block(Block block) {
+		super();
+		this.howMany = block.howMany;
+		this.colour = block.colour;
+		this.startIndex = block.startIndex;
+		this.endIndex = block.endIndex;
+		this.gone = block.gone;
+		this.minStartIndex = block.minStartIndex;
+		this.maxEndIndex = block.maxEndIndex;
+		this.minStartIndexNew = block.minStartIndexNew;
+		this.maxEndIndexNew = block.maxEndIndexNew;
+		this.colorString = block.colorString;
+		this.colorChar = block.colorChar;
+		this.entriesSet = block.entriesSet;
+		this.indeces = block.indeces;
+	}
 
 	/**
 	 * @return the colorChar
