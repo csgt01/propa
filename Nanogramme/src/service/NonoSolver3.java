@@ -1211,6 +1211,10 @@ public class NonoSolver3 implements INonogramSolver {
 		}
 	}
 
+	/**
+	 * 
+	 * @param row
+	 */
 	private void checkEmptyInBetweenBlock(Row row) {
 
 		ArrayList<Block> blocks = row.getBlocks();
