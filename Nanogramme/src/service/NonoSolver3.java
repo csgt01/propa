@@ -191,6 +191,7 @@ public class NonoSolver3 implements INonogramSolver {
          while (run1) {
             int starCount = getStarCountInRiddle();
             solveIterative();
+//            solveRecursive();
             // solveWithPossibilities();
             if (starCount <= getStarCountInRiddle()) {
                // setFirstStarToSomething();
@@ -1204,6 +1205,9 @@ public class NonoSolver3 implements INonogramSolver {
             if (indeces.size() > 1) {
                for (int column = indeces.first() + 1; column < indeces.last(); column++) {
                   if (!indeces.contains(column)) {
+                     if (getIndexOfRow(row) == 2 && (column == 8 || column == 9)) {
+                        throw new Exception();
+                     }
                      indeces.add(column);
                      block.increaseEntriesSet(column);
                      writeCharInMatrix(getIndexOfRow(row), block.getColourString().charAt(0), column);
@@ -1311,36 +1315,60 @@ public class NonoSolver3 implements INonogramSolver {
       if (blocks != null && blocks.size() > 1) {
          for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
             Block block = blocks.get(blockIndex);
-            // TODO einrechnen, wenn gleiche Farben
+            // prüfen, ob min/maxIndex gleich einer anderen Farbe ist
+            if (matrix[getIndexOfRow(row)][block.getMaxEndIndexNew()] != '*' && matrix[getIndexOfRow(row)][block.getMaxEndIndexNew()] != block.getColorChar()) {
+               block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
+            }
+            if (matrix[getIndexOfRow(row)][block.getMaxEndIndexNew()] != '*' && matrix[getIndexOfRow(row)][block.getMaxEndIndexNew()] != block.getColorChar()) {
+               block.setMinStartIndexNew(block.getMinStartIndexNew() + 1);
+            }
             // es gibt noch einen nächsteb Block
             if (blockIndex + 1 < blocks.size()) {
                Block nextBlock = blocks.get(blockIndex + 1);
-               if (nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() < block.getMaxEndIndexNew()) {
-                  block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany());
+               if (block.getColorChar() != nextBlock.getColorChar()) {
+                  if (nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() < block.getMaxEndIndexNew()) {
+                     block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany());
+                  }
+               } else {
+                  if (nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() - 1 < block.getMaxEndIndexNew()) {
+                     block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() - 1);
+                  }
                }
-               if (block.getMinStartIndexNew() + block.getHowMany() > nextBlock.getMinStartIndexNew()) {
-                  nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany());
+               if (block.getColorChar() != nextBlock.getColorChar()) {
+                  if (block.getMinStartIndexNew() + block.getHowMany() > nextBlock.getMinStartIndexNew()) {
+                     nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany());
+                  }
+               } else {
+                  if (block.getMinStartIndexNew() + block.getHowMany() + 1 > nextBlock.getMinStartIndexNew()) {
+                     nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany() + 1);
+                  }
                }
                // kein nächster, also nur vorherigen anpassen!
             } else {
                if (blockIndex - 1 > -1) {
                   Block previousBlock = blocks.get(blockIndex - 1);
-                  if (previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() > block.getMinStartIndexNew()) {
-                     block.setMinStartIndexNew(previousBlock.getMinStartIndexNew() + previousBlock.getHowMany());
+                  if (block.getColorChar() != previousBlock.getColorChar()) {
+                     if (previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() > block.getMinStartIndexNew()) {
+                        block.setMinStartIndexNew(previousBlock.getMinStartIndexNew() + previousBlock.getHowMany());
+                     }
+                  } else {
+                     if (previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() + 1 > block.getMinStartIndexNew()) {
+                        block.setMinStartIndexNew(previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() + 1);
+                     }
                   }
                }
             }
          }
       }
    }
-   
+
    /**
-    * Geht durch die Blöcke der Spalte. Wenn es mehr als einen Block gibt, werden
-    * immer zwei aufeinander folgende Blöcke überprüft, ob der maxEndIndexNew -
-    * der Größe des 2. Blocks kleiner ist, als der maxEndIndexNew des ersten
-    * Blocks. Dann muss der Index des 1. Blocks angepasst werden. Gleiches
-    * geschieht für den minStartIndexNew, nur dass hier der 2. Block angepasst
-    * wird.
+    * Geht durch die Blöcke der Spalte. Wenn es mehr als einen Block gibt,
+    * werden immer zwei aufeinander folgende Blöcke überprüft, ob der
+    * maxEndIndexNew - der Größe des 2. Blocks kleiner ist, als der
+    * maxEndIndexNew des ersten Blocks. Dann muss der Index des 1. Blocks
+    * angepasst werden. Gleiches geschieht für den minStartIndexNew, nur dass
+    * hier der 2. Block angepasst wird.
     * 
     * @param column
     */
@@ -1350,22 +1378,48 @@ public class NonoSolver3 implements INonogramSolver {
       if (blocks != null && blocks.size() > 1) {
          for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
             Block block = blocks.get(blockIndex);
+            // maxIndex hat bereits eine andere Farbe!
+            if (matrix[block.getMaxEndIndexNew()][getIndexOfColumn(column)] != '*' && matrix[block.getMaxEndIndexNew()][getIndexOfColumn(column)] != block.getColorChar()) {
+               block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
+            }
+            if (matrix[block.getMinStartIndexNew()][getIndexOfColumn(column)] != '*' && matrix[block.getMinStartIndexNew()][getIndexOfColumn(column)] != block.getColorChar()) {
+               block.setMinStartIndexNew(block.getMinStartIndexNew() + 1);
+            }
             // TODO einrechnen, wenn gleiche Farben
             // es gibt noch einen nächsteb Block
             if (blockIndex + 1 < blocks.size()) {
                Block nextBlock = blocks.get(blockIndex + 1);
-               if (nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() < block.getMaxEndIndexNew()) {
-                  block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany());
+               if (block.getColorChar() != nextBlock.getColorChar()) {
+                  if (nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() < block.getMaxEndIndexNew()) {
+                     block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany());
+                  }
+               } else {
+                  if (nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() - 1 < block.getMaxEndIndexNew()) {
+                     block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() - 1);
+                  }
                }
-               if (block.getMinStartIndexNew() + block.getHowMany() > nextBlock.getMinStartIndexNew()) {
-                  nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany());
+               
+               if (block.getColorChar() != nextBlock.getColorChar()) {
+                  if (block.getMinStartIndexNew() + block.getHowMany() > nextBlock.getMinStartIndexNew()) {
+                     nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany());
+                  }
+               } else {
+                  if (block.getMinStartIndexNew() + block.getHowMany() + 1 > nextBlock.getMinStartIndexNew()) {
+                     nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany() + 1);
+                  }
                }
                // kein nächster, also nur vorherigen anpassen!
             } else {
                if (blockIndex - 1 > -1) {
                   Block previousBlock = blocks.get(blockIndex - 1);
-                  if (previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() > block.getMinStartIndexNew()) {
-                     block.setMinStartIndexNew(previousBlock.getMinStartIndexNew() + previousBlock.getHowMany());
+                  if (block.getColorChar() != previousBlock.getColorChar()) {
+                     if (previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() > block.getMinStartIndexNew()) {
+                        block.setMinStartIndexNew(previousBlock.getMinStartIndexNew() + previousBlock.getHowMany());
+                     }
+                  } else {
+                     if (previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() + 1 > block.getMinStartIndexNew()) {
+                        block.setMinStartIndexNew(previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() + 1);
+                     }
                   }
                }
             }
@@ -3071,9 +3125,10 @@ public class NonoSolver3 implements INonogramSolver {
     * 
     * @param row
     * @param possibilitiy
+    * @throws Exception 
     * @throws Throwable
     */
-   private char[][] fillListIntoMatrixInRow(char[][] checkMatrix, int row, LinkedList<String> possibilitiy) {
+   private char[][] fillListIntoMatrixInRow(char[][] checkMatrix, int row, LinkedList<String> possibilitiy) throws Exception {
       // String methodName = "fillListIntoMatrixInRow()";
       // // System.out.println(methodName);
       // long startTime = new Date().getTime();
@@ -3103,8 +3158,9 @@ public class NonoSolver3 implements INonogramSolver {
     * 
     * @param row
     * @param possibilitiy
+    * @throws Exception 
     */
-   private void fillListIntoMatrixInColumn(int column, LinkedList<String> possibilities) {
+   private void fillListIntoMatrixInColumn(int column, LinkedList<String> possibilities) throws Exception {
       // String methodName = "fillListIntoMatrixInColumn()";
       // // System.out.println(methodName);
       // long startTime = new Date().getTime();

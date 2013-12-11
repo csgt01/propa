@@ -81,8 +81,9 @@ public class Row {
 	 * Inkrementiert die Anzahl der gesetzten Felder.
 	 * 
 	 * @return true wenn alle Felder gesetzt sind.
+	 * @throws Exception 
 	 */
-	public boolean setEntriesSet(int column) {
+	public boolean setEntriesSet(int column) throws Exception {
 		entriesSet++;
 		if (entriesSet == maxEntries) {
 			setGone(true);

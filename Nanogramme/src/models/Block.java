@@ -322,12 +322,16 @@ public class Block {
     * Increase entriesSet.
     * 
     * @return true if the Block is gone after set.
+    * @throws Exception 
     */
-   public boolean increaseEntriesSet(int index) {
+   public boolean increaseEntriesSet(int index) throws Exception {
       // System.out.println("increaseEntriesSet()");
 
       if (!indeces.add(index)) {
          this.entriesSet++;
+         if (entriesSet > howMany) {
+            throw new Exception();
+         }
       }
       if (howMany == entriesSet) {
          setGone(true, indeces.first());

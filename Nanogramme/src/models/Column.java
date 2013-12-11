@@ -103,8 +103,9 @@ public class Column {
 	 * zugehörigen Block die entriesSet erhöht, falls der Block eindeutig ist.
 	 * 
 	 * @return true wenn alle Felder gesetzt sind.
+	 * @throws Exception 
 	 */
-	public boolean setEntriesSet(int row) {
+	public boolean setEntriesSet(int row) throws Exception {
 		entriesSet++;
 		if (blocks != null) {
 			if (blocks.size() == 1) {
