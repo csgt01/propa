@@ -15,3323 +15,3208 @@ import de.feu.propra.nonogramme.interfaces.INonogramSolver;
 
 public class NonoSolver3 implements INonogramSolver {
 
-	private RiddleService riddleLoader;
-
-	private Riddle riddle;
-
-	private char[][] matrix;
-
-	private static long possibillities = 0;
-	private static long checkedPossibillities = 0;
-	private static long timeFor;
-	private int solveState = 0;
-	ArrayList<char[][]> solutionsFromGuising = new ArrayList<char[][]>();
-
-	ArrayList<ArrayList<ArrayList<String>>> loesungenVonBrutForce = new ArrayList<ArrayList<ArrayList<String>>>();
-
-	/**
-	 * Konstruktor. Er kann mit einer bereits gefüllten matrix aufgerufen
-	 * werden. Sonst wird eine matrix initialisiert.
-	 * 
-	 * @param matrix
-	 */
-	public NonoSolver3(char[][] matrix, Riddle riddle) {
-
-		if (matrix == null) {
-
-		} else {
-			this.matrix = matrix;
-		}
-
-		this.riddle = riddle;
-
-	}
-
-	public NonoSolver3() {
-
-	}
-
-	@Override
-	public String getEmail() {
-		return "csgt01@gmail.com";
-	}
-
-	@Override
-	public String getMatrNr() {
-		return "8352437";
-	}
-
-	@Override
-	public String getName() {
-		return "Christian Schulte genannt Trux";
-	}
-
-	@Override
-	public void openFile(String arg0) throws IOException {
-		// // String methodName = "openFile(" + arg0 + ")";
-		// // System.out.println(methodName);
-		riddleLoader = new RiddleService();
-		riddle = riddleLoader.readFile(arg0);
-		matrix = riddleLoader.matrix;
-	}
-
-	@Override
-	public char[][] getSolution() {
-		// String methodName = "getSolution()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		if (matrix == null) {
-			setupMatrix();
-		}
-		setupBlocks();
-		while (solveState != 1) {
-			if (solveState == 2) {
-				System.out.println("solveState:2");
-				if (stacks != null && stacks.size() > 0) {
-					showMatrix();
-					showBlockGoneTrue();
-					showMatrix();
-					return matrix;
-					// changeLastStacksMember();
-				} else {
-					System.out.println("out");
-					if (solutionsFromGuising == null
-							|| solutionsFromGuising.size() != 1) {
-						System.out.println(solutionsFromGuising);
-						System.out.println("null");
-						showMatrix();
-						showBlockGoneTrue();
-						showMatrix();
-						return matrix;
-						// return null;
-					} else {
-						// System.out.println(matrix);
-						showMatrix();
-						showBlockGoneTrue();
-						showMatrix();
-						return solutionsFromGuising.get(0);
-					}
-				}
-			} else if (solveState == 3) {
-				try {
-					System.out.println("solveState:3");
-					showMatrix();
-					showBlockGoneTrue();
-					showMatrix();
-					return matrix;
-					// setFirstStarToSomething();
-					// solveState = 0;
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if (solveState == 4) {
-				System.out.println("solveState:4");
-				showMatrix();
-				showBlockGoneTrue();
-				showMatrix();
-				return matrix;
-				// changeLastStacksMember();
-				// solveState = 0;
-			}
-			solveState = 0;
-			solve();
-		}
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-		// if (solveState == 1) {
-		// System.out.println("Good");
-		showMatrix();
-		showBlockGoneTrue();
-		showMatrix();
-		return matrix;
-		// } else {
-		// System.out.println("Bad");
-		// return null;
-		// }
-	}
-
-	/*
-	 * if (getStarCountInRiddle() > 0) { getSizesOfPossibilities();
-	 * ArrayList<ArrayList<String>> theMatrix; // showMatrix(); //
-	 * showBlockGoneTrue(); System.out.println(getPossibillitySizeOfColumn() +
-	 * "!!!!"+getPossibillitySizeOfRow()); if (getPossibillitySizeOfColumn() >
-	 * getPossibillitySizeOfRow()) { //
-	 * System.out.println("vfdsfffdfsfdsdfsdfssdffdsfdsf1"); possibillities =
-	 * getPossibillitySizeOfRow(); timeFor = new Date().getTime(); theMatrix =
-	 * solveByBrutForceByRow( new ArrayList<ArrayList<String>>(), 0, 0); } else
-	 * { // System.out.println("vfdsfffdfsfdsdfsdfssdffdsfdsf2"); possibillities
-	 * = getPossibillitySizeOfColumn(); theMatrix = solveByBrutForceByColumn(
-	 * new ArrayList<ArrayList<String>>(), 0, 0); }
-	 * 
-	 * System.out.println("-----------------"); int loesungenSize =
-	 * loesungenVonBrutForce.size(); if (loesungenVonBrutForce != null &&
-	 * loesungenSize > 0) { for (ArrayList<ArrayList<String>> list :
-	 * loesungenVonBrutForce) { for (ArrayList<String> list444 : list) {
-	 * System.out.println(list444); } System.out.println("______________"); } if
-	 * (loesungenSize == 1) { // System.out.println("solved!"); solveState = 1;
-	 * } else { solveState = 2; System.out.println("many possibilities"); } }
-	 * else { solveState = 3; System.out.println("Not solveable"); }
-	 * 
-	 * System.out.println("-----------------"); } else { solveState = 1; }
-	 */
-
-	LinkedList<StackHolder> stacks = new LinkedList<StackHolder>();
-
-	/**
-	 * Managed den Ablauf des Lösens.
-	 * 
-	 * @return solveState:
-	 */
-	private int solve() {
-		System.out.println("solve()");
-		try {
-			findOverlappingAreasInColumn();
-			findOverlappingAreasInRow();
-			boolean run1 = true;
-			while (run1) {
-				int starCount = getStarCountInRiddle();
-				solveIterative();
-				// solveWithPossibilities();
-				if (starCount <= getStarCountInRiddle()) {
-					// setFirstStarToSomething();
-					solveState = 3;
-					run1 = false;
-				}
-				// mögliche Lösung gefunden
-				if (getStarCountInRiddle() == 0) {
-					// direkte Lösung, da vorher nicht geraten wurde
-					if (stacks == null || stacks.size() == 0) {
-						solveState = 1;
-						run1 = false;
-						if (solutionFromTryingOk()) {
-							// TODO: testen ob Möglichkeit ok!
-							solutionsFromGuising.add(matrix);
-							// andere Möglichkeiten beim Raten testen!
-						}
-					} else {
-						run1 = false;
-						// TODO: testen ob Möglichkeit ok!
-						solutionsFromGuising.add(matrix);
-						solveState = 4;
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			// showMatrix();
-			// System.out.println(stacks.size());
-			solveState = 2;
-		} finally {
-			// showMatrix();
-			// showBlockGoneTrue();
-		}
-		return solveState;
-	}
-
-	private boolean solutionFromTryingOk() {
-		System.out.println("solutionFromTryingOk()");
-
-		return true;
-	}
-
-	/**
-	 * TODO: zu langsam
-	 * 
-	 * @throws Exception
-	 */
-	private void solveWithPossibilities() throws Exception {
-		String methodName = "solveWithPossibilities()";
-		System.out.println(methodName);
-		long startTime = new Date().getTime();
-		for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-			// Row row = getRows().get(rowInt);
-			// System.out.println(row.getPossibilities().size());
-			// getPossibilitiesForRowOrColumn(getIndexOfRow(row), false,
-			// row.getBlocks(),
-			// getFirstConditionOfRow(row.getBlocks(), null, 0),
-			// row.getPossibilities(), 0, 0);
-			// erasePossibilitiesInRow(row, row.getPossibilities());
-			// System.out.println(row.getPossibilities().size());
-			// System.out.println(row.getPossibilities());
-			// schnittmengeFindenInReihe(rowInt, row.getPossibilities());
-		}
-		System.out.println(methodName + " in "
-				+ (new Date().getTime() - startTime) + " ms.");
-	}
-
-	private void changeLastStacksMember() {
-		if (stacks != null && stacks.size() > 0) {
-			StackHolder lastStackHolder = stacks.get(stacks.size() - 1);
-			// System.out.println("changeLastStacksMember():" + stacks.size()
-			// + " colors:" + riddle.getColours().size() + " indexOfCo:"
-			// + lastStackHolder.getIndexOfColor());
-			int indexOfColor = lastStackHolder.getIndexOfColor();
-			// System.out.println("Index:" + indexOfColor);
-			// String out = "";
-			// out = showRow(out, lastStackHolder.getRow());
-			// System.out.println("row " + lastStackHolder.getRow()
-			// + " before change:\n" + out);
-			indexOfColor++;
-			if (indexOfColor >= riddle.getColours().size()) {
-				riddle = lastStackHolder.getRiddle();
-				matrix = lastStackHolder.getMatrix();
-				System.out.println("removed");
-				stacks.removeLast();
-				changeLastStacksMember();
-			} else {
-				lastStackHolder.setIndexOfColor(indexOfColor);
-				riddle = lastStackHolder.getRiddle();
-				// new Riddle(lastStackHolder.getRiddle().getColours(),
-				// lastStackHolder.getRiddle().getWidth(), lastStackHolder
-				// .getRiddle().getHeight(), lastStackHolder
-				// .getRiddle().getRows(), lastStackHolder
-				// .getRiddle().getColumns(), lastStackHolder
-				// .getRiddle().getNono());
-				matrix = lastStackHolder.getMatrix();
-				System.out.println("changed");
-				try {
-					writeCharInMatrix(lastStackHolder.getRow(), riddle
-							.getColours().get(indexOfColor).getName(),
-							lastStackHolder.getColumn());
-					// out = "";
-					// out = "after change:\n"
-					// + showRow(out, lastStackHolder.getRow());
-					// System.out.println(out);
-				} catch (Exception e) {
-					System.out.println("OHNOOHNO");
-					e.printStackTrace();
-				}
-				System.out.println("endchangeLastStacksMember()");
-			}
-		}
-	}
-
-	private void setFirstStarToSomething() throws Exception {
-		System.out.println("setFirstStarToSomething()");
-		System.out.println("stacks size:" + stacks.size());
-		for (int row = 0; row < riddle.getHeight(); row++) {
-			for (int column = 0; column < riddle.getWidth(); column++) {
-				if (matrix[row][column] == '*') {
-					// System.out.println("new Stack:" + row + "/" + column);
-					StackHolder stack = new StackHolder();
-					stack.setRiddle(new Riddle(riddle.getColours(), riddle
-							.getWidth(), riddle.getHeight(), riddle.getRows(),
-							riddle.getColumns(), riddle.getNono()));
-					stack.setMatrix(matrix, riddle.getHeight(),
-							riddle.getWidth());
-					stack.setRow(row);
-					stack.setColumn(column);
-					stack.setIndexOfColor(-1);
-					stacks.add(stack);
-					writeCharInMatrix(row, '-', column);
-					// String out = "";
-					// out = showRow(out, row);
-					// System.out.println("new row:" + row + "\n" + out + "\n");
-					// System.out.println("Stacks:" + stacks.size());
-					System.out.println("setFirstStarToSomething() end");
-					return;
-				}
-			}
-		}
-
-	}
-
-	private void checkStarBelongingToBlockForRow(Row row) throws Exception {
-		ArrayList<Block> blocks = row.getBlocks();
-		if (blocks == null || blocks.size() == 0) {
-			return;
-		}
-		int rowInt = getIndexOfRow(row);
-		// System.out.println();
-		for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-			// showMatrix();System.out.println();
-			if (matrix[rowInt][columnInt] == '*') {
-				LinkedList<Integer> blockInts = new LinkedList<Integer>();
-				for (Block block : blocks) {
-					if (!block.isGone()
-							&& columnInt >= block.getMinStartIndexNew()
-							&& columnInt <= block.getMaxEndIndexNew()) {
-						blockInts.add(blocks.indexOf(block));
-
-					}
-				}
-				// System.out.println("row:" + rowInt + "columnInt: " +
-				// columnInt
-				// + "\n" + blockInts.size() + " " + blockInts);
-				if (blockInts.size() == 1) {
-					int starCount = 0;
-					for (int i = 0; i < riddle.getWidth(); i++) {
-						if (matrix[getIndexOfRow(row)][i] == '*') {
-							starCount++;
-						}
-					}
-					if ((row.getMaxEntries() - row.getEntriesSet() - starCount) == 0) {
-						// System.out.println("QQQQQrow:" + rowInt +
-						// "columnInt: "
-						// + columnInt);
-						fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1,
-								blocks.get(blockInts.get(0)).getColourString()
-										.charAt(0));
-					}
-				} else if (blockInts.size() == 0) {
-					// System.out.println("EMPTYEMPTYEMPTY");
-					fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1, '-');
-				}
-				// System.out.println("JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ");
-			}
-		}
-	}
-
-	/**
-	 * Prüft, ob eine gesetzte Farbe zu einem Block gehört. Wenn ja wird der
-	 * Index in indeces von Block geschrieben und die maximale und minimale
-	 * Ausdehnung geändert.
-	 * 
-	 * @param row
-	 * @throws Exception
-	 */
-	private void checkColorBelongingToBlockForRow(Row row) throws Exception {
-		ArrayList<Block> blocks = row.getBlocks();
-		if (blocks == null || blocks.size() == 0) {
-			return;
-		}
-		int rowInt = getIndexOfRow(row);
-		for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-			char c = matrix[rowInt][columnInt];
-			// color
-			if (c != '*' && c != '-') {
-				LinkedList<Integer> blockInts = new LinkedList<Integer>();
-				for (Block block : blocks) {
-					if (columnInt >= block.getMinStartIndexNew()
-							&& columnInt <= block.getMaxEndIndexNew()) {
-						blockInts.add(blocks.indexOf(block));
-
-					}
-				}
-				if (blockInts.size() == 1) {
-					Block block = blocks.get(blockInts.get(0));
-					int min = columnInt - block.getHowMany() + 1;
-					if (min < 0) {
-						min = 0;
-					}
-					int max = columnInt + block.getHowMany() - 1;
-					if (max >= riddle.getWidth()) {
-						max = riddle.getWidth() - 1;
-					}
-					if (max < block.getMaxEndIndexNew()) {
-						block.setMaxEndIndexNew(max);
-					}
-					if (min > block.getMinStartIndexNew()) {
-						block.setMinStartIndexNew(min);
-					}
-				} else if (blockInts.size() == 0) {
-					throw new Exception("Farbe gehört zu keinem Block:"
-							+ getIndexOfRow(row) + "/" + columnInt + ":" + c);
-				}
-			}// TODO: hier exception, wenn farbe zu keinem gehört
-		}
-	}
-
-	/**
-	 * Prüft, ob eine gesetzte Farbe zu einem Block gehört. Wenn ja wird der
-	 * Index in indeces von Block geschrieben und die maximale und minimale
-	 * Ausdehnung geändert.
-	 * 
-	 * @param column
-	 * @throws Exception
-	 */
-	private void checkColorBelongingToBlockForColumn(Column column)
-			throws Exception {
-		ArrayList<Block> blocks = column.getBlocks();
-		if (blocks == null || blocks.size() == 0) {
-			return;
-		}
-		int columnInt = getIndexOfColumn(column);
-		for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-			char c = matrix[rowInt][columnInt];
-			// color
-			if (c != '*' && c != '-') {
-				LinkedList<Integer> blockInts = new LinkedList<Integer>();
-				for (Block block : blocks) {
-					if (rowInt >= block.getMinStartIndexNew()
-							&& rowInt <= block.getMaxEndIndexNew()) {
-						blockInts.add(blocks.indexOf(block));
-
-					}
-				}
-				if (blockInts.size() == 1) {
-					Block block = blocks.get(blockInts.get(0));
-					int min = rowInt - block.getHowMany() + 1;
-					if (min < 0) {
-						min = 0;
-					}
-					int max = rowInt + block.getHowMany() - 1;
-					if (max >= riddle.getHeight()) {
-						max = riddle.getHeight() - 1;
-					}
-					if (max < block.getMaxEndIndexNew()) {
-						block.setMaxEndIndexNew(max);
-					}
-					if (min > block.getMinStartIndexNew()) {
-						block.setMinStartIndexNew(min);
-					}
-				} else if (blockInts.size() == 0) {
-					throw new Exception("Farbe gehört zu keinem Block:"
-							+ rowInt + "/" + getIndexOfColumn(column) + ":" + c);
-				}
-			}// TODO: hier exception, wenn farbe zu keinem gehört
-		}
-	}
-
-	private void checkStarBelongingToBlockForColumn(Column column)
-			throws Exception {
-		ArrayList<Block> blocks = column.getBlocks();
-		if (blocks == null || blocks.size() == 0) {
-			return;
-		}
-		int columnInt = getIndexOfColumn(column);
-		for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-			if (matrix[rowInt][columnInt] == '*') {
-				LinkedList<Integer> blockInts = new LinkedList<Integer>();
-				for (Block block : blocks) {
-					if (!block.isGone()
-							&& rowInt >= block.getMinStartIndexNew()
-							&& rowInt <= block.getMaxEndIndexNew()) {
-						blockInts.add(blocks.indexOf(block));
-
-					}
-				}
-				// System.out.println("KKKKKKKKKKKKKKKKKKK");
-				// System.out.println("row:" + rowInt + "columnInt: " +
-				// columnInt
-				// + "\n" + blockInts.size() + " " + blockInts);
-				if (blockInts.size() == 1) {
-					// TODO overlapping with it!
-					int starCount = 0;
-					for (int i = 0; i < riddle.getHeight(); i++) {
-						if (matrix[i][getIndexOfColumn(column)] == '*') {
-							starCount++;
-						}
-					}
-					if ((column.getMaxEntries() - column.getEntriesSet() - starCount) == 0) {
-						// System.out.println("QQQQQrow:" + rowInt +
-						// "columnInt: "
-						// + columnInt);
-						fillAreaInColumnWithChar(columnInt, rowInt, rowInt + 1,
-								blocks.get(blockInts.get(0)).getColourString()
-										.charAt(0));
-					}
-				} else if (blockInts.size() == 0) {
-					// System.out.println("EMPTYEMPTYEMPTY");
-					fillAreaInColumnWithChar(columnInt, rowInt, rowInt + 1, '-');
-				} else {
-
-				}
-				// System.out.println("LLLLLLLLLLLLLLLLL");
-			}
-		}
-	}
-
-	/**
-	 * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
-	 * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. TODO: Wenn
-	 * in der Mitte prüfen, ob davor oder danach noch Platz für Block ist und
-	 * gegebenfalls anpassen.
-	 * 
-	 * @param row
-	 * @throws Exception
-	 */
-	private void checkEmptyBelongingToBlockForRow(Row row) throws Exception {
-		ArrayList<Block> blocks = row.getBlocks();
-		if (blocks == null || blocks.size() == 0) {
-			return;
-		}
-		int rowInt = getIndexOfRow(row);
-		for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-			if (matrix[rowInt][columnInt] == '-') {
-				for (Block block : blocks) {
-					if (!block.isGone()
-							&& columnInt == block.getMinStartIndexNew()) {
-						block.setMinStartIndexNew(block.getMinStartIndexNew() + 1);
-					} else if (!block.isGone()
-							&& columnInt == block.getMaxEndIndexNew()) {
-						block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
-						// Leeres Feld innerhalb des möglichen Blocks.
-					} else if (block.getMinStartIndexNew() < columnInt
-							&& block.getMaxEndIndexNew() > columnInt) {
-						checkSizesBeforeAndAfterEmptyInBlockRange(block,
-								columnInt);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * TODO why not dom
-	 * 
-	 * @param block
-	 * @param columnInt
-	 */
-	private void checkSizesBeforeAndAfterEmptyInBlockRange(Block block,
-			int columnInt) {
-		if ((columnInt - block.getMinStartIndexNew()) < block.getHowMany()) {
-			// block.setMinStartIndexNew(columnInt +1);
-		} else if (block.getMaxEndIndexNew() - columnInt < block.getHowMany()) {
-			// block.setMaxEndIndexNew(columnInt - 1);
-		}
-	}
-
-	/**
-	 * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
-	 * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. TODO: Wenn
-	 * in der Mitte prüfen, ob davor oder danach noch Platz für Block ist und
-	 * gegebenfalls anpassen.
-	 * 
-	 * @param column
-	 * @throws Exception
-	 */
-	private void checkEmptyBelongingToBlockForColumn(Column column)
-			throws Exception {
-		ArrayList<Block> blocks = column.getBlocks();
-		if (blocks == null || blocks.size() == 0) {
-			return;
-		}
-		int columnInt = getIndexOfColumn(column);
-		for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-			if (matrix[rowInt][columnInt] == '-') {
-				for (Block block : blocks) {
-					if (!block.isGone()
-							&& rowInt == block.getMinStartIndexNew()) {
-						block.setMinStartIndexNew(block.getMinStartIndexNew() + 1);
-					} else if (!block.isGone()
-							&& rowInt == block.getMaxEndIndexNew()) {
-						block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
-					} else if (block.getMinStartIndexNew() < columnInt
-							&& block.getMaxEndIndexNew() > columnInt) {
-						checkSizesBeforeAndAfterEmptyInBlockRange(block, rowInt);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Diese Methode nimmt die erste Möglichkeit der ersten Reihe und ruft sich
-	 * rekursiv auf, bis sie bei der letzten Reihe angekommen ist. Dann wird
-	 * getestet, ob das Ergebnis eine gültige Lösung ist. Wenn nicht, wird die
-	 * nächate getestest.
-	 * 
-	 * @param rowInt
-	 * @param possibilityInt
-	 * @return
-	 */
-	private ArrayList<ArrayList<String>> solveByBrutForceByRow(
-			ArrayList<ArrayList<String>> listFromBefore, int rowInt,
-			int possibilityInt) {
-		// System.out.println("solveByBrutForce");
-		// // System.out.println("solveByBrutForce");
-		Integer rowIndex = new Integer(rowInt);
-
-		Integer possibilityIndex = new Integer(possibilityInt);
-		ArrayList<ArrayList<String>> returnList = new ArrayList<ArrayList<String>>(
-				listFromBefore);
-		if (rowIndex < riddle.getHeight()) {
-			// // System.out.println("Row:" + rowIndex);
-			Row row = getRows().get(rowIndex);
-			// eigene poss hinzufügen
-			while (possibilityIndex < row.getPossibilities().size()) {
-				// // System.out.println("pos:" + possibilityIndex);
-				returnList = new ArrayList<ArrayList<String>>(listFromBefore);
-				returnList.add(new ArrayList<String>(row.getPossibilities()
-						.get(possibilityIndex)));
-				// Wenn noch Reihen übrig sind Methode neu aufrufen
-				if (rowIndex + 1 < riddle.getHeight()) {
-					// // System.out.println("Row before call again:" +
-					// (rowIndex
-					// +1));
-					returnList = solveByBrutForceByRow(returnList,
-							(rowIndex + 1), 0);
-					// // System.out.println("Row after call again:" +
-					// (rowIndex));
-					if (null == returnList) {
-						possibilityIndex++;
-					} else {
-						return returnList;
-					}
-
-				} else {
-					// System.out.println("sdafasfddas" + returnList);
-					if (!checkStateOfWrittenMatrixByRow(returnList)) {
-						returnList = null;
-						possibilityIndex++;
-					} else {
-						return returnList;
-					}
-				}
-			}
-		}
-		return returnList;
-	}
-
-	/**
-	 * Prüft ob die in {@link #solveByBrutForceByRow(LinkedList, int, int)}
-	 * zusammengestellte Matrix korrekt ist.
-	 * 
-	 * @param returnList
-	 * @return
-	 */
-	private boolean checkStateOfWrittenMatrixByRow(
-			ArrayList<ArrayList<String>> returnList) {
-
-		// String methodName = "checkStateOfWrittenMatrix()";
-		// System.out.println(methodName);
-		Date startTime = new Date();
-
-		// Array anlegen
-		// System.out.println("XXXXXXXXXXX");
-		for (ArrayList<String> list : returnList) {
-			// System.out.println(list);
-		}
-
-		// eigentliche Tests:
-		int columnInt = 0;
-		String empty = "-";
-		while (columnInt < riddle.getWidth()) {
-			Column column = getColumns().get(columnInt);
-			ArrayList<Block> blocks = column.getBlocks();
-			if (blocks != null && blocks.size() > 0) {
-				int roInt = 0;
-				int blockInt = 0;
-				while (roInt < riddle.getHeight()) {
-					if (returnList.get(roInt).get(columnInt).equals(empty)) {
-						roInt++;
-					} else {
-						// Ist eine Farbe, aber keine Blöcke mehr!
-						if (blockInt >= blocks.size()) {
-							// System.out.println("false1: row: " + roInt
-							// + " column: " + columnInt);
-							return false;
-						} else {
-							// Block prüfen
-							Block block = blocks.get(blockInt);
-							for (int i = 0; i < block.getHowMany(); i++) {
-								if (!(returnList.get(roInt).get(columnInt)
-										.equals(block.getColourString()))) {
-									// System.out.println("false2: row: " +
-									// roInt
-									// + " column: " + columnInt);
-									return false;
-								}
-							}
-							roInt += block.getHowMany();
-							// Nächster Block ist gleiche Farbe, also muss -
-							// sein!
-							if ((blockInt + 1) < blocks.size()
-									&& block.getColourString().equals(
-											blocks.get(blockInt + 1)
-													.getColourString())
-									&& !returnList.get(roInt).get(columnInt)
-											.equals(empty)) {
-								// System.out.println("false3: row: " + roInt
-								// + " column: " + columnInt);
-								return false;
-							}
-							blockInt++;
-						}
-					}
-				}
-			} else {
-				// nur -!!!
-				for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-					if (!returnList.get(rowInt).get(columnInt).equals(empty)) {
-						// System.out.println("false4: row: " + rowInt
-						// + " column: " + columnInt);
-						return false;
-					}
-				}
-			}
-			columnInt++;
-		}
-
-		// System.out.println("YYYYYYYYYYY");
-		// showAMatrix(testMatrix);
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime.getTime()) + " ms");
-		returnList = null;
-		return true;
-	}
-
-	/**
-	 * Diese Methode nimmt die erste Möglichkeit der ersten Reihe und ruft sich
-	 * rekursiv auf, bis sie bei der letzten Reihe angekommen ist. Dann wird
-	 * getestet, ob das Ergebnis eine gültige Lösung ist. Wenn nicht, wird die
-	 * nächate getestest. TODO: für column!
-	 * 
-	 * @param coInt
-	 * @param possibilityInt
-	 * @return
-	 */
-	private ArrayList<ArrayList<String>> solveByBrutForceByColumn(
-			ArrayList<ArrayList<String>> listFromBefore, int coInt,
-			int possibilityInt) {
-		// System.out.println("solveByBrutForceC");
-		Integer columnInt = new Integer(coInt);
-		Integer possibilityIndex = new Integer(possibilityInt);
-		ArrayList<ArrayList<String>> returnList = new ArrayList<ArrayList<String>>(
-				listFromBefore);
-		if (columnInt < riddle.getWidth()) {
-			// // System.out.println("Row:" + rowIndex);
-			Column column = getColumns().get(columnInt);
-			// eigene poss hinzufügen
-			while (possibilityIndex < column.getPossibilities().size()) {
-				// // System.out.println("pos:" + possibilityIndex);
-				returnList = new ArrayList<ArrayList<String>>(listFromBefore);
-				returnList.add(new ArrayList<String>(column.getPossibilities()
-						.get(possibilityIndex)));
-				ArrayList<ArrayList<String>> newList = new ArrayList<ArrayList<String>>(
-						returnList);
-				// Wenn noch Reihen übrig sind Methode neu aufrufen
-				if (columnInt + 1 < riddle.getWidth()) {
-					// // System.out.println("Row before call again:" +
-					// (rowIndex
-					// +1));
-					returnList = solveByBrutForceByColumn(newList,
-							(columnInt + 1), 0);
-					// // System.out.println("Row after call again:" +
-					// (rowIndex));
-					if (null == returnList) {
-						possibilityIndex++;
-					} else {
-						loesungenVonBrutForce.add(returnList);
-						return null;
-					}
-
-				} else {
-					// System.out.println("sdafasfddas" + returnList);
-					if (!checkStateOfWrittenMatrixByColumn(returnList)) {
-						returnList = null;
-						possibilityIndex++;
-					} else {
-						return returnList;
-					}
-				}
-			}
-		}
-		// System.out.println("ff" + returnList);
-		return returnList;
-	}
-
-	/**
-	 * Prüft ob die in {@link #solveByBrutForceByRow(LinkedList, int, int)}
-	 * zusammengestellte Matrix korrekt ist.
-	 * 
-	 * @param returnList
-	 * @return
-	 */
-	private boolean checkStateOfWrittenMatrixByColumn(
-			ArrayList<ArrayList<String>> returnList) {
-
-		// String methodName = "checkStateOfWrittenMatrix()";
-		// System.out.println(methodName);
-		Date startTime = new Date();
-
-		// Array anlegen
-		// System.out.println("XXXXXXXXXXX");
-		for (ArrayList<String> list : returnList) {
-			// System.out.println(list);
-		}
-
-		// eigentliche Tests:
-		int rowInt = 0;
-		String empty = "-";
-		while (rowInt < riddle.getHeight()) {
-			Row column = getRows().get(rowInt);
-			ArrayList<Block> blocks = column.getBlocks();
-			if (blocks != null && blocks.size() > 0) {
-				int columnInt = 0;
-				int blockInt = 0;
-				while (columnInt < riddle.getWidth()) {
-					if (returnList.get(columnInt).get(rowInt).equals(empty)) {
-						columnInt++;
-					} else {
-						// Ist eine Farbe, aber keine Blöcke mehr!
-						if (blockInt >= blocks.size()) {
-							// // System.out.println("false1: row: " + roInt +
-							// " column: "
-							// + columnInt);
-							checkedPossibillities++;
-							if ((possibillities - checkedPossibillities) % 100000000 == 0) {
-								// System.gc();
-								// System.out
-								// .println("False1:"
-								// + (possibillities - checkedPossibillities));
-								long time = new Date().getTime();
-								// System.out.println("Time:" + (time -
-								// timeFor));
-								timeFor = time;
-							}
-							return false;
-						} else {
-							// Block prüfen
-							Block block = blocks.get(blockInt);
-							for (int i = 0; i < block.getHowMany(); i++) {
-								if (!(returnList.get(columnInt).get(rowInt)
-										.equals(block.getColourString()))) {
-									// System.out.println("false2: row: " +
-									// rowInt
-									// + " column: " + columnInt);
-									checkedPossibillities++;
-									if ((possibillities - checkedPossibillities) % 100000000 == 0) {
-										// System.gc();
-										long time = new Date().getTime();
-										// System.out.println("Time:"
-										// + (time - timeFor));
-										timeFor = time;
-									}
-									return false;
-								}
-							}
-							columnInt += block.getHowMany();
-							// Nächster Block ist gleiche Farbe, also muss -
-							// sein!
-							if ((blockInt + 1) < blocks.size()
-									&& block.getColourString().equals(
-											blocks.get(blockInt + 1)
-													.getColourString())
-									&& !returnList.get(columnInt).get(rowInt)
-											.equals(empty)) {
-								// System.out.println("false3: row: " + rowInt
-								// + " column: " + columnInt);
-								checkedPossibillities++;
-								if ((possibillities - checkedPossibillities) % 100000000 == 0) {
-									// System.gc();
-									long time = new Date().getTime();
-									// System.out.println("Time:"
-									// + (time - timeFor));
-									timeFor = time;
-								}
-								return false;
-							}
-							blockInt++;
-						}
-					}
-				}
-			} else {
-				// nur - !!!
-				for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-					if (!returnList.get(rowInt).get(columnInt).equals(empty)) {
-						// System.out.println("false4: row: " + rowInt
-						// + " column: " + columnInt);
-						checkedPossibillities++;
-						if ((possibillities - checkedPossibillities) % 100000000 == 0) {
-							// System.gc();
-						}
-						return false;
-					}
-				}
-			}
-			rowInt++;
-		}
-
-		// // System.out.println("YYYYYYYYYYY");
-		// showAMatrix(testMatrix);
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime.getTime()) + " ms");
-		checkedPossibillities++;
-		if ((possibillities - checkedPossibillities) % 100000000 == 0) {
-			// System.gc();
-			// System.out.println((possibillities - checkedPossibillities));
-			long time = new Date().getTime();
-			// System.out.println("Time:" + (time - timeFor));
-			timeFor = time;
-		}
-		return true;
-	}
-
-	private void solveIterative() throws Exception {
-		String methodName = "solveIterative()";
-		System.out.println(methodName);
-		long startTime = new Date().getTime();
-		boolean run = true;
-		while (run) {
-			int starCountInRiddle = getStarCountInRiddle();
-			// showMatrix();
-			fillBlocksOnBeginningOfColumns();
-			// showMatrix();
-			fillBlocksOnEndOfColumns();
-			// showMatrix();
-			fillBlocksOnBeginningOfRows();
-			// showMatrix();
-			fillBlocksOnEndOfRows();
-			// showMatrix();
-			checkRowsAndColumnsForGone();
-			// showMatrix();
-			checkByBlock();
-			fillBlocksOnEndOfColumns();
-			if (starCountInRiddle <= getStarCountInRiddle()) {
-				run = false;
-			}
-		}
-		System.out.println("Time for " + methodName + ": "
-				+ (new Date().getTime() - startTime) + " ms");
-		showMatrix();
-	}
-
-	/**
-	 * Ruft mehrere Methoden auf, die versuchen das Rätsel auf Blockebene zu
-	 * lösen.
-	 * 
-	 * @throws Exception
-	 */
-	private void checkByBlock() throws Exception {
-		for (Row row : getRows()) {
-			// System.out.println("ROWROWROWROWROWOROWRO" + getIndexOfRow(row));
-			updateMinAndMaxIndexOfBlocks(row);
-			checkStarBelongingToBlockForRow(row);
-			checkEmptyBelongingToBlockForRow(row);
-			overlapBlocksInRow(row);
-			checkColorBelongingToBlockForRow(row);
-			checkIfEntriesNotSetInBlock(row);
-			checkEmptyInBetweenBlock(row);
-			fillWithEmptyAfterGone(row);
-			fillIfMinMaxEqualToHowMany(row);
-			fillEntriesFromBlockIntoMatrix(row);
-		}
-		for (Column column : getColumns()) {
-			updateMinAndMaxIndexOfBlocks(column);
-			checkStarBelongingToBlockForColumn(column);
-			checkEmptyBelongingToBlockForColumn(column);
-			overlapBlocksInColumn(column);
-			checkColorBelongingToBlockForColumn(column);
-			checkEmptyInBetweenBlock(column);
-			fillWithEmptyAfterGone(column);
-			fillIfMinMaxEqualToHowMany(column);
-			fillEntriesFromBlockIntoMatrix(column);
-		}
-	}
-
-	/**
-	 * Schreibt die bereits gesetzten Felder des Blocks in die Matrix.
-	 * 
-	 * @param row
-	 * @throws Exception
-	 */
-	private void fillEntriesFromBlockIntoMatrix(Row row) throws Exception {
-
-		ArrayList<Block> blocks = row.getBlocks();
-		if (blocks == null || blocks.size() == 0) {
-			return;
-		}
-		for (Block block : blocks) {
-			if (!block.isGone()) {
-				TreeSet<Integer> indeces = block.getIndeces();
-				if (indeces.size() > 1) {
-					for (int column : indeces) {
-						writeCharInMatrix(getIndexOfRow(row), block
-								.getColourString().charAt(0), column);
-					}
-				}
-			}
-		}
-
-	}
-
-	/**
-	 * Schreibt die bereits gesetzten Felder des Blocks in die Matrix.
-	 * 
-	 * @param row
-	 * @throws Exception
-	 */
-	private void fillEntriesFromBlockIntoMatrix(Column column) throws Exception {
-
-		ArrayList<Block> blocks = column.getBlocks();
-		if (blocks == null || blocks.size() == 0) {
-			return;
-		}
-		for (Block block : blocks) {
-			if (!block.isGone()) {
-				TreeSet<Integer> indeces = block.getIndeces();
-				if (indeces.size() > 1) {
-					for (int row : indeces) {
-						writeCharInMatrix(row, block.getColourString()
-								.charAt(0), getIndexOfColumn(column));
-					}
-				}
-			}
-		}
-
-	}
-
-	/**
-	 * Füllt den Bereich zwischen MinStartIndexNew und MaxEndIndexNew des
-	 * Blockes, falls die Differenz gleich der Größe des Blocks ist
-	 * 
-	 * @param row
-	 * @throws Exception
-	 */
-	private void fillIfMinMaxEqualToHowMany(Row row) throws Exception {
-		ArrayList<Block> blocks = row.getBlocks();
-		if (blocks == null || blocks.size() < 2) {
-			return;
-		}
-		for (Block block : blocks) {
-			if (block.getMaxEndIndexNew() + 1 - block.getMinStartIndexNew() == block
-					.getHowMany()) {
-				fillAreaInRowWithChar(getIndexOfRow(row),
-						block.getMinStartIndexNew(),
-						block.getMaxEndIndexNew() + 1, block.getColorChar());
-				block.setGone(true, block.getMinStartIndexNew());
-			}
-		}
-	}
-
-	/**
-	 * Füllt den Bereich zwischen MinStartIndexNew und MaxEndIndexNew des
-	 * Blockes, falls die Differenz gleich der Größe des Blocks ist
-	 * 
-	 * @param column
-	 * @throws Exception
-	 */
-	private void fillIfMinMaxEqualToHowMany(Column column) throws Exception {
-		ArrayList<Block> blocks = column.getBlocks();
-		if (blocks == null || blocks.size() < 2) {
-			return;
-		}
-		for (Block block : blocks) {
-			if (block.getMaxEndIndexNew() + 1 - block.getMinStartIndexNew() == block
-					.getHowMany()) {
-				fillAreaInColumnWithChar(getIndexOfColumn(column),
-						block.getMinStartIndexNew(),
-						block.getMaxEndIndexNew() + 1, block.getColorChar());
-				block.setGone(true, block.getMinStartIndexNew());
-			}
-		}
-	}
-
-	/**
-	 * Falls die Reihe fertig ist, werden alle "*" mit "-" gefüllt.
-	 * 
-	 * @param row
-	 * @throws Exception
-	 */
-	private void fillWithEmptyAfterGone(Row row) throws Exception {
-		ArrayList<Block> blocks = row.getBlocks();
-		if (blocks == null || blocks.size() < 2) {
-			return;
-		}
-		int indexOfRow = getIndexOfRow(row);
-		for (int blockInt = 0; blockInt < blocks.size(); blockInt++) {
-			Block block = blocks.get(blockInt);
-			if (block.isGone()) {
-				if (blockInt == 0) {
-					if (block.getColourString().equals(
-							blocks.get(blockInt + 1).getColourString())
-							&& block.getEndIndex() != null
-							&& (block.getEndIndex() + 1) < riddle.getWidth()) {
-						writeCharInMatrix(indexOfRow, '-',
-								block.getEndIndex() + 1);
-					}
-				} else if (blockInt == blocks.size() - 1) {
-					if (block.getColourString().equals(
-							blocks.get(blockInt - 1).getColourString())
-							&& block.getStartIndex() != null
-							&& (block.getStartIndex() - 1) > -1) {
-						writeCharInMatrix(indexOfRow, '-',
-								block.getStartIndex() - 1);
-					}
-				} else {
-					if (block.getColourString().equals(
-							blocks.get(blockInt + 1).getColourString())
-							&& block.getEndIndex() != null
-							&& (block.getEndIndex() + 1) < riddle.getWidth()) {
-						writeCharInMatrix(indexOfRow, '-',
-								block.getEndIndex() + 1);
-					}
-					if (block.getColourString().equals(
-							blocks.get(blockInt - 1).getColourString())
-							&& block.getStartIndex() != null
-							&& (block.getStartIndex() - 1) > -1) {
-						writeCharInMatrix(indexOfRow, '-',
-								block.getStartIndex() - 1);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Falls die Spalte fertig ist, werden alle "*" mit "-" gefüllt.
-	 * 
-	 * @param spalte
-	 * @throws Exception
-	 */
-	private void fillWithEmptyAfterGone(Column column) throws Exception {
-		ArrayList<Block> blocks = column.getBlocks();
-		if (blocks == null || blocks.size() < 2) {
-			return;
-		}
-		int indexOfColumn = getIndexOfColumn(column);
-		for (int blockInt = 0; blockInt < blocks.size(); blockInt++) {
-			Block block = blocks.get(blockInt);
-			if (block.isGone()) {
-				if (blockInt == 0) {
-					if (block.getColourString().equals(
-							blocks.get(blockInt + 1).getColourString())
-							&& block.getEndIndex() != null
-							&& (block.getEndIndex() + 1) < riddle.getHeight()) {
-						writeCharInMatrix(block.getEndIndex() + 1, '-',
-								indexOfColumn);
-					}
-				} else if (blockInt == blocks.size() - 1) {
-					if (block.getColourString().equals(
-							blocks.get(blockInt - 1).getColourString())
-							&& block.getStartIndex() != null
-							&& (block.getStartIndex() - 1) > -1) {
-						writeCharInMatrix(block.getStartIndex() - 1, '-',
-								indexOfColumn);
-					}
-				} else {
-					if (block.getColourString().equals(
-							blocks.get(blockInt + 1).getColourString())
-							&& block.getEndIndex() != null
-							&& (block.getEndIndex() + 1) < riddle.getHeight()) {
-						writeCharInMatrix(block.getEndIndex() + 1, '-',
-								indexOfColumn);
-					}
-					if (block.getColourString().equals(
-							blocks.get(blockInt - 1).getColourString())
-							&& block.getStartIndex() != null
-							&& (block.getStartIndex() - 1) > -1) {
-						writeCharInMatrix(block.getStartIndex() - 1, '-',
-								indexOfColumn);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * 
-	 * @param row
-	 */
-	private void checkEmptyInBetweenBlock(Row row) {
-
-		ArrayList<Block> blocks = row.getBlocks();
-		if (blocks == null || blocks.size() == 0) {
-			return;
-		}
-		int indexOfRow = getIndexOfRow(row);
-		for (Block block : blocks) {
-			for (int i = block.getMinStartIndexNew(); i <= block
-					.getMaxEndIndexNew(); i++) {
-				if (matrix[indexOfRow][i] == '-') {
-					if ((i - block.getMinStartIndexNew()) < block.getHowMany()) {
-						block.setMinStartIndexNew(i + 1);
-					}
-				}
-			}
-			for (int i = block.getMaxEndIndexNew(); i >= block
-					.getMinStartIndexNew(); i--) {
-				if (matrix[indexOfRow][i] == '-') {
-					if ((block.getMaxEndIndexNew() - i) < block.getHowMany()) {
-						block.setMaxEndIndexNew(i - 1);
-					}
-				}
-			}
-		}
-	}
-
-	private void checkEmptyInBetweenBlock(Column column) {
-
-		ArrayList<Block> blocks = column.getBlocks();
-		if (blocks == null || blocks.size() == 0) {
-			return;
-		}
-		int indexOfColumn = getIndexOfColumn(column);
-		for (Block block : blocks) {
-			for (int i = block.getMinStartIndexNew(); i <= block
-					.getMaxEndIndexNew(); i++) {
-				if (matrix[i][indexOfColumn] == '-') {
-					if ((i - block.getMinStartIndexNew()) < block.getHowMany()) {
-						block.setMinStartIndexNew(i + 1);
-					}
-				}
-			}
-			for (int i = block.getMaxEndIndexNew(); i >= block
-					.getMinStartIndexNew(); i--) {
-				if (matrix[i][indexOfColumn] == '-') {
-					if ((block.getMaxEndIndexNew() - i) < block.getHowMany()) {
-						block.setMaxEndIndexNew(i - 1);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Testet, ob Felder innerhalb von Blöcken gesetzt werden können. Z.B. wenn
-	 * in indeces 2 und 5 eingetragen sind, ,müssen 3 und vier auch gesetzt
-	 * werden.
-	 * 
-	 * @param row
-	 * @throws Exception
-	 */
-	private void checkIfEntriesNotSetInBlock(Row row) throws Exception {
-
-		ArrayList<Block> blocks = row.getBlocks();
-		if (blocks == null || blocks.size() == 0) {
-			return;
-		}
-		for (Block block : blocks) {
-			if (!block.isGone()) {
-				TreeSet<Integer> indeces = block.getIndeces();
-				if (indeces.size() > 1) {
-					for (int column = indeces.first() + 1; column < indeces
-							.last(); column++) {
-						if (!indeces.contains(column)) {
-							indeces.add(column);
-							block.increaseEntriesSet(column);
-							writeCharInMatrix(getIndexOfRow(row), block
-									.getColourString().charAt(0), column);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Setzt Min/MaxIndex von Blöcken neu, falls der vorherige oder nachfolgende
-	 * gone ist.
-	 * 
-	 * @param row
-	 */
-	private void updateMinAndMaxIndexOfBlocks(Row row) {
-		// System.out.println("updateMinAndMaxIndexOfBlocks:" +
-		// getIndexOfRow(row));
-		// showBlockGoneTrue();
-		ArrayList<Block> blocks = row.getBlocks();
-		if (blocks != null && blocks.size() > 1) {
-			for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
-				Block block = blocks.get(blockIndex);
-				if (block.isGone()) {
-					int minIndex = block.getMinStartIndexNew();
-					int maxIndex = block.getMaxEndIndexNew();
-					// erster Block, also nur nachfolgende updaten!
-					if (blockIndex == 0) {
-						updateBlocksAfterThisBlock(blocks, blockIndex, block,
-								maxIndex);
-						// letzer Block, also nur davor updaten
-					} else if ((blockIndex + 1) == blocks.size()) {
-						updateBlocksBeforeThisBlock(blocks, blockIndex, block,
-								minIndex);
-					} else {
-						updateBlocksAfterThisBlock(blocks, blockIndex, block,
-								maxIndex);
-						updateBlocksBeforeThisBlock(blocks, blockIndex, block,
-								minIndex);
-					}
-				} else {
-					// wenn der vorherige/nachfolgende char von Min/Max gleich
-					// block.char dann erhöhen/erniedrigen
-					int minIndex = block.getMinStartIndexNew();
-					int maxIndex = block.getMaxEndIndexNew();
-					while ((minIndex - 1 > -1)
-							&& matrix[getIndexOfRow(row)][minIndex - 1] == block
-									.getColorChar()) {
-						minIndex++;
-						block.setMinStartIndexNew(minIndex);
-					}
-					while ((maxIndex + 1 < riddle.getWidth())
-							&& matrix[getIndexOfRow(row)][maxIndex + 1] == block
-									.getColorChar()) {
-						maxIndex--;
-						block.setMaxEndIndexNew(maxIndex);
-					}
-				}
-			}
-		}
-		// System.out.println("bliblarow2:" + getIndexOfRow(row));
-		// showBlockGoneTrue();
-	}
-
-	/**
-	 * Setzt MaxEndIndex der vorherigen Blöcke.
-	 * 
-	 * @param blocks
-	 * @param blockIndex
-	 * @param block
-	 * @param minIndex
-	 */
-	private void updateBlocksBeforeThisBlock(ArrayList<Block> blocks,
-			int blockIndex, Block block, int minIndex) {
-		for (int newIndex = (blockIndex - 1); newIndex > -1; newIndex--) {
-			Block checkBlock = blocks.get(newIndex);
-			if (!checkBlock.isGone()) {
-				if (checkBlock.getMaxEndIndexNew() >= minIndex) {
-					if (block.getColourString().equals(
-							checkBlock.getColourString())) {
-						checkBlock.setMaxEndIndexNew(minIndex - 2);
-						if (block.getMinStartIndexNew() <= checkBlock.getMinStartIndexNew()) {
-							block.setMinStartIndexNew(checkBlock.getMinStartIndexNew() + checkBlock.getHowMany() - 1);
-						}
-					} else {
-						checkBlock.setMaxEndIndexNew(minIndex - 1);
-						if (block.getMinStartIndexNew() <= checkBlock.getMinStartIndexNew()) {
-							block.setMinStartIndexNew(checkBlock.getMinStartIndexNew() + checkBlock.getHowMany());
-						}
-					}
-				}
-			}
-			if (block.getMinStartIndexNew() <= checkBlock.getMinStartIndexNew()) {
-				block.setMinStartIndexNew(checkBlock.getMinStartIndexNew() + checkBlock.getHowMany() - 1);
-			}
-		}
-	}
-
-	/**
-	 * Setzt MinStartIndexNew der folgenden Blöcke.
-	 * TODO: max darf nur nächster.max - nächster.howmany sein!!
-	 * @param blocks
-	 * @param blockIndex
-	 * @param block
-	 * @param maxIndex
-	 */
-	private void updateBlocksAfterThisBlock(ArrayList<Block> blocks,
-			int blockIndex, Block block, int maxIndex) {
-		for (int newIndex = (blockIndex + 1); newIndex < blocks.size(); newIndex++) {
-			Block checkBlock = blocks.get(newIndex);
-			if (!checkBlock.isGone()) {
-				if (checkBlock.getMinStartIndexNew() <= maxIndex) {
-					if (block.getColourString().equals(
-							checkBlock.getColourString())) {
-						checkBlock.setMinStartIndexNew(maxIndex + 2);
-						if (block.getMaxEndIndexNew() >= checkBlock.getMaxEndIndexNew()) {
-							block.setMaxEndIndexNew(checkBlock.getMaxEndIndexNew() - checkBlock.getHowMany() - 1);
-						}
-					} else {
-						checkBlock.setMinStartIndexNew(maxIndex + 1);
-						if (block.getMaxEndIndexNew() >= checkBlock.getMaxEndIndexNew()) {
-							block.setMaxEndIndexNew(checkBlock.getMaxEndIndexNew() - checkBlock.getHowMany());
-						}
-					}
-				}
-			}
-			if (block.getMaxEndIndexNew() >= checkBlock.getMaxEndIndexNew()) {
-				block.setMaxEndIndexNew(checkBlock.getMaxEndIndexNew() - checkBlock.getHowMany() - 1);
-			}
-		}
-	}
-
-	private void updateMinAndMaxIndexOfBlocks(Column column) {
-		ArrayList<Block> blocks = column.getBlocks();
-		if (blocks != null && blocks.size() > 1) {
-			for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
-				Block block = blocks.get(blockIndex);
-				if (block.isGone()) {
-					int minIndex = block.getMinStartIndexNew();
-					int maxIndex = block.getMaxEndIndexNew();
-					// erster Block, also nur nachfolgende updaten!
-					if (blockIndex == 0) {
-						updateBlocksAfterThisBlock(blocks, blockIndex, block,
-								maxIndex);
-					} else if ((blockIndex + 1) == blocks.size()) {
-						updateBlocksBeforeThisBlock(blocks, blockIndex, block,
-								minIndex);
-					} else {
-						updateBlocksAfterThisBlock(blocks, blockIndex, block,
-								maxIndex);
-						updateBlocksBeforeThisBlock(blocks, blockIndex, block,
-								minIndex);
-					}
-				} else {
-					// wenn der vorherige/nachfolgende char von Min/Max gleich
-					// block.char dann erhöhen/erniedrigen
-					int minIndex = block.getMinStartIndexNew();
-					int maxIndex = block.getMaxEndIndexNew();
-					while ((minIndex - 1 > -1)
-							&& matrix[minIndex - 1][getIndexOfColumn(column)] == block
-									.getColorChar()) {
-						minIndex++;
-						block.setMinStartIndexNew(minIndex);
-					}
-					while ((maxIndex + 1 < riddle.getHeight())
-							&& matrix[maxIndex + 1][getIndexOfColumn(column)] == block
-									.getColorChar()) {
-						maxIndex--;
-						block.setMaxEndIndexNew(maxIndex);
-					}
-				}
-			}
-		}
-	}
-
-	private void overlapBlocksInRow(Row row) throws Exception {
-		// System.out.println("Row:" + getIndexOfRow(row));
-		// showMatrix();
-		// showBlockGoneTrue();
-		ArrayList<Block> blocks = row.getBlocks();
-		if (blocks != null && blocks.size() > 0) {
-			for (Block block : blocks) {
-				if (!block.isGone()) {
-					int start = block.getMinStartIndexNew();
-					LinkedList<String> first = initializeBlockList(block, start);
-					LinkedList<String> workingList = new LinkedList<String>();
-					workingList.addAll(first);
-					LinkedList<Integer> result = new LinkedList<Integer>();
-					for (int i = 0; i < first.size(); i++) {
-						if (!first.get(i).equals("-")) {
-							result.add(i);
-						}
-					}
-					// System.out.println(result);
-					String removed;
-					// so lange nach rechts verschieben, bis Ende erreicht und
-					// zu
-					// asd hinzufügen.
-					while (workingList.getLast().equals("-")) {
-						removed = workingList.removeLast();
-						workingList.addFirst(removed);
-						int size = result.size();
-						for (int i = size - 1; i > -1; i--) {
-							Integer index = result.get(i);
-							if (!first.get(index)
-									.equals(workingList.get(index))) {
-								result.remove(result.get(i));
-							}
-						}
-					}
-					// System.out.println(result);
-					for (Integer column : result) {
-						char charAt = first.get(column).charAt(0);
-						writeCharInMatrix(getIndexOfRow(row), charAt,
-								(column + start));
-					}
-				}
-			}
-		}
-	}
-
-	private LinkedList<String> initializeBlockList(Block block, int start) {
-		int end = block.getMaxEndIndexNew();
-		int colorsSet = 0;
-		LinkedList<String> first = new LinkedList<String>();
-		for (int i = 0; i < block.getHowMany(); i++) {
-			first.add(String.valueOf(block.getColour().getName()));
-			colorsSet++;
-		}
-		int ij = end - start + 1 - colorsSet;
-		while (ij > 0) {
-			first.add("-");
-			ij--;
-		}
-		return first;
-	}
-
-	private void overlapBlocksInColumn(Column column) throws Exception {
-		ArrayList<Block> blocks = column.getBlocks();
-		if (blocks != null && blocks.size() > 0) {
-			for (Block block : blocks) {
-				if (!block.isGone()) {
-					int start = block.getMinStartIndexNew();
-					LinkedList<String> first = initializeBlockList(block, start);
-					LinkedList<String> workingList = new LinkedList<String>();
-					workingList.addAll(first);
-					LinkedList<Integer> result = new LinkedList<Integer>();
-					for (int i = 0; i < first.size(); i++) {
-						if (!first.get(i).equals("-")) {
-							result.add(i);
-						}
-					}
-					String removed;
-					// so lange nach rechts verschieben, bis Ende erreicht und
-					// zu
-					// asd hinzufügen.
-					while (workingList.getLast().equals("-")) {
-						moveBlocksInList(workingList, first, result);
-					}
-					for (Integer row : result) {
-						char charAt = first.get(row).charAt(0);
-						writeCharInMatrix((row + start), charAt,
-								getIndexOfColumn(column));
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Erstellt eine neue Matrix mit der Breite und Höhe des Rätsels und füllt
-	 * diese mit '*'.
-	 */
-	private void setupMatrix() {
-		// // String methodName = "setupBlocks()";
-		// // System.out.println(methodName);
-		// // long startTime = new Date().getTime();
-		matrix = new char[riddle.getHeight()][riddle.getWidth()];
-		for (int i = 0; i < riddle.getHeight(); i++) {
-			for (int j = 0; j < riddle.getWidth(); j++) {
-				matrix[i][j] = '*';
-			}
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Setzt die initialen Werte für minStartIndex und maxStartIndex. Wichtig
-	 * für {@link #solveRecursive()}.
-	 */
-	private void setupBlocks() {
-		// // String methodName = "setupBlocks()";
-		// // System.out.println(methodName);
-		// // long startTime = new Date().getTime();
-		// alle Reihen durchgehen.
-		for (Row row : getRows()) {
-			ArrayList<Block> blocks = row.getBlocks();
-			// int index = getIndexOfRow(row);
-			// // System.out.println(index);
-			// Blöcke durchgehen.
-			setupBlocksInRowAndColumn(blocks, riddle.getWidth());
-		}
-
-		for (Column column : getColumns()) {
-			ArrayList<Block> blocks = column.getBlocks();
-			// Blöcke durchgehen.
-			setupBlocksInRowAndColumn(blocks, riddle.getHeight());
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	// Iterativ
-
-	/**
-	 * Geht durch die Spalten und sucht nach überlappenden Bereichen. Dabei
-	 * werden die Blöcke aneinander gelegt und bis ans Ende der Spalten
-	 * geschoben. An Stellen die immer gefüllt sind kann die Matrix gefüllt
-	 * werden.
-	 * 
-	 * @throws Exception
-	 *             falls eine Stelle in der Matrix schon mit einem anderen char
-	 *             gefüllt ist.
-	 */
-	private void findOverlappingAreasInColumn() throws Exception {
-		// String methodName = "findOverlappingAreasInColumn()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-			// Liste, die zum schieben der Blöcke genutzt wird
-			LinkedList<String> workingList = new LinkedList<String>();
-			// Vergleichsliste
-			LinkedList<String> firstList = new LinkedList<String>();
-			Column column = riddle.getColumns().get(columnInt);
-			// // System.out.println(column);
-			ArrayList<Block> blocks = column.getBlocks();
-			// nur wenn es Blöcke gibt
-			if (blocks.size() != 0) {
-				Block lastBlock = null;
-				int resultIndex = 0;
-				// Blöcke durchgehen und Größen und mögliche Zwischenräume
-				// addieren
-				workingList = getFirstConditionOfColumn(blocks, lastBlock,
-						resultIndex);
-				firstList.addAll(workingList);
-
-				// nur die Indeces der Farben in die ResultList schreiben
-				LinkedList<Integer> result = new LinkedList<Integer>();
-				for (int i = 0; i < firstList.size(); i++) {
-
-					if (!firstList.get(i).equals("-")) {
-						result.add(i);
-					}
-				}
-				// eine Stelle nach hinten schieben
-				while (workingList.getLast().equals("-")) {
-					moveBlocksInList(workingList, firstList, result);
-				}
-				for (Integer rowIndex : result) {
-					char charAt = firstList.get(rowIndex).charAt(0);
-					writeCharInMatrix(rowIndex, charAt, columnInt);
-				}
-				// sonst: keine Blöcke, also mit '-' füllen
-			} else {
-				column.setGone(true);
-				fillAreaInColumnWithChar(columnInt, 0, riddle.getHeight(), '-');
-			}
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return;
-	}
-
-	/**
-	 * Verschiebt das letzte Zeichen (immer ein -) von der letzten an die erste
-	 * Position. Dann wird jede Position der workingList mit der Position in der
-	 * firstList verglichen. Falls die Posiitonen nicht gleich sind wird die
-	 * Position aus result gelöscht.
-	 * 
-	 * @param workingList
-	 * @param firstList
-	 * @param result
-	 *            Liste mit Positionen (aus firstList) die gesetzt werden
-	 *            können.
-	 */
-	private void moveBlocksInList(LinkedList<String> workingList,
-			LinkedList<String> firstList, LinkedList<Integer> result) {
-		String removed = workingList.removeLast();
-		workingList.addFirst(removed);
-		int size = result.size();
-		// der eigentliche Vergleich
-		for (int i = size - 1; i > -1; i--) {
-			Integer index = result.get(i);
-			if (!firstList.get(index).equals(workingList.get(index))) {
-				result.remove(index);
-			}
-		}
-	}
-
-	/**
-	 * Geht durch die Spalten und sucht nach überlappenden Bereichen. Dabei
-	 * werden die Blöcke aneinander gelegt und bis ans Ende der Spalten
-	 * geschoben. An Stellen die immer gefüllt sind kann die Matrix gefüllt
-	 * werden.
-	 * 
-	 * @param matrix
-	 * @return
-	 * @throws Exception
-	 */
-	private void findOverlappingAreasInRow() throws Exception {
-		// String methodName = "findOverlappingAreasInRow()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-			LinkedList<String> workingList = new LinkedList<String>();
-			LinkedList<String> first = new LinkedList<String>();
-			Row row = riddle.getRows().get(rowInt);
-			// // System.out.println(row);
-			ArrayList<Block> blocks = row.getBlocks();
-			// nur wenn es Blöcke gibt
-			if (blocks.size() != 0) {
-				Block lastBlock = null;
-				int resultIndex = 0;
-				// alle Blöcke so weit wie möglich nach links verschoben
-				workingList = getFirstConditionOfRow(blocks, lastBlock,
-						resultIndex);
-				first.addAll(workingList);
-				LinkedList<Integer> result = new LinkedList<Integer>();
-				for (int i = 0; i < first.size(); i++) {
-					if (!first.get(i).equals("-")) {
-						result.add(i);
-					}
-				}
-				String removed;
-				// so lange nach rechts verschieben, bis Ende erreicht und zu
-				// asd hinzufügen.
-				while (workingList.getLast().equals("-")) {
-					moveBlocksInList(workingList, first, result);
-				}
-				for (Integer column : result) {
-					char charAt = first.get(column).charAt(0);
-					writeCharInMatrix(rowInt, charAt, column);
-				}
-				// sonst: keine Blöcke, also mit - füllen
-			} else {
-				row.setGone(true);
-				fillAreaInRowWithChar(rowInt, 0, riddle.getWidth(), '-');
-			}
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return;
-	}
-
-	/**
-	 * Spalte und Reihe wird mit '-' aufgefüllt, falls gone == true ist.
-	 */
-	private void checkRowsAndColumnsForGone() {
-		// String methodName = "checkRowsAndColumnsForGone()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		for (Row row : getRows()) {
-			if (row.isGone()) {
-				fillRowWithFree(row);
-			}
-		}
-		for (Column column : getColumns()) {
-			if (column.isGone()) {
-				fillColumnWithFree(column);
-			}
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Füllt Blöcke am Ende der Spalten.
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	private char[][] fillBlocksOnEndOfColumns() throws Exception {
-		// String methodName = "fillBlocksOnEndOfColumns()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		for (Column column : riddle.getColumns()) {
-			fillBlocksOnEndOfColumn(column, column.getBlocks().size() - 1,
-					riddle.getHeight() - 1);
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return matrix;
-	}
-
-	/**
-	 * Wenn eine Spalte mit einer Farbe endet wird der Block gefüllt. Auch
-	 * angefangene Blöcke danach werden gefüllt.
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	private void fillBlocksOnEndOfColumn(Column column, int blockIndex,
-			int rowIndex) throws Exception {
-		// String methodName = "fillBlocksOnEndOfColumn()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		int block = blockIndex;
-		int rowInt = rowIndex;
-		boolean run = true;
-		// bis char != - weiterlaufen
-		while (run) {
-			if (rowInt > -1 && matrix[rowInt][getIndexOfColumn(column)] == '-') {
-				rowInt--;
-			} else {
-				run = false;
-			}
-		}
-		// nur wenn char eine Farbe ist Füllen
-		if (rowInt > -1 && matrix[rowInt][getIndexOfColumn(column)] != '*') {
-			ArrayList<Block> blocks = column.getBlocks();
-			if (blocks != null) {
-				Block colourBlock = blocks.get(block);
-				if (matrix[rowInt][getIndexOfColumn(column)] == colourBlock
-						.getColour().getName()) {
-					fillAreaInColumnWithChar(getIndexOfColumn(column), (rowInt
-							- colourBlock.getHowMany() + 1), (rowInt + 1),
-							colourBlock.getColour().getName());
-					rowInt = rowInt - colourBlock.getHowMany();
-					colourBlock.setGone(true, rowInt + 1);
-					// weiter wenn es noch mehr Blöcke gibt
-					if (-1 < block - 1) {
-						block--;
-						Block nextBlock = blocks.get(block);
-						// wenn nächster Block gleiche Farbe hat - setzen
-						if (nextBlock != null
-								&& nextBlock.getColour().getName() == colourBlock
-										.getColour().getName() && rowInt > -1) {
-							fillAreaInColumnWithChar(getIndexOfColumn(column),
-									rowInt, rowInt + 1, '-');
-							rowInt--;
-						}
-						// nochmal aufrufen
-						fillBlocksOnEndOfColumn(column, block, rowInt);
-					} else {
-						// keine Blöcke mehr, also mit - füllen
-						fillColumnWithFree(column);
-					}
-				} else {
-					solveState = 3;
-					throw new DataCollisionException(
-							"Char wurde nochmal in fillBlocksOnEndOfColumn gesetzt \nchar "
-									+ matrix[getIndexOfColumn(column)][rowInt]
-									+ " ungleich "
-									+ colourBlock.getColour().getName());
-				}
-
-			}
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Füllt Blöcke am Anfang der Spalten.
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	private char[][] fillBlocksOnBeginningOfColumns() throws Exception {
-		// String methodName = "fillBlocksOnBeginningOfColumns()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		for (Column column : riddle.getColumns()) {
-			fillBlocksOnBeginningOfColumn(column, 0, 0);
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return matrix;
-	}
-
-	/**
-	 * Füllt Blöcke am Anfang einer Spalte. Ruft sich rekursiv auf.
-	 * 
-	 * @param column
-	 * @param blockIndex
-	 * @throws Exception
-	 */
-	private void fillBlocksOnBeginningOfColumn(Column column, int blockIndex,
-			int rowIndex) throws Exception {
-		// String methodName = "fillBlocksOnBeginningOfColumn()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		if (!column.isGone()) {
-			int block = blockIndex;
-			int rowInt = rowIndex;
-			boolean run = true;
-			// '-' überspringen
-			while (run) {
-				if (rowInt < riddle.getHeight()
-						&& matrix[rowInt][getIndexOfColumn(column)] == '-') {
-					rowInt++;
-				} else {
-					run = false;
-				}
-			}
-			// Wenn kein '*' und nicht hinter dem Ende
-			if (rowInt < riddle.getHeight()
-					&& matrix[rowInt][getIndexOfColumn(column)] != '*') {
-				ArrayList<Block> blocks = column.getBlocks();
-				if (blocks != null) {
-					Block colourBlock = blocks.get(block);
-					// wenn die Farben übereinstimmen Matrix mit Block füllen
-					if ((rowInt + colourBlock.getHowMany()) < riddle
-							.getHeight()
-							&& matrix[rowInt][getIndexOfColumn(column)] == colourBlock
-									.getColour().getName()) {
-						fillAreaInColumnWithChar(getIndexOfColumn(column),
-								rowInt, (rowInt + colourBlock.getHowMany()),
-								colourBlock.getColour().getName());
-						colourBlock.setGone(true, rowInt);
-						rowInt = rowInt + colourBlock.getHowMany();
-						// wenn dahinter noch ein Block Methode wieder aufrufen
-						if (blocks.size() > block + 1) {
-							block++;
-							Block nextBlock = blocks.get(block);
-							if (nextBlock != null
-									&& nextBlock.getColour().getName() == colourBlock
-											.getColour().getName()) {
-								fillAreaInColumnWithChar(
-										getIndexOfColumn(column), rowInt,
-										rowInt + 1, '-');
-								rowInt++;
-							}
-							fillBlocksOnBeginningOfColumn(column, block, rowInt);
-							// falls kein Block dahinter kann Spalte mit '-'
-							// gefüllt werden
-						} else {
-							fillColumnWithFree(column);
-						}
-					} else {
-						if ((rowInt + colourBlock.getHowMany()) < riddle
-								.getHeight()) {
-							solveState = 3;
-							throw new DataCollisionException(
-									"Char wurde nochmal in fillBlocksOnEndOfColumn gesetzt \nchar "
-											+ matrix[rowInt][getIndexOfColumn(column)]
-											+ " at" + rowInt + "/"
-											+ getIndexOfColumn(column)
-											+ " ungleich "
-											+ colourBlock.getColour().getName());
-						}
-					}
-
-				}
-			}
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Füllt Blöcke am Ende der Spalten.
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	private char[][] fillBlocksOnEndOfRows() throws Exception {
-		// String methodName = "fillBlocksOnEndOfRows()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		for (Row row : riddle.getRows()) {
-			fillBlocksOnEndOfRow(row, row.getBlocks().size() - 1,
-					riddle.getWidth() - 1);
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return matrix;
-	}
-
-	/**
-	 * Wenn eine Spalte mit einer Farbe endet wird der Block gefüllt. Auch
-	 * angefangene Blöcke danach werden gefüllt.
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	private void fillBlocksOnEndOfRow(Row row, int blockIndex, int columnIndex)
-			throws Exception {
-		// String methodName = "fillBlocksOnEndOfRow()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		int block = blockIndex;
-		int columnInt = columnIndex;
-		boolean run = true;
-		while (run) {
-			if (columnInt > -1 && matrix[getIndexOfRow(row)][columnInt] == '-') {
-				columnInt--;
-			} else {
-				run = false;
-			}
-		}
-		if (columnInt > -1 && matrix[getIndexOfRow(row)][columnInt] != '*') {
-			ArrayList<Block> blocks = row.getBlocks();
-			if (blocks != null) {
-				Block colourBlock = blocks.get(block);
-				if (matrix[getIndexOfRow(row)][columnInt] == colourBlock
-						.getColour().getName()) {
-					fillAreaInRowWithChar(getIndexOfRow(row), (columnInt
-							- colourBlock.getHowMany() + 1), (columnInt + 1),
-							colourBlock.getColour().getName());
-					columnInt = columnInt - colourBlock.getHowMany();
-					colourBlock.setGone(true, columnInt + 1);
-					if (-1 < block - 1) {
-						block--;
-						Block nextBlock = blocks.get(block);
-						if (nextBlock != null
-								&& nextBlock.getColour().getName() == colourBlock
-										.getColour().getName()) {
-							fillAreaInRowWithChar(getIndexOfRow(row),
-									columnInt, columnInt + 1, '-');
-							columnInt--;
-						}
-						fillBlocksOnEndOfRow(row, block, columnInt);
-					} else {
-						fillRowWithFree(row);
-					}
-				} else {
-					solveState = 3;
-					throw new DataCollisionException("char "
-							+ matrix[getIndexOfRow(row)][columnInt]
-							+ " ungleich " + colourBlock.getColour().getName());
-				}
-
-			}
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Füllt Blöcke am Anfang der Spalten.
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	private char[][] fillBlocksOnBeginningOfRows() throws Exception {
-		// String methodName = "fillBlocksOnBeginningOfRows()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		for (Row row : riddle.getRows()) {
-			fillBlocksOnBeginningOfRow(row, 0, 0);
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return matrix;
-	}
-
-	/**
-	 * Füllt Blöcke am Anfang einer Spalte. Ruft sich rekursiv auf.
-	 * 
-	 * @param row
-	 * @param blockIndex
-	 * @throws Exception
-	 */
-	private void fillBlocksOnBeginningOfRow(Row row, int blockIndex,
-			int columnIndex) throws Exception {
-		// String methodName = "fillBlocksOnBeginningOfRow()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		if (!row.isGone()) {
-			// showMatrix();
-			int block = blockIndex;
-			int columnInt = columnIndex;
-			boolean run = true;
-			// '-' überspringen
-			while (run) {
-				if (columnInt < riddle.getWidth()
-						&& matrix[getIndexOfRow(row)][columnInt] == '-') {
-					columnInt++;
-				} else {
-					run = false;
-				}
-			}
-			// Wenn kein '*' und nicht hinter dem Ende
-			if (columnInt < riddle.getWidth()
-					&& matrix[getIndexOfRow(row)][columnInt] != '*') {
-				ArrayList<Block> blocks = row.getBlocks();
-				if (blocks != null) {
-					Block colourBlock = blocks.get(block);
-					// wenn die Farben übereinstimmen Matrix mit Block füllen
-					if ((columnInt + colourBlock.getHowMany()) <= riddle
-							.getWidth()
-							&& matrix[getIndexOfRow(row)][columnInt] == colourBlock
-									.getColour().getName()) {
-						fillAreaInRowWithChar(getIndexOfRow(row), columnInt,
-								(columnInt + colourBlock.getHowMany()),
-								colourBlock.getColour().getName());
-						colourBlock.setGone(true, columnInt);
-						columnInt = columnInt + colourBlock.getHowMany();
-						// wenn dahinter noch ein Block Methode wieder aufrufen
-						if (blocks.size() > block + 1) {
-							block++;
-							Block nextBlock = blocks.get(block);
-							if (nextBlock != null
-									&& nextBlock.getColour().getName() == colourBlock
-											.getColour().getName()) {
-								fillAreaInRowWithChar(getIndexOfRow(row),
-										columnInt, columnInt + 1, '-');
-								columnInt++;
-							}
-							fillBlocksOnBeginningOfRow(row, block, columnInt);
-							// falls kein Block dahinter kann Spalte mit '-'
-							// gefüllt werden
-						} else {
-							System.out.println("Hierjfjfj");
-							fillRowWithFree(row);
-						}
-					} else {
-						if ((columnInt + colourBlock.getHowMany()) < riddle
-								.getWidth()) {
-							solveState = 3;
-							throw new DataCollisionException("char "
-									+ matrix[columnInt][getIndexOfRow(row)]
-									+ " at" + columnInt + "/"
-									+ getIndexOfRow(row) + " ungleich "
-									+ colourBlock.getColour().getName());
-						}
-					}
-
-				}
-			}
-		}
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-	}
-
-	// Rekursiv
-
-	/**
-	 * Sucht nach einer Lösung nach einem rekursiven Ansatz. Es werden alle
-	 * Möglichkeiten der Spalten und Reihen gesucht und nach und nach
-	 * ausgeschlossen. Es werden auch die Schnittmengen in die Matrix
-	 * geschrieben.
-	 * 
-	 * @throws Throwable
-	 */
-	private void solveRecursive() throws Exception {
-		String methodName = "solveRecursive()";
-		System.out.println(methodName);
-
-		// long startTime = new Date().getTime();
-		boolean run = true;
-		for (Column column : getColumns()) {
-			System.out.println("first cond Column:" + getIndexOfColumn(column));
-			// // System.out.println("First condition of column:" +
-			// firstConditionOfColumn);
-			ArrayList<LinkedList<String>> possibilities = column
-					.getPossibilities();
-			if (possibilities == null || possibilities.size() == 0) {
-				System.out.println("new");
-				LinkedList<String> firstConditionOfColumn = getFirstConditionOfColumn(
-						column.getBlocks(), null, 0);
-				getPossibilitiesForRowOrColumn(getIndexOfColumn(column), true,
-						column.getBlocks(), firstConditionOfColumn,
-						possibilities, 0, 0);
-				if (run) {
-					possibilities.add(getFirstConditionOfColumn(
-							column.getBlocks(), null, 0));
-				}
-				column.setPossibilities(possibilities);
-			}
-			possibilities = null;
-			// System.gc();
-		}
-		// läuft, bis keine Änderungen mehr vorkommen
-		// System.gc();
-		// System.out.println("after first poss");
-		while (run) {
-			run = false;
-			for (Row row : getRows()) {
-				// System.out.println("Row:" + getIndexOfRow(row));
-				// Initiale leere Liste
-				ArrayList<LinkedList<String>> possibilities = row
-						.getPossibilities();
-				// // System.out.println("Pos1:" + possibilities);
-				if (row.getBlocks().size() > 0 && !row.isGone()) {
-					// Wenn es noch keine Liste mit Möglichkeiten gibt wir sie
-					// hier
-					// erstellt.
-					if (possibilities == null || possibilities.size() == 0) {
-						// System.out.println("new");
-						LinkedList<String> firstConditionOfRow = getFirstConditionOfRow(
-								row.getBlocks(), null, 0);
-						getPossibilitiesForRowOrColumn(getIndexOfRow(row),
-								false, row.getBlocks(), firstConditionOfRow,
-								possibilities, 0, 0);
-						// Initiale Möglichkeit muss von HAnd hinzugefügt werden
-						possibilities.add(getFirstConditionOfRow(
-								row.getBlocks(), null, 0));
-						row.setPossibilities(possibilities);
-					}
-					int posibillitiesBefore = possibilities.size();
-					System.out.println("Pos1 size:" + possibilities.size());
-					// Unmögliche Möglichkeiten entfernen
-					possibilities = erasePossibilitiesInRow(row,
-							row.getPossibilities());
-					row.setPossibilities(possibilities);
-					// System.gc();
-					System.out.println("Pos2 size:" + possibilities.size());
-					int posibillitiesAfter = possibilities.size();
-					if (possibilities.size() > 0) {
-						if (possibilities.size() == 1) {
-							fillListIntoMatrixInRow(getIndexOfRow(row),
-									possibilities.get(0));
-						} else {
-							// // System.out.println(possibilities);
-							schnittmengeFindenInReihe(getIndexOfRow(row),
-									possibilities);
-						}
-					} else {
-						throw new NotSolvableException("Not solvable!\n"
-								+ "Row " + getIndexOfRow(row) + ":\n" + row);
-					}
-					int difference = posibillitiesBefore - posibillitiesAfter;
-					// // System.out.println("Difference:" + difference);
-					if (difference > 0) {
-						run = true;
-					}
-					// // System.out.println("------------");
-				} else {
-					fillRowWithFree(row);
-				}
-				possibilities = null;
-				// System.gc();
-			}
-			for (Column column : getColumns()) {
-				System.out.println("Column:" + getIndexOfColumn(column));
-				// showMatrix();
-				ArrayList<LinkedList<String>> possibilities = column
-						.getPossibilities();
-				// // System.out.println("Pos1:" + possibilities);
-				if (column.getBlocks().size() > 0 && !column.isGone()) {
-					LinkedList<String> firstConditionOfRow = getFirstConditionOfColumn(
-							column.getBlocks(), null, 0);
-					if (possibilities == null || possibilities.size() == 0) {
-						System.out.println("new");
-						getPossibilitiesForRowOrColumn(
-								getIndexOfColumn(column), true,
-								column.getBlocks(), firstConditionOfRow,
-								possibilities, 0, 0);
-						possibilities.add(getFirstConditionOfColumn(
-								column.getBlocks(), null, 0));
-						column.setPossibilities(possibilities);
-					}
-					int posibillitiesBefore = possibilities.size();
-					System.out.println("Pos1 size:" + possibilities.size());
-					possibilities = erasePossibilitiesInColumn(column,
-							column.getPossibilities());
-					column.setPossibilities(possibilities);
-					System.out.println("Pos2 size:" + possibilities.size());
-					// System.gc();
-					int posibillitiesAfter = possibilities.size();
-					if (possibilities.size() > 0) {
-						if (possibilities.size() == 1) {
-							fillListIntoMatrixInColumn(
-									getIndexOfColumn(column),
-									possibilities.get(0));
-						} else {
-							// // System.out.println(possibilities);
-							schnittmengeFindenInSpalte(
-									getIndexOfColumn(column), possibilities);
-						}
-					} else {
-						throw new Exception("Not solvable!\n" + "Column "
-								+ getIndexOfColumn(column) + ":\n" + column);
-					}
-					int difference = posibillitiesBefore - posibillitiesAfter;
-					// // System.out.println("Difference:" + difference);
-					if (difference > 0) {
-						run = true;
-					}
-					// // System.out.println("+++++++++++++++++++++");
-				}
-				possibilities = null;
-				// System.gc();
-			}
-			// showMatrix();
-		}
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-		// System.gc();
-	}
-
-	/**
-	 * Findet chars, die in allen posibilities gesetzt sind. Diese können dann
-	 * in die Matrix geschrieben werden.
-	 * 
-	 * @param indexOfRow
-	 * @param possibilities
-	 * @throws Exception
-	 */
-	private void schnittmengeFindenInReihe(int indexOfRow,
-			ArrayList<LinkedList<String>> possibilities) throws Exception {
-		// long startTime = new Date().getTime();
-		// String methodName = "schnittmengeFindenInReihe()";
-		// System.out.println(methodName);
-		// 1. Möglichkeit herausnehmen und Indeces in result schreiben.
-		LinkedList<String> firstLinkedList = possibilities.get(0);
-		ArrayList<Integer> results = new ArrayList<Integer>();
-		for (int j = 0; j < riddle.getWidth(); j++) {
-			results.add(new Integer(j));
-		}
-		// wenn strings an derselben Stelle nicht übereinstimmen herausstreichen
-		// aus results
-		Integer o;
-		for (LinkedList<String> list : possibilities) {
-			for (int i = 0; i < riddle.getWidth(); i++) {
-				o = new Integer(i);
-				if (results.contains(o)) {
-					if (!firstLinkedList.get(i).equals(list.get(i))) {
-						results.remove(o);
-					}
-				}
-			}
-		}
-		o = null;
-		for (Integer index : results) {
-			writeCharInMatrix(indexOfRow, firstLinkedList.get(index).charAt(0),
-					index);
-		}
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Findet chars, die in allen posibilities gesetzt sind. Diese können dann
-	 * in die Matrix geschrieben werden.
-	 * 
-	 * @param indexOfColumn
-	 * @param possibilities
-	 * @throws Exception
-	 */
-	private void schnittmengeFindenInSpalte(int indexOfColumn,
-			ArrayList<LinkedList<String>> possibilities) throws Exception {
-		// long startTime = new Date().getTime();
-		// String methodName = "schnittmengeFindenInSpalte()";
-		// System.out.println(methodName);
-		// 1. Möglichkeit herausnehmen und Indeces in result schreiben.
-		LinkedList<String> firstLinkedList = possibilities.get(0);
-		ArrayList<Integer> results = new ArrayList<Integer>();
-		for (int j = 0; j < riddle.getHeight(); j++) {
-			results.add(new Integer(j));
-		}
-		// wenn strings an derselben Stelle nicht übereinstimmen herausstreichen
-		// aus results
-		Integer o;
-		for (LinkedList<String> list : possibilities) {
-			for (int i = 0; i < riddle.getHeight(); i++) {
-				o = new Integer(i);
-				if (results.contains(o)) {
-					if (!firstLinkedList.get(i).equals(list.get(i))) {
-						results.remove(o);
-					}
-				}
-			}
-		}
-		o = null;
-		for (Integer index : results) {
-			writeCharInMatrix(index, firstLinkedList.get(index).charAt(0),
-					indexOfColumn);
-		}
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Schreibt alle Möglichkeiten die Reihe oder Spalte mit den Blöcken zu
-	 * belegen in possibilities. Die Methode ruft sich selber auf, um zwischen
-	 * den Blöcken zu wechseln. Dabei wird der letzte Block nach hinten
-	 * geschoben. Dann wird der vorletzte Block einen weiter nach hinten
-	 * geschoben und der letzte wieder nach und nach nach hinten geschoben. Dies
-	 * geschieht für alle Blöcke, bis alle Blöcke komplett bis zum Maximum nach
-	 * hinten geschoben sind.
-	 * 
-	 * @param blocks1
-	 * @param aa
-	 * @param possibilities
-	 * @param numberOfBlock
-	 * @param add1
-	 * @return
-	 */
-	private ArrayList<LinkedList<String>> getPossibilitiesForRowOrColumn(
-			int rowInt, boolean forColumn, ArrayList<Block> blocks1,
-			LinkedList<String> aa,
-			ArrayList<LinkedList<String>> possibilities2, int numberOfBlock,
-			int add1) {
-		// String methodName = "getPossibilitiesForRowOrColumn()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		int add = add1;
-		ArrayList<Block> blocks = new ArrayList<Block>(blocks1);
-		// ArrayList<LinkedList<String>> possibilities2 = new
-		// ArrayList<LinkedList<String>>(
-		// possibilities);
-		if (blocks.size() > 0) {
-			Block block = blocks.get(numberOfBlock);
-			int numberOfBlock2 = numberOfBlock + 1;
-			int start = block.getMinStartIndex() + add;
-			// verschieben des Blocks bis zum Maximum nach hinten.
-			for (int i = start; i + block.getHowMany() <= block
-					.getMaxEndIndex(); i++) {
-				// rekursiv die Blöcke durchgehen
-				LinkedList<String> bb = new LinkedList<String>(aa);
-				if (numberOfBlock2 < blocks.size()) {
-					possibilities2 = getPossibilitiesForRowOrColumn(rowInt,
-							forColumn, blocks, bb, possibilities2,
-							numberOfBlock2, add);
-				}
-				bb = null;
-				//
-				if (aa.getLast().equals("-")) {
-					aa.removeLast();
-					aa.add(start, "-");
-					if (!forColumn) {
-						if (isPossibilityGoodInRow(aa, rowInt)) {
-							// // System.out.println("aaaaa" + aa);
-							possibilities2.add(new LinkedList<String>(aa));
-							// // System.out.println(aa);
-						}
-					} else {
-						if (isPossibilityGoodInColumn(aa, rowInt)) {
-							// // System.out.println("aaaaa" + aa);
-							possibilities2.add(new LinkedList<String>(aa));
-							// // System.out.println(aa);
-						}
-					}
-				} else {
-					if (!forColumn) {
-						if (isPossibilityGoodInRow(aa, rowInt)) {
-							// // System.out.println("aaaaa" + aa);
-							possibilities2.add(new LinkedList<String>(aa));
-							// // System.out.println(aa);
-						}
-					} else {
-						if (isPossibilityGoodInColumn(aa, rowInt)) {
-							// // System.out.println("aaaaa" + aa);
-							possibilities2.add(new LinkedList<String>(aa));
-							// // System.out.println(aa);
-						}
-					}
-				}
-				add++;
-			}
-		} else {
-			if (forColumn) {
-				LinkedList<String> list = new LinkedList<String>();
-				for (int i = 0; i < riddle.getHeight(); i++) {
-					list.add("-");
-				}
-				possibilities2.add(list);
-				list = null;
-			} else {
-				LinkedList<String> list = new LinkedList<String>();
-				for (int i = 0; i < riddle.getWidth(); i++) {
-					list.add("-");
-				}
-				possibilities2.add(list);
-				list = null;
-			}
-		}
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-		// // System.out.println("Possibilities:" + possibilities2.size());
-		return possibilities2;
-	}
-
-	/**
-	 * Prüft, ob die Möglichkeit zu der Spielsituation passt. Falls sie nicht
-	 * passt wird false zurück gegeben.
-	 * 
-	 * @param possibility
-	 * @param rowInt
-	 * @return boolean
-	 */
-	private boolean isPossibilityGoodInRow(LinkedList<String> possibility,
-			int rowInt) {
-		// String methodName = "isPossibilityGoodInRow()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		boolean isPossible = true;
-		// gegen Situation testen
-		for (int i = 0; i < riddle.getWidth(); i++) {
-			if (isPossible) {
-				char charInMatrix = matrix[rowInt][i];
-				char charInPoss = possibility.get(i).charAt(0);
-				if (charInMatrix != charInPoss && charInMatrix != '*') {
-					isPossible = false;
-				}
-				if (charInMatrix == '*' && getColumns().get(i).isGone()
-						&& charInPoss != '-') {
-					isPossible = false;
-				}
-				if (isPossible) {
-					// TODO: check this method, performance
-					// if (!checkPossibilityOfRowAgainstColumns(possibility,
-					// rowInt)) {
-					// isPossible = false;
-					// }
-				}
-			}
-		}
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-		return isPossible;
-	}
-
-	/**
-	 * Prüft, ob die Möglichkeit zu der Spielsituation passt.
-	 * 
-	 * @param possibility
-	 * @param rowInt
-	 * @return boolean
-	 */
-	private boolean isPossibilityGoodInColumn(LinkedList<String> possibility,
-			int columnInt) {
-		// String methodName = "isPossibilityGoodInColumn()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		boolean isPossible = true;
-
-		for (int i = 0; i < riddle.getHeight(); i++) {
-			if (isPossible) {
-				char charInMatrix = matrix[i][columnInt];
-				char charInPoss = possibility.get(i).charAt(0);
-				if (charInMatrix != charInPoss && charInMatrix != '*') {
-					isPossible = false;
-				}
-				if (charInMatrix == '*' && getRows().get(i).isGone()
-						&& charInPoss != '-') {
-					isPossible = false;
-				}
-				// if (!checkPossibilityOfColumnAgainstRows(possibility,
-				// columnInt)) {
-				// isPossible = false;
-				// }
-			}
-		}
-		// System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return isPossible;
-	}
-
-	/**
-	 * Überprüft, ob jede Spalte in dieser Reihe mindestens eine Übereinstimmung
-	 * in den Possibilities der jeweiligen Spalte hat. Ansonsten ist die
-	 * Möglichkeit falsch.
-	 * 
-	 * @param possibility
-	 * @param rowInt
-	 * @return
-	 */
-	private boolean checkPossibilityOfRowAgainstColumns(
-			LinkedList<String> possibility, int rowInt) {
-		// String methodName = "checkPossibilityOfRowAgainstColumns()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		boolean isPossible = true;
-		if (isPossible) {
-			// String (Splaten durchgehen)
-			for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-				Column column = getColumns().get(columnInt);
-				ArrayList<LinkedList<String>> possibilitiesOfColumn = column
-						.getPossibilities();
-				if (isPossible && possibilitiesOfColumn != null
-						&& possibilitiesOfColumn.size() > 0) {
-					boolean isPossibleInColumn = false;
-					for (LinkedList<String> possibilityOfColumn : possibilitiesOfColumn) {
-						if (possibilityOfColumn.get(rowInt).equals(
-								possibility.get(columnInt))) {
-							isPossibleInColumn = true;
-						}
-					}
-					if (isPossible) {
-						isPossible = isPossibleInColumn;
-					}
-				}
-			}
-		}
-		// System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return isPossible;
-	}
-
-	// TODO row setEntries mit char...
-	/**
-	 * Überprüft, ob jede Reihe(ein char) in dieser Spalte mindestens eine
-	 * Übereinstimmung in den Possibilities der Reihe hat.
-	 * 
-	 * @param possibility
-	 * @param rowInt
-	 * @return
-	 */
-	private boolean checkPossibilityOfColumnAgainstRows(
-			LinkedList<String> possibility, int columnInt) {
-		// String methodName = "checkPossibilityOfColumnAgainstRows()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		boolean isPossible = true;
-		if (isPossible) {
-			// String (Splaten durchgehen)
-			for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-				ArrayList<LinkedList<String>> possibilities = getRows().get(
-						rowInt).getPossibilities();
-				if (isPossible && possibilities != null
-						&& possibilities.size() > 0) {
-					boolean isPossibleInColumn = false;
-					for (LinkedList<String> possibilityOfRow : possibilities) {
-						if (possibilityOfRow.get(columnInt).equals(
-								possibility.get(rowInt))) {
-							isPossibleInColumn = true;
-						}
-					}
-					if (isPossible) {
-						isPossible = isPossibleInColumn;
-					}
-				}
-				// if (isPossible) {
-				// char[][] checkMatrix = matrix;
-				// checkMatrix = fillListIntoMatrixInRow(checkMatrix, rowInt,
-				// possibility);
-				// isPossible = checkIfColumnsStateIsPossible(checkMatrix,
-				// columnInt);
-				// }
-			}
-		}
-		// System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return isPossible;
-	}
-
-	/**
-	 * Löscht eine Möglichkeit aus der Liste, nachdem sie in
-	 * {@link #isPossibilityGoodInRow(LinkedList, int)} geprüft wurde.
-	 * 
-	 * @param row
-	 * @param possibilities
-	 * @return ArrayList<LinkedList<String>> weniger .
-	 */
-	private ArrayList<LinkedList<String>> erasePossibilitiesInRow(Row row,
-			ArrayList<LinkedList<String>> possibilities) {
-		// String methodName = "erasePossibilitiesInRow()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		ArrayList<LinkedList<String>> possibilities2 = new ArrayList<LinkedList<String>>(
-				possibilities);
-		System.out.println("Row:" + getIndexOfRow(row));
-		for (LinkedList<String> possibility : possibilities) {
-			boolean possible = isPossibilityGoodInRow(possibility,
-					getIndexOfRow(row));
-			if (!possible) {
-				possibilities2.remove(possibility);
-				// System.out.println(possibility + " erased");
-			}
-		}
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-		return possibilities2;
-	}
-
-	/**
-	 * Löscht eine Möglichkeit aus der Liste, nachdem sie in
-	 * {@link #isPossibilityGoodInColumn(LinkedList, int)} geprüft wurde.
-	 * 
-	 * @param row
-	 * @param possibilities
-	 * @return ArrayList<LinkedList<String>> weniger .
-	 */
-	private ArrayList<LinkedList<String>> erasePossibilitiesInColumn(
-			Column column, ArrayList<LinkedList<String>> possibilities) {
-		// String methodName = "erasePossibilitiesInColumn()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		ArrayList<LinkedList<String>> possibilities2 = new ArrayList<LinkedList<String>>(
-				possibilities);
-		for (LinkedList<String> possibility : possibilities) {
-			// System.out.println(possibility);
-			boolean possible = isPossibilityGoodInColumn(possibility,
-					getIndexOfColumn(column));
-			if (!possible) {
-				possibilities2.remove(possibility);
-				// System.out.println(possibility + " erased");
-			}
-		}
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-		return possibilities2;
-	}
-
-	// Helper
-
-	/**
-	 * Liefert die initiale Belegung für die Reihe.
-	 * 
-	 * @param asd
-	 * @param blocks
-	 * @param lastBlock
-	 * @param resultIndex
-	 * @return
-	 */
-	private LinkedList<String> getFirstConditionOfRow(ArrayList<Block> blocks,
-			Block lastBlock, int resultIndex) {
-		// String methodName = "getFirstConditionOfRow()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		LinkedList<String> asd = new LinkedList<String>();
-		for (Block block : blocks) {
-			if (null != lastBlock
-					&& lastBlock.getColour().getName() == block.getColour()
-							.getName()) {
-				asd.add("-");
-				resultIndex++;
-			}
-
-			for (int i = 0; i < block.getHowMany(); i++) {
-				asd.add(String.valueOf(block.getColour().getName()));
-			}
-
-			resultIndex += block.getHowMany();
-			lastBlock = block;
-		}
-		for (int i = resultIndex; i < riddle.getWidth(); i++) {
-			asd.add("-");
-		}
-		// // System.out.println("firstCond:" + asd);
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-		// System.out.println("asd:" + asd);
-		return asd;
-	}
-
-	/**
-	 * Liefert die initiale Belegung für die Spalte.
-	 * 
-	 * @param asd
-	 * @param blocks
-	 * @param lastBlock
-	 * @param resultIndex
-	 * @return
-	 */
-	private LinkedList<String> getFirstConditionOfColumn(
-			ArrayList<Block> blocks, Block lastBlock, int resultIndex) {
-		// String methodName = "getFirstConditionOfColumn()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		LinkedList<String> asd = new LinkedList<String>();
-		for (Block block : blocks) {
-			if (null != lastBlock
-					&& lastBlock.getColour().getName() == block.getColour()
-							.getName()) {
-				asd.add("-");
-				resultIndex++;
-			}
-
-			for (int i = 0; i < block.getHowMany(); i++) {
-				asd.add(String.valueOf(block.getColour().getName()));
-			}
-
-			resultIndex += block.getHowMany();
-			lastBlock = block;
-		}
-		for (int i = resultIndex; i < riddle.getHeight(); i++) {
-			asd.add("-");
-		}
-		// // System.out.println("firstCond:" + asd);
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-		return asd;
-	}
-
-	/**
-	 * Display the matrix.
-	 * 
-	 * @param matrix
-	 * @throws Exception
-	 */
-	private void showMatrix() {
-		// String methodName = "showMatrix()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		String out = "\n";
-		for (int i = 0; i < riddle.getHeight(); i++) {
-			out = showRow(out, i);
-		}
-		System.out.println(out);
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Returns the Row of the current mfatrix as String.
-	 * 
-	 * @param out
-	 * @param i
-	 * @return
-	 */
-	private String showRow(String out, int i) {
-		for (int j = 0; j < riddle.getWidth(); j++) {
-			out += matrix[i][j];
-			out += "  ";
-		}
-		out += "\n";
-		return out;
-	}
-
-	private void showBlockGoneTrue() {
-		String methodName = "showBlockGoneTrue()";
-		System.out.println(methodName);
-		long startTime = new Date().getTime();
-		for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-			Row row = getRows().get(rowInt);
-			System.out.println("Row:" + rowInt + " -- " + row.isGone());
-			ArrayList<Block> blocks = row.getBlocks();
-			if (null != blocks) {
-				for (Block block : blocks) {
-					System.out.println(block);
-				}
-			}
-		}
-		for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-			Column column = getColumns().get(columnInt);
-			System.out
-					.println("Column:" + columnInt + " -- " + column.isGone());
-			ArrayList<Block> blocks = column.getBlocks();
-			if (null != blocks) {
-				for (Block block : blocks) {
-					System.out.println(block);
-				}
-			}
-		}
-		System.out.println("Time for " + methodName + ": "
-				+ (new Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Füllt die Spalte mit '-'.
-	 * 
-	 * @param column
-	 */
-	private void fillColumnWithFree(Column column) {
-		// // String methodName = "fillColumnWithFree()";
-		// // System.out.println(methodName);
-		// // long startTime = new Date().getTime();
-		LinkedList<String> list = new LinkedList<String>();
-		for (int row = 0; row < riddle.getHeight(); row++) {
-			int indexOfColumn = getIndexOfColumn(column);
-			if (matrix[row][indexOfColumn] == '*') {
-				matrix[row][indexOfColumn] = '-';
-			}
-			list.add("-");
-		}
-		ArrayList<LinkedList<String>> possibilities = column.getPossibilities();
-		if (possibilities == null || possibilities.size() == 0) {
-			possibilities.add(list);
-			column.setPossibilities(possibilities);
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Füllt die Reihe mit '-'.
-	 * 
-	 * @param row
-	 */
-	private void fillRowWithFree(Row row) {
-		// // String methodName = "fillRowWithFree()";
-		// // System.out.println(methodName);
-		// // long startTime = new Date().getTime();
-		for (int column = 0; column < riddle.getWidth(); column++) {
-			int indexOfRow = getIndexOfRow(row);
-			if (matrix[indexOfRow][column] == '*') {
-				matrix[indexOfRow][column] = '-';
-			}
-		}
-
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Setzt die initialen Werte für minStartIndex und maxStartIndex für eine
-	 * Reihe oder Spalte.
-	 * 
-	 * @param blocks
-	 * @param size
-	 */
-	private void setupBlocksInRowAndColumn(ArrayList<Block> blocks, int size) {
-		// // String methodName = "setupBlocksInRowAndColumn()";
-		// // System.out.println(methodName);
-		// // long startTime = new Date().getTime();
-		for (int i = 0; i < blocks.size(); i++) {
-			Block block = blocks.get(i);
-			if (blocks.size() == 0) {
-				block.setMinStartIndex(0);
-				block.setMaxEndIndex(size - 1);
-			} else if (blocks.size() == 1) {
-				block.setMinStartIndex(0);
-				block.setMaxEndIndex(size - 1);
-			} else {
-				if (i == 0) {
-					block.setMinStartIndex(0);
-					block.setMaxEndIndex(getMaxEndIndexOfBlock(blocks, i, size));
-				} else if (i == blocks.size() - 1) {
-					block.setMinStartIndex(getMinStartIndexOfBlock(blocks, i,
-							size));
-					block.setMaxEndIndex(size - 1);
-				} else {
-					block.setMinStartIndex(getMinStartIndexOfBlock(blocks, i,
-							size));
-					block.setMaxEndIndex(getMaxEndIndexOfBlock(blocks, i, size));
-				}
-			}
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Berechnet den minimalen Startindex eines Blockes, indem die Größen der
-	 * vorherigen Blöcke unter Berücksichtigung etwaiger Zwischenräume addiert
-	 * werden.
-	 * 
-	 * @param blocks
-	 * @param indexOfBlock
-	 * @param widthOfRiddle
-	 * @return
-	 */
-	private int getMinStartIndexOfBlock(ArrayList<Block> blocks,
-			int indexOfBlock, int widthOfRiddle) {
-		// String methodName = "getMinStartIndexOfBlock()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		int index = 0;
-		Block lastBlock = blocks.get(indexOfBlock);
-		for (int i = indexOfBlock - 1; i >= 0; i--) {
-			Block block = blocks.get(i);
-			index += block.getHowMany();
-			if (null != lastBlock
-					&& lastBlock.getColour().getName() == block.getColour()
-							.getName()) {
-				index++;
-			}
-			lastBlock = block;
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return index;
-	}
-
-	/**
-	 * Berechnet den maximalen Index für einen Block.
-	 * 
-	 * @param blocks
-	 * @param indexOfBlock
-	 * @param size
-	 * @return
-	 */
-	private int getMaxEndIndexOfBlock(ArrayList<Block> blocks,
-			int indexOfBlock, int size) {
-		// String methodName = "getMaxEndIndexOfBlock()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		int index = 0;
-		Block lastBlock = blocks.get(indexOfBlock);
-		for (int i = indexOfBlock + 1; i < blocks.size(); i++) {
-			Block block = blocks.get(i);
-			index += block.getHowMany();
-			if (lastBlock.getColour().getName() == block.getColour().getName()) {
-				index++;
-			}
-			lastBlock = block;
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return (size - 1 - index);
-	}
-
-	/**
-	 * Gibt alle Spalten des Rätsels zurück.
-	 * 
-	 * @return
-	 */
-	private LinkedList<Column> getColumns() {
-		return riddle.getColumns();
-	}
-
-	/**
-	 * Display the matrix.
-	 * 
-	 * @param matrix
-	 * @throws Exception
-	 */
-	private void showAMatrix(String[][] matrix) {
-		// String methodName = "showAMatrix()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		for (int i = 0; i < riddle.getHeight(); i++) {
-			String out = "";
-			for (int j = 0; j < riddle.getWidth(); j++) {
-				out += matrix[i][j];
-				out += "  ";
-			}
-			// // System.out.println(out);
-		}
-		// // System.out.println();
-		// showBlockGoneTrue(matrix);
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Gibt alle Reihen des Rätsels zurück.
-	 * 
-	 * @return
-	 */
-	private LinkedList<Row> getRows() {
-		return riddle.getRows();
-	}
-
-	private int getIndexOfColumn(Column column) {
-		return getColumns().indexOf(column);
-	}
-
-	private int getIndexOfRow(Row row) {
-		return getRows().indexOf(row);
-	}
-
-	/**
-	 * Füllt den Bereich in der column zwischen rowBegin (inklusive) und rowEnd
-	 * (exklusive) mit dem char c.
-	 * 
-	 * @param matrix
-	 * @param columnIndex
-	 * @param rowBegin
-	 * @param rowEnd
-	 * @param c
-	 * @return
-	 * @throws Exception
-	 */
-	private char[][] fillAreaInColumnWithChar(int columnIndex, int rowBegin,
-			int rowEnd, char c) throws Exception {
-		// String methodName = "fillAreaInColumnWithChar()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		for (int row = rowBegin; row < rowEnd; row++) {
-			writeCharInMatrix(row, c, columnIndex);
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return matrix;
-	}
-
-	/**
-	 * Füllt den Bereich in der row zwischen columnBegin (inklusive) und
-	 * columnEnd (exklusive) mit dem char c.
-	 * 
-	 * @param matrix
-	 * @param columnIndex
-	 * @param rowBegin
-	 * @param rowEnd
-	 * @param c
-	 * @return
-	 * @throws Exception
-	 */
-	private void fillAreaInRowWithChar(int rowIndex, int columnBegin,
-			int columnEnd, char c) throws Exception {
-		// String methodName = "fillAreaInRowWithChar()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		for (int column = columnBegin; column < columnEnd; column++) {
-			writeCharInMatrix(rowIndex, c, column);
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Füllt die Stelle in der Matrix.
-	 * 
-	 * @param rowIndex
-	 *            Nummer der Reihe in der Matrix.
-	 * @param c
-	 *            Farbe
-	 * @param columnIndex
-	 *            rowIndex Nummer der Reihe in der Matrix.
-	 * @throws Exception
-	 *             falls an der Stelle bereits ein anderer char als c oder '*'
-	 *             steht.
-	 */
-	private void writeCharInMatrix(int rowIndex, char c, int columnIndex)
-			throws Exception {
-		// String methodName = "writeCharInMatrix()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		// System.out.println(matrix.length);
-		// System.out.println(rowIndex);
-		// System.out.println(columnIndex);
-		// if (columnIndex == -1) {
-		// showBlockGoneTrue();
-		// }
-		if (matrix[rowIndex][columnIndex] != '*'
-				&& matrix[rowIndex][columnIndex] != c) {
-			solveState = 3;
-			throw new DataCollisionException("Fehler: row:" + rowIndex
-					+ " column:" + columnIndex + " " + c + " ungleich "
-					+ matrix[rowIndex][columnIndex]);
-		}
-		if (matrix[rowIndex][columnIndex] != c) {
-			matrix[rowIndex][columnIndex] = c;
-			if (matrix[rowIndex][columnIndex] != '-') {
-				if (getRows().get(rowIndex).setEntriesSet(columnIndex)) {
-					fillRowWithFree(getRows().get(rowIndex));
-					// TODO vieleicht noch benötigt
-					// LinkedList<String> list = new LinkedList<String>();
-					// ArrayList<LinkedList<String>> list2 = new
-					// ArrayList<LinkedList<String>>();
-					// for (int column = 0; column < riddle.getWidth();
-					// column++) {
-					// list.add(String.valueOf(matrix[rowIndex][column]));
-					// }
-					// list2.add(list);
-					// getRows().get(rowIndex).setPossibilities(list2);
-				}
-				if (getColumns().get(columnIndex).setEntriesSet(rowIndex)) {
-					fillColumnWithFree(getColumns().get(columnIndex));
-					// TODO vieleicht noch benötigt
-					// LinkedList<String> list = new LinkedList<String>();
-					// ArrayList<LinkedList<String>> list2 = new
-					// ArrayList<LinkedList<String>>();
-					// for (int row = 0; row < riddle.getHeight(); row++) {
-					// list.add(String.valueOf(matrix[row][columnIndex]));
-					// }
-					// list2.add(list);
-					// getColumns().get(columnIndex).setPossibilities(list2);
-				}
-			}
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Füllt den Inhalt einer zutreffenden Möglichkeit aus
-	 * {@link #solveRecursive()} in die Matrix.
-	 * 
-	 * @param row
-	 * @param possibilitiy
-	 * @throws Throwable
-	 */
-	private void fillListIntoMatrixInRow(int row,
-			LinkedList<String> possibilitiy) throws Exception {
-		// String methodName = "fillListIntoMatrixInRow()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		getRows().get(row).setGone(true);
-		for (int i = 0; i < riddle.getWidth(); i++) {
-			char c = possibilitiy.get(i).charAt(0);
-			if (matrix[row][i] != c) {
-				matrix[row][i] = c;
-				if (c != '-') {
-					if (getRows().get(row).setEntriesSet(i)) {
-						fillRowWithFree(getRows().get(row));
-					}
-					if (getColumns().get(i).setEntriesSet(row)) {
-						fillColumnWithFree(getColumns().get(i));
-					}
-				}
-			}
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Füllt den Inhalt einer zutreffenden Möglichkeit aus
-	 * {@link #solveRecursive()} in die Matrix.
-	 * 
-	 * @param row
-	 * @param possibilitiy
-	 * @throws Throwable
-	 */
-	private char[][] fillListIntoMatrixInRow(char[][] checkMatrix, int row,
-			LinkedList<String> possibilitiy) {
-		// String methodName = "fillListIntoMatrixInRow()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		getRows().get(row).setGone(true);
-		for (int i = 0; i < riddle.getWidth(); i++) {
-			char c = possibilitiy.get(i).charAt(0);
-			if (checkMatrix[row][i] != c) {
-				checkMatrix[row][i] = c;
-				if (c != '-') {
-					if (getRows().get(row).setEntriesSet(i)) {
-						fillRowWithFree(getRows().get(row));
-					}
-					if (getColumns().get(i).setEntriesSet(row)) {
-						fillColumnWithFree(getColumns().get(i));
-					}
-				}
-			}
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-		return checkMatrix;
-	}
-
-	/**
-	 * Füllt den Inhalt einer zutreffenden Möglichkeit aus
-	 * {@link #solveRecursive()} in die Matrix.
-	 * 
-	 * @param row
-	 * @param possibilitiy
-	 */
-	private void fillListIntoMatrixInColumn(int column,
-			LinkedList<String> possibilities) {
-		// String methodName = "fillListIntoMatrixInColumn()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		getColumns().get(column).setGone(true);
-		for (int i = 0; i < riddle.getHeight(); i++) {
-			char c = possibilities.get(i).charAt(0);
-			if (matrix[i][column] != c) {
-				matrix[i][column] = c;
-				if (c != '-') {
-					if (getRows().get(i).setEntriesSet(column)) {
-						fillRowWithFree(getRows().get(i));
-					}
-					if (getColumns().get(column).setEntriesSet(i)) {
-						fillColumnWithFree(getColumns().get(column));
-					}
-				}
-			}
-		}
-		// // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
-	}
-
-	/**
-	 * Gibt die Anzahl der nicht belegten Felder zurück.
-	 * 
-	 * @return
-	 */
-	private int getStarCountInRiddle() {
-		// String methodName = "getStarCountInRiddle()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		int starCount = 0;
-
-		for (Row row : getRows()) {
-			for (int i = 0; i < riddle.getWidth(); i++) {
-				if (matrix[getIndexOfRow(row)][i] == '*') {
-					starCount++;
-				}
-			}
-		}
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-		return starCount;
-	}
-
-	private int getRowWithSmallestSizesOfPossibilities() {
-		// String methodName = "getSizesOfPossibilities()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		int smallestRowInt = 0;
-		Integer sizesmallestRowInt = null;
-		for (Row row : getRows()) {
-			int size = row.getPossibilities().size();
-			if (sizesmallestRowInt == null
-					|| (size < sizesmallestRowInt && size != 1)) {
-				sizesmallestRowInt = size;
-				smallestRowInt = getIndexOfRow(row);
-			}
-			// // System.out.println("Row " + getIndexOfRow(row) +
-			// " pssibilities size:" + size);
-		}
-		return smallestRowInt;
-	}
-
-	private void getSizesOfPossibilities() {
-		// String methodName = "getSizesOfPossibilities()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
-		long rowPosSize = getPossibillitySizeOfRow();
-		long columnPosSize = getPossibillitySizeOfColumn();
-		// System.out.println("RowPos: " + rowPosSize + "\n" + "ColPos: "
-		// + columnPosSize);
-		// System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-	}
-
-	private long getPossibillitySizeOfColumn() {
-		long columnPosSize = 1;
-		for (Column column : getColumns()) {
-			// System.out.println("Column " + getIndexOfColumn(column)
-			// + " pssibilities size:" + column.getPossibilities().size());
-			// // System.out.println(column.getPossibilities());
-			columnPosSize *= column.getPossibilities().size();
-			// System.out.println();
-		}
-		return columnPosSize;
-	}
-
-	private long getPossibillitySizeOfRow() {
-		long rowPosSize = 1;
-
-		for (Row row : getRows()) {
-			// System.out.println("Row " + getIndexOfRow(row)
-			// + " pssibilities size:" + row.getPossibilities().size());
-			rowPosSize *= row.getPossibilities().size();
-			// // System.out.println(row.getPossibilities());
-		}
-		return rowPosSize;
-	}
-
-	/**
-	 * @return the solveState
-	 */
-	public int getSolveState() {
-		return solveState;
-	}
-
-	/**
-	 * @param solveState
-	 *            the solveState to set
-	 */
-	public void setSolveState(int solveState) {
-		this.solveState = solveState;
-	}
+   private RiddleService riddleLoader;
+
+   private Riddle riddle;
+
+   private char[][] matrix;
+
+   private static long possibillities = 0;
+   private static long checkedPossibillities = 0;
+   private static long timeFor;
+   private int solveState = 0;
+   ArrayList<char[][]> solutionsFromGuising = new ArrayList<char[][]>();
+
+   ArrayList<ArrayList<ArrayList<String>>> loesungenVonBrutForce = new ArrayList<ArrayList<ArrayList<String>>>();
+
+   /**
+    * Konstruktor. Er kann mit einer bereits gefüllten matrix aufgerufen werden.
+    * Sonst wird eine matrix initialisiert.
+    * 
+    * @param matrix
+    */
+   public NonoSolver3(char[][] matrix, Riddle riddle) {
+
+      if (matrix == null) {
+
+      } else {
+         this.matrix = matrix;
+      }
+
+      this.riddle = riddle;
+
+   }
+
+   public NonoSolver3() {
+
+   }
+
+   @Override
+   public String getEmail() {
+      return "csgt01@gmail.com";
+   }
+
+   @Override
+   public String getMatrNr() {
+      return "8352437";
+   }
+
+   @Override
+   public String getName() {
+      return "Christian Schulte genannt Trux";
+   }
+
+   @Override
+   public void openFile(String arg0) throws IOException {
+      // // String methodName = "openFile(" + arg0 + ")";
+      // // System.out.println(methodName);
+      riddleLoader = new RiddleService();
+      riddle = riddleLoader.readFile(arg0);
+      matrix = riddleLoader.matrix;
+   }
+
+   @Override
+   public char[][] getSolution() {
+      // String methodName = "getSolution()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      if (matrix == null) {
+         setupMatrix();
+      }
+      setupBlocks();
+      while (solveState != 1) {
+         if (solveState == 2) {
+            System.out.println("solveState:2");
+            if (stacks != null && stacks.size() > 0) {
+               showMatrix();
+               showBlockGoneTrue();
+               showMatrix();
+               return matrix;
+               // changeLastStacksMember();
+            } else {
+               System.out.println("out");
+               if (solutionsFromGuising == null || solutionsFromGuising.size() != 1) {
+                  System.out.println(solutionsFromGuising);
+                  System.out.println("null");
+                  showMatrix();
+                  showBlockGoneTrue();
+                  showMatrix();
+                  return matrix;
+                  // return null;
+               } else {
+                  // System.out.println(matrix);
+                  showMatrix();
+                  showBlockGoneTrue();
+                  showMatrix();
+                  return solutionsFromGuising.get(0);
+               }
+            }
+         } else if (solveState == 3) {
+            try {
+               System.out.println("solveState:3");
+               showMatrix();
+               showBlockGoneTrue();
+               showMatrix();
+               return matrix;
+               // setFirstStarToSomething();
+               // solveState = 0;
+
+            } catch (Exception e) {
+               e.printStackTrace();
+            }
+         } else if (solveState == 4) {
+            System.out.println("solveState:4");
+            showMatrix();
+            showBlockGoneTrue();
+            showMatrix();
+            return matrix;
+            // changeLastStacksMember();
+            // solveState = 0;
+         }
+         solveState = 0;
+         solve();
+      }
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+      // if (solveState == 1) {
+      // System.out.println("Good");
+      showMatrix();
+      showBlockGoneTrue();
+      showMatrix();
+      return matrix;
+      // } else {
+      // System.out.println("Bad");
+      // return null;
+      // }
+   }
+
+   /*
+    * if (getStarCountInRiddle() > 0) { getSizesOfPossibilities();
+    * ArrayList<ArrayList<String>> theMatrix; // showMatrix(); //
+    * showBlockGoneTrue(); System.out.println(getPossibillitySizeOfColumn() +
+    * "!!!!"+getPossibillitySizeOfRow()); if (getPossibillitySizeOfColumn() >
+    * getPossibillitySizeOfRow()) { //
+    * System.out.println("vfdsfffdfsfdsdfsdfssdffdsfdsf1"); possibillities =
+    * getPossibillitySizeOfRow(); timeFor = new Date().getTime(); theMatrix =
+    * solveByBrutForceByRow( new ArrayList<ArrayList<String>>(), 0, 0); } else {
+    * // System.out.println("vfdsfffdfsfdsdfsdfssdffdsfdsf2"); possibillities =
+    * getPossibillitySizeOfColumn(); theMatrix = solveByBrutForceByColumn( new
+    * ArrayList<ArrayList<String>>(), 0, 0); }
+    * 
+    * System.out.println("-----------------"); int loesungenSize =
+    * loesungenVonBrutForce.size(); if (loesungenVonBrutForce != null &&
+    * loesungenSize > 0) { for (ArrayList<ArrayList<String>> list :
+    * loesungenVonBrutForce) { for (ArrayList<String> list444 : list) {
+    * System.out.println(list444); } System.out.println("______________"); } if
+    * (loesungenSize == 1) { // System.out.println("solved!"); solveState = 1; }
+    * else { solveState = 2; System.out.println("many possibilities"); } } else
+    * { solveState = 3; System.out.println("Not solveable"); }
+    * 
+    * System.out.println("-----------------"); } else { solveState = 1; }
+    */
+
+   LinkedList<StackHolder> stacks = new LinkedList<StackHolder>();
+
+   /**
+    * Managed den Ablauf des Lösens.
+    * 
+    * @return solveState:
+    */
+   private int solve() {
+      System.out.println("solve()");
+      try {
+         findOverlappingAreasInColumn();
+         findOverlappingAreasInRow();
+         boolean run1 = true;
+         while (run1) {
+            int starCount = getStarCountInRiddle();
+            solveIterative();
+            // solveWithPossibilities();
+            if (starCount <= getStarCountInRiddle()) {
+               // setFirstStarToSomething();
+               solveState = 3;
+               run1 = false;
+            }
+            // mögliche Lösung gefunden
+            if (getStarCountInRiddle() == 0) {
+               // direkte Lösung, da vorher nicht geraten wurde
+               if (stacks == null || stacks.size() == 0) {
+                  solveState = 1;
+                  run1 = false;
+                  if (solutionFromTryingOk()) {
+                     // TODO: testen ob Möglichkeit ok!
+                     solutionsFromGuising.add(matrix);
+                     // andere Möglichkeiten beim Raten testen!
+                  }
+               } else {
+                  run1 = false;
+                  // TODO: testen ob Möglichkeit ok!
+                  solutionsFromGuising.add(matrix);
+                  solveState = 4;
+               }
+            }
+         }
+      } catch (Exception e) {
+         e.printStackTrace();
+         // showMatrix();
+         // System.out.println(stacks.size());
+         solveState = 2;
+      } finally {
+         // showMatrix();
+         // showBlockGoneTrue();
+      }
+      return solveState;
+   }
+
+   private boolean solutionFromTryingOk() {
+      System.out.println("solutionFromTryingOk()");
+
+      return true;
+   }
+
+   /**
+    * TODO: zu langsam
+    * 
+    * @throws Exception
+    */
+   private void solveWithPossibilities() throws Exception {
+      String methodName = "solveWithPossibilities()";
+      System.out.println(methodName);
+      long startTime = new Date().getTime();
+      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+         // Row row = getRows().get(rowInt);
+         // System.out.println(row.getPossibilities().size());
+         // getPossibilitiesForRowOrColumn(getIndexOfRow(row), false,
+         // row.getBlocks(),
+         // getFirstConditionOfRow(row.getBlocks(), null, 0),
+         // row.getPossibilities(), 0, 0);
+         // erasePossibilitiesInRow(row, row.getPossibilities());
+         // System.out.println(row.getPossibilities().size());
+         // System.out.println(row.getPossibilities());
+         // schnittmengeFindenInReihe(rowInt, row.getPossibilities());
+      }
+      System.out.println(methodName + " in " + (new Date().getTime() - startTime) + " ms.");
+   }
+
+   private void changeLastStacksMember() {
+      if (stacks != null && stacks.size() > 0) {
+         StackHolder lastStackHolder = stacks.get(stacks.size() - 1);
+         // System.out.println("changeLastStacksMember():" + stacks.size()
+         // + " colors:" + riddle.getColours().size() + " indexOfCo:"
+         // + lastStackHolder.getIndexOfColor());
+         int indexOfColor = lastStackHolder.getIndexOfColor();
+         // System.out.println("Index:" + indexOfColor);
+         // String out = "";
+         // out = showRow(out, lastStackHolder.getRow());
+         // System.out.println("row " + lastStackHolder.getRow()
+         // + " before change:\n" + out);
+         indexOfColor++;
+         if (indexOfColor >= riddle.getColours().size()) {
+            riddle = lastStackHolder.getRiddle();
+            matrix = lastStackHolder.getMatrix();
+            System.out.println("removed");
+            stacks.removeLast();
+            changeLastStacksMember();
+         } else {
+            lastStackHolder.setIndexOfColor(indexOfColor);
+            riddle = lastStackHolder.getRiddle();
+            // new Riddle(lastStackHolder.getRiddle().getColours(),
+            // lastStackHolder.getRiddle().getWidth(), lastStackHolder
+            // .getRiddle().getHeight(), lastStackHolder
+            // .getRiddle().getRows(), lastStackHolder
+            // .getRiddle().getColumns(), lastStackHolder
+            // .getRiddle().getNono());
+            matrix = lastStackHolder.getMatrix();
+            System.out.println("changed");
+            try {
+               writeCharInMatrix(lastStackHolder.getRow(), riddle.getColours().get(indexOfColor).getName(), lastStackHolder.getColumn());
+               // out = "";
+               // out = "after change:\n"
+               // + showRow(out, lastStackHolder.getRow());
+               // System.out.println(out);
+            } catch (Exception e) {
+               System.out.println("OHNOOHNO");
+               e.printStackTrace();
+            }
+            System.out.println("endchangeLastStacksMember()");
+         }
+      }
+   }
+
+   /**
+    * Setzt den ersten "*" in der Matrix auf "-". Des weiteren wird ein
+    * StackHolder-Objekt angelegt, um den Status des Lösungsweges zu speichern.
+    * 
+    * @throws Exception
+    */
+   private void setFirstStarToSomething() throws Exception {
+      System.out.println("setFirstStarToSomething()");
+      System.out.println("stacks size:" + stacks.size());
+      for (int row = 0; row < riddle.getHeight(); row++) {
+         for (int column = 0; column < riddle.getWidth(); column++) {
+            if (matrix[row][column] == '*') {
+               // System.out.println("new Stack:" + row + "/" + column);
+               StackHolder stack = new StackHolder();
+               stack.setRiddle(new Riddle(riddle.getColours(), riddle.getWidth(), riddle.getHeight(), riddle.getRows(), riddle.getColumns(), riddle.getNono()));
+               stack.setMatrix(matrix, riddle.getHeight(), riddle.getWidth());
+               stack.setRow(row);
+               stack.setColumn(column);
+               stack.setIndexOfColor(-1);
+               stacks.add(stack);
+               writeCharInMatrix(row, '-', column);
+               // String out = "";
+               // out = showRow(out, row);
+               // System.out.println("new row:" + row + "\n" + out + "\n");
+               // System.out.println("Stacks:" + stacks.size());
+               System.out.println("setFirstStarToSomething() end");
+               return;
+            }
+         }
+      }
+
+   }
+
+   /**
+    * Überprüft, ob ein "*" nur zu einem Block gehört. Falls dies der Fall ist,
+    * wird überprüft, ob row.getMaxEntries() - row.getEntriesSet() - starCount)
+    * == 0 ist. Dies bedeutet, dass nur noch ein Farbfeld zu setzen ist und es
+    * mit der Farbe des Blocks gesetzt werden kann.
+    * 
+    * @param row
+    * @throws Exception
+    */
+   private void checkStarBelongingToBlockForRow(Row row) throws Exception {
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int rowInt = getIndexOfRow(row);
+      // System.out.println();
+      for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
+         // showMatrix();System.out.println();
+         if (matrix[rowInt][columnInt] == '*') {
+            LinkedList<Integer> blockInts = new LinkedList<Integer>();
+            for (Block block : blocks) {
+               if (!block.isGone() && columnInt >= block.getMinStartIndexNew() && columnInt <= block.getMaxEndIndexNew()) {
+                  blockInts.add(blocks.indexOf(block));
+
+               }
+            }
+            // System.out.println("row:" + rowInt + "columnInt: " +
+            // columnInt
+            // + "\n" + blockInts.size() + " " + blockInts);
+            if (blockInts.size() == 1) {
+               int starCount = 0;
+               for (int i = 0; i < riddle.getWidth(); i++) {
+                  if (matrix[getIndexOfRow(row)][i] == '*') {
+                     starCount++;
+                  }
+               }
+               if ((row.getMaxEntries() - row.getEntriesSet() - starCount) == 0) {
+                  // System.out.println("QQQQQrow:" + rowInt +
+                  // "columnInt: "
+                  // + columnInt);
+                  fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1, blocks.get(blockInts.get(0)).getColourString().charAt(0));
+               }
+            } else if (blockInts.size() == 0) {
+               // System.out.println("EMPTYEMPTYEMPTY");
+               fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1, '-');
+            }
+            // System.out.println("JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ");
+         }
+      }
+   }
+
+   /**
+    * Prüft, ob eine gesetzte Farbe zu einem Block gehört. Wenn ja wird der
+    * Index in indeces von Block geschrieben und die maximale und minimale
+    * Ausdehnung geändert.
+    * 
+    * @param row
+    * @throws Exception
+    */
+   private void checkColorBelongingToBlockForRow(Row row) throws Exception {
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int rowInt = getIndexOfRow(row);
+      for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
+         char c = matrix[rowInt][columnInt];
+         // color
+         if (c != '*' && c != '-') {
+            LinkedList<Integer> blockInts = new LinkedList<Integer>();
+            for (Block block : blocks) {
+               if (columnInt >= block.getMinStartIndexNew() && columnInt <= block.getMaxEndIndexNew()) {
+                  blockInts.add(blocks.indexOf(block));
+
+               }
+            }
+            // "*" gehört nur zu einem Block
+            if (blockInts.size() == 1) {
+               Block block = blocks.get(blockInts.get(0));
+               int min = columnInt - block.getHowMany() + 1;
+               if (min < 0) {
+                  min = 0;
+               }
+               int max = columnInt + block.getHowMany() - 1;
+               if (max >= riddle.getWidth()) {
+                  max = riddle.getWidth() - 1;
+               }
+               block.setMaxEndIndexNew(max);
+               block.setMinStartIndexNew(min);
+            } else if (blockInts.size() == 0) {
+               throw new Exception("Farbe gehört zu keinem Block:" + getIndexOfRow(row) + "/" + columnInt + ":" + c);
+            }
+         }
+      }
+   }
+
+   /**
+    * Prüft, ob eine gesetzte Farbe zu einem Block gehört. Wenn ja wird der
+    * Index in indeces von Block geschrieben und die maximale und minimale
+    * Ausdehnung geändert.
+    * 
+    * @param column
+    * @throws Exception
+    */
+   private void checkColorBelongingToBlockForColumn(Column column) throws Exception {
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int columnInt = getIndexOfColumn(column);
+      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+         char c = matrix[rowInt][columnInt];
+         // color
+         if (c != '*' && c != '-') {
+            LinkedList<Integer> blockInts = new LinkedList<Integer>();
+            for (Block block : blocks) {
+               if (rowInt >= block.getMinStartIndexNew() && rowInt <= block.getMaxEndIndexNew()) {
+                  blockInts.add(blocks.indexOf(block));
+
+               }
+            }
+            if (blockInts.size() == 1) {
+               Block block = blocks.get(blockInts.get(0));
+               int min = rowInt - block.getHowMany() + 1;
+               if (min < 0) {
+                  min = 0;
+               }
+               int max = rowInt + block.getHowMany() - 1;
+               if (max >= riddle.getHeight()) {
+                  max = riddle.getHeight() - 1;
+               }
+               block.setMaxEndIndexNew(max);
+               block.setMinStartIndexNew(min);
+            } else if (blockInts.size() == 0) {
+               throw new Exception("Farbe gehört zu keinem Block:" + rowInt + "/" + getIndexOfColumn(column) + ":" + c);
+            }
+         }
+      }
+   }
+
+   /**
+    * Überprüft, ob ein "*" nur zu einem Block gehört. Falls dies der Fall ist,
+    * wird überprüft, ob row.getMaxEntries() - row.getEntriesSet() - starCount)
+    * == 0 ist. Dies bedeutet, dass nur noch ein Farbfeld zu setzen ist und es
+    * mit der Farbe des Blocks gesetzt werden kann.
+    * 
+    * @param column
+    * @throws Exception
+    */
+   private void checkStarBelongingToBlockForColumn(Column column) throws Exception {
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int columnInt = getIndexOfColumn(column);
+      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+         if (matrix[rowInt][columnInt] == '*') {
+            LinkedList<Integer> blockInts = new LinkedList<Integer>();
+            for (Block block : blocks) {
+               if (!block.isGone() && rowInt >= block.getMinStartIndexNew() && rowInt <= block.getMaxEndIndexNew()) {
+                  blockInts.add(blocks.indexOf(block));
+
+               }
+            }
+            if (blockInts.size() == 1) {
+               int starCount = 0;
+               for (int i = 0; i < riddle.getHeight(); i++) {
+                  if (matrix[i][getIndexOfColumn(column)] == '*') {
+                     starCount++;
+                  }
+               }
+               if ((column.getMaxEntries() - column.getEntriesSet() - starCount) == 0) {
+                  // System.out.println("QQQQQrow:" + rowInt +
+                  // "columnInt: "
+                  // + columnInt);
+                  fillAreaInColumnWithChar(columnInt, rowInt, rowInt + 1, blocks.get(blockInts.get(0)).getColourString().charAt(0));
+               }
+            } else if (blockInts.size() == 0) {
+               // System.out.println("EMPTYEMPTYEMPTY");
+               fillAreaInColumnWithChar(columnInt, rowInt, rowInt + 1, '-');
+            } else {
+
+            }
+         }
+      }
+   }
+
+   /**
+    * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
+    * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. TODO: Wenn in
+    * der Mitte prüfen, ob davor oder danach noch Platz für Block ist und
+    * gegebenfalls anpassen.
+    * 
+    * @param row
+    * @throws Exception
+    */
+   private void checkEmptyBelongingToBlockForRow(Row row) throws Exception {
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int rowInt = getIndexOfRow(row);
+      for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
+         if (matrix[rowInt][columnInt] == '-') {
+            for (Block block : blocks) {
+               if (!block.isGone() && columnInt == block.getMinStartIndexNew()) {
+                  block.setMinStartIndexNew(block.getMinStartIndexNew() + 1);
+               } else if (!block.isGone() && columnInt == block.getMaxEndIndexNew()) {
+                  block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
+                  // Leeres Feld innerhalb des möglichen Blocks.
+               } else if (block.getMinStartIndexNew() < columnInt && block.getMaxEndIndexNew() > columnInt) {
+                  checkSizesBeforeAndAfterEmptyInBlockRange(block, columnInt);
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * TODO why not dom
+    * 
+    * @param block
+    * @param columnInt
+    */
+   private void checkSizesBeforeAndAfterEmptyInBlockRange(Block block, int columnInt) {
+      if ((columnInt - block.getMinStartIndexNew()) < block.getHowMany()) {
+         // block.setMinStartIndexNew(columnInt +1);
+      } else if (block.getMaxEndIndexNew() - columnInt < block.getHowMany()) {
+         // block.setMaxEndIndexNew(columnInt - 1);
+      }
+   }
+
+   /**
+    * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
+    * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. TODO: Wenn in
+    * der Mitte prüfen, ob davor oder danach noch Platz für Block ist und
+    * gegebenfalls anpassen.
+    * 
+    * @param column
+    * @throws Exception
+    */
+   private void checkEmptyBelongingToBlockForColumn(Column column) throws Exception {
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int columnInt = getIndexOfColumn(column);
+      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+         if (matrix[rowInt][columnInt] == '-') {
+            for (Block block : blocks) {
+               if (!block.isGone() && rowInt == block.getMinStartIndexNew()) {
+                  block.setMinStartIndexNew(block.getMinStartIndexNew() + 1);
+               } else if (!block.isGone() && rowInt == block.getMaxEndIndexNew()) {
+                  block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
+               } else if (block.getMinStartIndexNew() < columnInt && block.getMaxEndIndexNew() > columnInt) {
+                  checkSizesBeforeAndAfterEmptyInBlockRange(block, rowInt);
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Diese Methode nimmt die erste Möglichkeit der ersten Reihe und ruft sich
+    * rekursiv auf, bis sie bei der letzten Reihe angekommen ist. Dann wird
+    * getestet, ob das Ergebnis eine gültige Lösung ist. Wenn nicht, wird die
+    * nächate getestest.
+    * 
+    * @param rowInt
+    * @param possibilityInt
+    * @return
+    */
+   private ArrayList<ArrayList<String>> solveByBrutForceByRow(ArrayList<ArrayList<String>> listFromBefore, int rowInt, int possibilityInt) {
+      // System.out.println("solveByBrutForce");
+      // // System.out.println("solveByBrutForce");
+      Integer rowIndex = new Integer(rowInt);
+
+      Integer possibilityIndex = new Integer(possibilityInt);
+      ArrayList<ArrayList<String>> returnList = new ArrayList<ArrayList<String>>(listFromBefore);
+      if (rowIndex < riddle.getHeight()) {
+         // // System.out.println("Row:" + rowIndex);
+         Row row = getRows().get(rowIndex);
+         // eigene poss hinzufügen
+         while (possibilityIndex < row.getPossibilities().size()) {
+            // // System.out.println("pos:" + possibilityIndex);
+            returnList = new ArrayList<ArrayList<String>>(listFromBefore);
+            returnList.add(new ArrayList<String>(row.getPossibilities().get(possibilityIndex)));
+            // Wenn noch Reihen übrig sind Methode neu aufrufen
+            if (rowIndex + 1 < riddle.getHeight()) {
+               // // System.out.println("Row before call again:" +
+               // (rowIndex
+               // +1));
+               returnList = solveByBrutForceByRow(returnList, (rowIndex + 1), 0);
+               // // System.out.println("Row after call again:" +
+               // (rowIndex));
+               if (null == returnList) {
+                  possibilityIndex++;
+               } else {
+                  return returnList;
+               }
+
+            } else {
+               // System.out.println("sdafasfddas" + returnList);
+               if (!checkStateOfWrittenMatrixByRow(returnList)) {
+                  returnList = null;
+                  possibilityIndex++;
+               } else {
+                  return returnList;
+               }
+            }
+         }
+      }
+      return returnList;
+   }
+
+   /**
+    * Prüft ob die in {@link #solveByBrutForceByRow(LinkedList, int, int)}
+    * zusammengestellte Matrix korrekt ist.
+    * 
+    * @param returnList
+    * @return
+    */
+   private boolean checkStateOfWrittenMatrixByRow(ArrayList<ArrayList<String>> returnList) {
+
+      // String methodName = "checkStateOfWrittenMatrix()";
+      // System.out.println(methodName);
+      Date startTime = new Date();
+
+      // Array anlegen
+      // System.out.println("XXXXXXXXXXX");
+      for (ArrayList<String> list : returnList) {
+         // System.out.println(list);
+      }
+
+      // eigentliche Tests:
+      int columnInt = 0;
+      String empty = "-";
+      while (columnInt < riddle.getWidth()) {
+         Column column = getColumns().get(columnInt);
+         ArrayList<Block> blocks = column.getBlocks();
+         if (blocks != null && blocks.size() > 0) {
+            int roInt = 0;
+            int blockInt = 0;
+            while (roInt < riddle.getHeight()) {
+               if (returnList.get(roInt).get(columnInt).equals(empty)) {
+                  roInt++;
+               } else {
+                  // Ist eine Farbe, aber keine Blöcke mehr!
+                  if (blockInt >= blocks.size()) {
+                     // System.out.println("false1: row: " + roInt
+                     // + " column: " + columnInt);
+                     return false;
+                  } else {
+                     // Block prüfen
+                     Block block = blocks.get(blockInt);
+                     for (int i = 0; i < block.getHowMany(); i++) {
+                        if (!(returnList.get(roInt).get(columnInt).equals(block.getColourString()))) {
+                           // System.out.println("false2: row: " +
+                           // roInt
+                           // + " column: " + columnInt);
+                           return false;
+                        }
+                     }
+                     roInt += block.getHowMany();
+                     // Nächster Block ist gleiche Farbe, also muss -
+                     // sein!
+                     if ((blockInt + 1) < blocks.size() && block.getColourString().equals(blocks.get(blockInt + 1).getColourString()) && !returnList.get(roInt).get(columnInt).equals(empty)) {
+                        // System.out.println("false3: row: " + roInt
+                        // + " column: " + columnInt);
+                        return false;
+                     }
+                     blockInt++;
+                  }
+               }
+            }
+         } else {
+            // nur -!!!
+            for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+               if (!returnList.get(rowInt).get(columnInt).equals(empty)) {
+                  // System.out.println("false4: row: " + rowInt
+                  // + " column: " + columnInt);
+                  return false;
+               }
+            }
+         }
+         columnInt++;
+      }
+
+      // System.out.println("YYYYYYYYYYY");
+      // showAMatrix(testMatrix);
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime.getTime()) + " ms");
+      returnList = null;
+      return true;
+   }
+
+   /**
+    * Diese Methode nimmt die erste Möglichkeit der ersten Reihe und ruft sich
+    * rekursiv auf, bis sie bei der letzten Reihe angekommen ist. Dann wird
+    * getestet, ob das Ergebnis eine gültige Lösung ist. Wenn nicht, wird die
+    * nächate getestest. TODO: für column!
+    * 
+    * @param coInt
+    * @param possibilityInt
+    * @return
+    */
+   private ArrayList<ArrayList<String>> solveByBrutForceByColumn(ArrayList<ArrayList<String>> listFromBefore, int coInt, int possibilityInt) {
+      // System.out.println("solveByBrutForceC");
+      Integer columnInt = new Integer(coInt);
+      Integer possibilityIndex = new Integer(possibilityInt);
+      ArrayList<ArrayList<String>> returnList = new ArrayList<ArrayList<String>>(listFromBefore);
+      if (columnInt < riddle.getWidth()) {
+         // // System.out.println("Row:" + rowIndex);
+         Column column = getColumns().get(columnInt);
+         // eigene poss hinzufügen
+         while (possibilityIndex < column.getPossibilities().size()) {
+            // // System.out.println("pos:" + possibilityIndex);
+            returnList = new ArrayList<ArrayList<String>>(listFromBefore);
+            returnList.add(new ArrayList<String>(column.getPossibilities().get(possibilityIndex)));
+            ArrayList<ArrayList<String>> newList = new ArrayList<ArrayList<String>>(returnList);
+            // Wenn noch Reihen übrig sind Methode neu aufrufen
+            if (columnInt + 1 < riddle.getWidth()) {
+               // // System.out.println("Row before call again:" +
+               // (rowIndex
+               // +1));
+               returnList = solveByBrutForceByColumn(newList, (columnInt + 1), 0);
+               // // System.out.println("Row after call again:" +
+               // (rowIndex));
+               if (null == returnList) {
+                  possibilityIndex++;
+               } else {
+                  loesungenVonBrutForce.add(returnList);
+                  return null;
+               }
+
+            } else {
+               // System.out.println("sdafasfddas" + returnList);
+               if (!checkStateOfWrittenMatrixByColumn(returnList)) {
+                  returnList = null;
+                  possibilityIndex++;
+               } else {
+                  return returnList;
+               }
+            }
+         }
+      }
+      // System.out.println("ff" + returnList);
+      return returnList;
+   }
+
+   /**
+    * Prüft ob die in {@link #solveByBrutForceByRow(LinkedList, int, int)}
+    * zusammengestellte Matrix korrekt ist.
+    * 
+    * @param returnList
+    * @return
+    */
+   private boolean checkStateOfWrittenMatrixByColumn(ArrayList<ArrayList<String>> returnList) {
+
+      // String methodName = "checkStateOfWrittenMatrix()";
+      // System.out.println(methodName);
+      Date startTime = new Date();
+
+      // Array anlegen
+      // System.out.println("XXXXXXXXXXX");
+      for (ArrayList<String> list : returnList) {
+         // System.out.println(list);
+      }
+
+      // eigentliche Tests:
+      int rowInt = 0;
+      String empty = "-";
+      while (rowInt < riddle.getHeight()) {
+         Row column = getRows().get(rowInt);
+         ArrayList<Block> blocks = column.getBlocks();
+         if (blocks != null && blocks.size() > 0) {
+            int columnInt = 0;
+            int blockInt = 0;
+            while (columnInt < riddle.getWidth()) {
+               if (returnList.get(columnInt).get(rowInt).equals(empty)) {
+                  columnInt++;
+               } else {
+                  // Ist eine Farbe, aber keine Blöcke mehr!
+                  if (blockInt >= blocks.size()) {
+                     // // System.out.println("false1: row: " + roInt +
+                     // " column: "
+                     // + columnInt);
+                     checkedPossibillities++;
+                     if ((possibillities - checkedPossibillities) % 100000000 == 0) {
+                        // System.gc();
+                        // System.out
+                        // .println("False1:"
+                        // + (possibillities - checkedPossibillities));
+                        long time = new Date().getTime();
+                        // System.out.println("Time:" + (time -
+                        // timeFor));
+                        timeFor = time;
+                     }
+                     return false;
+                  } else {
+                     // Block prüfen
+                     Block block = blocks.get(blockInt);
+                     for (int i = 0; i < block.getHowMany(); i++) {
+                        if (!(returnList.get(columnInt).get(rowInt).equals(block.getColourString()))) {
+                           // System.out.println("false2: row: " +
+                           // rowInt
+                           // + " column: " + columnInt);
+                           checkedPossibillities++;
+                           if ((possibillities - checkedPossibillities) % 100000000 == 0) {
+                              // System.gc();
+                              long time = new Date().getTime();
+                              // System.out.println("Time:"
+                              // + (time - timeFor));
+                              timeFor = time;
+                           }
+                           return false;
+                        }
+                     }
+                     columnInt += block.getHowMany();
+                     // Nächster Block ist gleiche Farbe, also muss -
+                     // sein!
+                     if ((blockInt + 1) < blocks.size() && block.getColourString().equals(blocks.get(blockInt + 1).getColourString()) && !returnList.get(columnInt).get(rowInt).equals(empty)) {
+                        // System.out.println("false3: row: " + rowInt
+                        // + " column: " + columnInt);
+                        checkedPossibillities++;
+                        if ((possibillities - checkedPossibillities) % 100000000 == 0) {
+                           // System.gc();
+                           long time = new Date().getTime();
+                           // System.out.println("Time:"
+                           // + (time - timeFor));
+                           timeFor = time;
+                        }
+                        return false;
+                     }
+                     blockInt++;
+                  }
+               }
+            }
+         } else {
+            // nur - !!!
+            for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
+               if (!returnList.get(rowInt).get(columnInt).equals(empty)) {
+                  // System.out.println("false4: row: " + rowInt
+                  // + " column: " + columnInt);
+                  checkedPossibillities++;
+                  if ((possibillities - checkedPossibillities) % 100000000 == 0) {
+                     // System.gc();
+                  }
+                  return false;
+               }
+            }
+         }
+         rowInt++;
+      }
+
+      // // System.out.println("YYYYYYYYYYY");
+      // showAMatrix(testMatrix);
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime.getTime()) + " ms");
+      checkedPossibillities++;
+      if ((possibillities - checkedPossibillities) % 100000000 == 0) {
+         // System.gc();
+         // System.out.println((possibillities - checkedPossibillities));
+         long time = new Date().getTime();
+         // System.out.println("Time:" + (time - timeFor));
+         timeFor = time;
+      }
+      return true;
+   }
+
+   private void solveIterative() throws Exception {
+      String methodName = "solveIterative()";
+      System.out.println(methodName);
+      long startTime = new Date().getTime();
+      boolean run = true;
+      while (run) {
+         int starCountInRiddle = getStarCountInRiddle();
+         // showMatrix();
+         fillBlocksOnBeginningOfColumns();
+         // showMatrix();
+         fillBlocksOnEndOfColumns();
+         // showMatrix();
+         fillBlocksOnBeginningOfRows();
+         // showMatrix();
+         fillBlocksOnEndOfRows();
+         // showMatrix();
+         checkRowsAndColumnsForGone();
+         // showMatrix();
+         checkByBlock();
+         fillBlocksOnEndOfColumns();
+         if (starCountInRiddle <= getStarCountInRiddle()) {
+            run = false;
+         }
+      }
+      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+      showMatrix();
+   }
+
+   /**
+    * Ruft mehrere Methoden auf, die versuchen das Rätsel auf Blockebene zu
+    * lösen.
+    * 
+    * @throws Exception
+    */
+   private void checkByBlock() throws Exception {
+      for (Row row : getRows()) {
+         // System.out.println("ROWROWROWROWROWOROWRO" + getIndexOfRow(row));
+         updateMinAndMaxIndexOfBlocks(row);
+         updateMinAndMaxIndexOfBlocks2(row);
+         checkStarBelongingToBlockForRow(row);
+         checkEmptyBelongingToBlockForRow(row);
+         overlapBlocksInRow(row);
+         checkColorBelongingToBlockForRow(row);
+         checkIfEntriesNotSetInBlock(row);
+         checkEmptyInBetweenBlock(row);
+         fillWithEmptyAfterGone(row);
+         fillIfMinMaxEqualToHowMany(row);
+         fillEntriesFromBlockIntoMatrix(row);
+      }
+      for (Column column : getColumns()) {
+         updateMinAndMaxIndexOfBlocks(column);
+         updateMinAndMaxIndexOfBlocks2(column);
+         checkStarBelongingToBlockForColumn(column);
+         checkEmptyBelongingToBlockForColumn(column);
+         overlapBlocksInColumn(column);
+         checkColorBelongingToBlockForColumn(column);
+         checkIfEntriesNotSetInBlock(column);
+         checkEmptyInBetweenBlock(column);
+         fillWithEmptyAfterGone(column);
+         fillIfMinMaxEqualToHowMany(column);
+         fillEntriesFromBlockIntoMatrix(column);
+      }
+   }
+
+   /**
+    * Schreibt die bereits gesetzten Felder des Blocks in die Matrix.
+    * 
+    * @param row
+    * @throws Exception
+    */
+   private void fillEntriesFromBlockIntoMatrix(Row row) throws Exception {
+
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      for (Block block : blocks) {
+         if (!block.isGone()) {
+            TreeSet<Integer> indeces = block.getIndeces();
+            if (indeces.size() > 1) {
+               for (int column : indeces) {
+                  writeCharInMatrix(getIndexOfRow(row), block.getColourString().charAt(0), column);
+               }
+            }
+         }
+      }
+
+   }
+
+   /**
+    * Schreibt die bereits gesetzten Felder des Blocks in die Matrix.
+    * 
+    * @param row
+    * @throws Exception
+    */
+   private void fillEntriesFromBlockIntoMatrix(Column column) throws Exception {
+
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      for (Block block : blocks) {
+         if (!block.isGone()) {
+            TreeSet<Integer> indeces = block.getIndeces();
+            if (indeces.size() > 1) {
+               for (int row : indeces) {
+                  writeCharInMatrix(row, block.getColourString().charAt(0), getIndexOfColumn(column));
+               }
+            }
+         }
+      }
+
+   }
+
+   /**
+    * Füllt den Bereich zwischen MinStartIndexNew und MaxEndIndexNew des
+    * Blockes, falls die Differenz gleich der Größe des Blocks ist
+    * 
+    * @param row
+    * @throws Exception
+    */
+   private void fillIfMinMaxEqualToHowMany(Row row) throws Exception {
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks == null || blocks.size() < 2) {
+         return;
+      }
+      for (Block block : blocks) {
+         if (block.getMaxEndIndexNew() + 1 - block.getMinStartIndexNew() == block.getHowMany()) {
+            fillAreaInRowWithChar(getIndexOfRow(row), block.getMinStartIndexNew(), block.getMaxEndIndexNew() + 1, block.getColorChar());
+            block.setGone(true, block.getMinStartIndexNew());
+         }
+      }
+   }
+
+   /**
+    * Füllt den Bereich zwischen MinStartIndexNew und MaxEndIndexNew des
+    * Blockes, falls die Differenz gleich der Größe des Blocks ist
+    * 
+    * @param column
+    * @throws Exception
+    */
+   private void fillIfMinMaxEqualToHowMany(Column column) throws Exception {
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks == null || blocks.size() < 2) {
+         return;
+      }
+      for (Block block : blocks) {
+         if (block.getMaxEndIndexNew() + 1 - block.getMinStartIndexNew() == block.getHowMany()) {
+            fillAreaInColumnWithChar(getIndexOfColumn(column), block.getMinStartIndexNew(), block.getMaxEndIndexNew() + 1, block.getColorChar());
+            block.setGone(true, block.getMinStartIndexNew());
+         }
+      }
+   }
+
+   /**
+    * Falls die Reihe fertig ist, werden alle "*" mit "-" gefüllt.
+    * 
+    * @param row
+    * @throws Exception
+    */
+   private void fillWithEmptyAfterGone(Row row) throws Exception {
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks == null || blocks.size() < 2) {
+         return;
+      }
+      int indexOfRow = getIndexOfRow(row);
+      for (int blockInt = 0; blockInt < blocks.size(); blockInt++) {
+         Block block = blocks.get(blockInt);
+         if (block.isGone()) {
+            if (blockInt == 0) {
+               if (block.getColourString().equals(blocks.get(blockInt + 1).getColourString()) && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getWidth()) {
+                  writeCharInMatrix(indexOfRow, '-', block.getEndIndex() + 1);
+               }
+            } else if (blockInt == blocks.size() - 1) {
+               if (block.getColourString().equals(blocks.get(blockInt - 1).getColourString()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
+                  writeCharInMatrix(indexOfRow, '-', block.getStartIndex() - 1);
+               }
+            } else {
+               if (block.getColourString().equals(blocks.get(blockInt + 1).getColourString()) && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getWidth()) {
+                  writeCharInMatrix(indexOfRow, '-', block.getEndIndex() + 1);
+               }
+               if (block.getColourString().equals(blocks.get(blockInt - 1).getColourString()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
+                  writeCharInMatrix(indexOfRow, '-', block.getStartIndex() - 1);
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Falls die Spalte fertig ist, werden alle "*" mit "-" gefüllt.
+    * 
+    * @param spalte
+    * @throws Exception
+    */
+   private void fillWithEmptyAfterGone(Column column) throws Exception {
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks == null || blocks.size() < 2) {
+         return;
+      }
+      int indexOfColumn = getIndexOfColumn(column);
+      for (int blockInt = 0; blockInt < blocks.size(); blockInt++) {
+         Block block = blocks.get(blockInt);
+         if (block.isGone()) {
+            if (blockInt == 0) {
+               if (block.getColourString().equals(blocks.get(blockInt + 1).getColourString()) && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getHeight()) {
+                  writeCharInMatrix(block.getEndIndex() + 1, '-', indexOfColumn);
+               }
+            } else if (blockInt == blocks.size() - 1) {
+               if (block.getColourString().equals(blocks.get(blockInt - 1).getColourString()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
+                  writeCharInMatrix(block.getStartIndex() - 1, '-', indexOfColumn);
+               }
+            } else {
+               if (block.getColourString().equals(blocks.get(blockInt + 1).getColourString()) && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getHeight()) {
+                  writeCharInMatrix(block.getEndIndex() + 1, '-', indexOfColumn);
+               }
+               if (block.getColourString().equals(blocks.get(blockInt - 1).getColourString()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
+                  writeCharInMatrix(block.getStartIndex() - 1, '-', indexOfColumn);
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * 
+    * @param row
+    */
+   private void checkEmptyInBetweenBlock(Row row) {
+
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int indexOfRow = getIndexOfRow(row);
+      for (Block block : blocks) {
+         for (int i = block.getMinStartIndexNew(); i <= block.getMaxEndIndexNew(); i++) {
+            if (matrix[indexOfRow][i] == '-') {
+               if ((i - block.getMinStartIndexNew()) < block.getHowMany()) {
+                  block.setMinStartIndexNew(i + 1);
+               }
+            }
+         }
+         for (int i = block.getMaxEndIndexNew(); i >= block.getMinStartIndexNew(); i--) {
+            if (matrix[indexOfRow][i] == '-') {
+               if ((block.getMaxEndIndexNew() - i) < block.getHowMany()) {
+                  block.setMaxEndIndexNew(i - 1);
+               }
+            }
+         }
+      }
+   }
+
+   private void checkEmptyInBetweenBlock(Column column) {
+
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int indexOfColumn = getIndexOfColumn(column);
+      for (Block block : blocks) {
+         for (int i = block.getMinStartIndexNew(); i <= block.getMaxEndIndexNew(); i++) {
+            if (matrix[i][indexOfColumn] == '-') {
+               if ((i - block.getMinStartIndexNew()) < block.getHowMany()) {
+                  block.setMinStartIndexNew(i + 1);
+               }
+            }
+         }
+         for (int i = block.getMaxEndIndexNew(); i >= block.getMinStartIndexNew(); i--) {
+            if (matrix[i][indexOfColumn] == '-') {
+               if ((block.getMaxEndIndexNew() - i) < block.getHowMany()) {
+                  block.setMaxEndIndexNew(i - 1);
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Testet, ob Felder innerhalb von Blöcken gesetzt werden können. Z.B. wenn
+    * in indeces 2 und 5 eingetragen sind, ,müssen 3 und vier auch gesetzt
+    * werden.
+    * 
+    * @param row
+    * @throws Exception
+    */
+   private void checkIfEntriesNotSetInBlock(Row row) throws Exception {
+
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      for (Block block : blocks) {
+         if (!block.isGone()) {
+            TreeSet<Integer> indeces = block.getIndeces();
+            if (indeces.size() > 1) {
+               for (int column = indeces.first() + 1; column < indeces.last(); column++) {
+                  if (!indeces.contains(column)) {
+                     indeces.add(column);
+                     block.increaseEntriesSet(column);
+                     writeCharInMatrix(getIndexOfRow(row), block.getColourString().charAt(0), column);
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Testet, ob Felder innerhalb von Blöcken gesetzt werden können. Z.B. wenn
+    * in indeces 2 und 5 eingetragen sind, ,müssen 3 und vier auch gesetzt
+    * werden.
+    * 
+    * @param column
+    * @throws Exception
+    */
+   private void checkIfEntriesNotSetInBlock(Column column) throws Exception {
+
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      for (Block block : blocks) {
+         if (!block.isGone()) {
+            TreeSet<Integer> indeces = block.getIndeces();
+            if (indeces.size() > 1) {
+               for (int row = indeces.first() + 1; row < indeces.last(); row++) {
+                  if (!indeces.contains(row)) {
+                     indeces.add(row);
+                     block.increaseEntriesSet(row);
+                     writeCharInMatrix(row, block.getColourString().charAt(0), getIndexOfColumn(column));
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Setzt Min/MaxIndex von Blöcken neu, falls der vorherige oder nachfolgende
+    * gone ist. Somit schränkt sich der Bereich, in dem der Block gesetzt werden
+    * kann ein. Überprüft auch, ob bei nicht fertigen Blöcken das
+    * nächste/vorherige von maxEndIndexNew/minStartIndexNew gleich der
+    * Blockfarbe ist und passt dann die Werte an.
+    * 
+    * @param row
+    */
+   private void updateMinAndMaxIndexOfBlocks(Row row) {
+      // System.out.println("updateMinAndMaxIndexOfBlocks:" +
+      // getIndexOfRow(row));
+      // showBlockGoneTrue();
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks != null && blocks.size() > 1) {
+         for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
+            Block block = blocks.get(blockIndex);
+            if (block.isGone()) {
+               int minIndex = block.getMinStartIndexNew();
+               int maxIndex = block.getMaxEndIndexNew();
+               // erster Block, also nur nachfolgende updaten!
+               if (blockIndex == 0) {
+                  updateBlocksAfterThisBlock(blocks, blockIndex, block, maxIndex);
+                  // letzer Block, also nur davor updaten
+               } else if ((blockIndex + 1) == blocks.size()) {
+                  updateBlocksBeforeThisBlock(blocks, blockIndex, block, minIndex);
+               } else {
+                  updateBlocksAfterThisBlock(blocks, blockIndex, block, maxIndex);
+                  updateBlocksBeforeThisBlock(blocks, blockIndex, block, minIndex);
+               }
+            } else {
+               // wenn der vorherige/nachfolgende char von Min/Max gleich
+               // block.char dann erhöhen/erniedrigen, da ein Feld leer sein
+               // muss.
+               int minIndex = block.getMinStartIndexNew();
+               int maxIndex = block.getMaxEndIndexNew();
+               while ((minIndex - 1 > -1) && matrix[getIndexOfRow(row)][minIndex - 1] == block.getColorChar()) {
+                  minIndex++;
+                  block.setMinStartIndexNew(minIndex);
+               }
+               while ((maxIndex + 1 < riddle.getWidth()) && matrix[getIndexOfRow(row)][maxIndex + 1] == block.getColorChar()) {
+                  maxIndex--;
+                  block.setMaxEndIndexNew(maxIndex);
+               }
+            }
+         }
+      }
+      // System.out.println("bliblarow2:" + getIndexOfRow(row));
+      // showBlockGoneTrue();
+   }
+
+   /**
+    * Geht durch die Blöcke der Reihe. Wenn es mehr als einen Block gibt, werden
+    * immer zwei aufeinander folgende Blöcke überprüft, ob der maxEndIndexNew -
+    * der Größe des 2. Blocks kleiner ist, als der maxEndIndexNew des ersten
+    * Blocks. Dann muss der Index des 1. Blocks angepasst werden. Gleiches
+    * geschieht für den minStartIndexNew, nur dass hier der 2. Block angepasst
+    * wird.
+    * 
+    * @param row
+    */
+   private void updateMinAndMaxIndexOfBlocks2(Row row) {
+      // System.out.println("updateMinAndMaxIndexOfBlocks2:");
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks != null && blocks.size() > 1) {
+         for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
+            Block block = blocks.get(blockIndex);
+            // TODO einrechnen, wenn gleiche Farben
+            // es gibt noch einen nächsteb Block
+            if (blockIndex + 1 < blocks.size()) {
+               Block nextBlock = blocks.get(blockIndex + 1);
+               if (nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() < block.getMaxEndIndexNew()) {
+                  block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany());
+               }
+               if (block.getMinStartIndexNew() + block.getHowMany() > nextBlock.getMinStartIndexNew()) {
+                  nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany());
+               }
+               // kein nächster, also nur vorherigen anpassen!
+            } else {
+               if (blockIndex - 1 > -1) {
+                  Block previousBlock = blocks.get(blockIndex - 1);
+                  if (previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() > block.getMinStartIndexNew()) {
+                     block.setMinStartIndexNew(previousBlock.getMinStartIndexNew() + previousBlock.getHowMany());
+                  }
+               }
+            }
+         }
+      }
+   }
+   
+   /**
+    * Geht durch die Blöcke der Spalte. Wenn es mehr als einen Block gibt, werden
+    * immer zwei aufeinander folgende Blöcke überprüft, ob der maxEndIndexNew -
+    * der Größe des 2. Blocks kleiner ist, als der maxEndIndexNew des ersten
+    * Blocks. Dann muss der Index des 1. Blocks angepasst werden. Gleiches
+    * geschieht für den minStartIndexNew, nur dass hier der 2. Block angepasst
+    * wird.
+    * 
+    * @param column
+    */
+   private void updateMinAndMaxIndexOfBlocks2(Column column) {
+      // System.out.println("updateMinAndMaxIndexOfBlocks2:");
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks != null && blocks.size() > 1) {
+         for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
+            Block block = blocks.get(blockIndex);
+            // TODO einrechnen, wenn gleiche Farben
+            // es gibt noch einen nächsteb Block
+            if (blockIndex + 1 < blocks.size()) {
+               Block nextBlock = blocks.get(blockIndex + 1);
+               if (nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() < block.getMaxEndIndexNew()) {
+                  block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany());
+               }
+               if (block.getMinStartIndexNew() + block.getHowMany() > nextBlock.getMinStartIndexNew()) {
+                  nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany());
+               }
+               // kein nächster, also nur vorherigen anpassen!
+            } else {
+               if (blockIndex - 1 > -1) {
+                  Block previousBlock = blocks.get(blockIndex - 1);
+                  if (previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() > block.getMinStartIndexNew()) {
+                     block.setMinStartIndexNew(previousBlock.getMinStartIndexNew() + previousBlock.getHowMany());
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Setzt MaxEndIndex der vorherigen Blöcke.
+    * 
+    * 
+    * @param blocks
+    * @param blockIndex
+    * @param block
+    * @param minIndex
+    */
+   private void updateBlocksBeforeThisBlock(ArrayList<Block> blocks, int blockIndex, Block block, int minIndex) {
+      for (int newIndex = (blockIndex - 1); newIndex > -1; newIndex--) {
+         Block checkBlock = blocks.get(newIndex);
+         if (!checkBlock.isGone()) {
+            if (checkBlock.getMaxEndIndexNew() >= minIndex) {
+               if (block.getColourString().equals(checkBlock.getColourString())) {
+                  checkBlock.setMaxEndIndexNew(minIndex - 2);
+               } else {
+                  checkBlock.setMaxEndIndexNew(minIndex - 1);
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Setzt MinStartIndexNew der folgenden Blöcke.
+    * 
+    * @param blocks
+    * @param blockIndex
+    * @param block
+    * @param maxIndex
+    */
+   private void updateBlocksAfterThisBlock(ArrayList<Block> blocks, int blockIndex, Block block, int maxIndex) {
+      for (int newIndex = (blockIndex + 1); newIndex < blocks.size(); newIndex++) {
+         Block checkBlock = blocks.get(newIndex);
+         if (!checkBlock.isGone()) {
+            if (checkBlock.getMinStartIndexNew() <= maxIndex) {
+               if (block.getColourString().equals(checkBlock.getColourString())) {
+                  checkBlock.setMinStartIndexNew(maxIndex + 2);
+               } else {
+                  checkBlock.setMinStartIndexNew(maxIndex + 1);
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Setzt Min/MaxIndex von Blöcken neu, falls der vorherige oder nachfolgende
+    * gone ist. Somit schränkt sich der Bereich, in dem der Block gesetzt werden
+    * kann ein. Überprüft auch, ob bei nicht fertigen Blöcken das
+    * nächste/vorherige von maxEndIndexNew/minStartIndexNew gleich der
+    * Blockfarbe ist und passt dann die Werte an.
+    * 
+    * @param column
+    */
+   private void updateMinAndMaxIndexOfBlocks(Column column) {
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks != null && blocks.size() > 1) {
+         for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
+            Block block = blocks.get(blockIndex);
+            if (block.isGone()) {
+               int minIndex = block.getMinStartIndexNew();
+               int maxIndex = block.getMaxEndIndexNew();
+               // erster Block, also nur nachfolgende updaten!
+               if (blockIndex == 0) {
+                  updateBlocksAfterThisBlock(blocks, blockIndex, block, maxIndex);
+               } else if ((blockIndex + 1) == blocks.size()) {
+                  updateBlocksBeforeThisBlock(blocks, blockIndex, block, minIndex);
+               } else {
+                  updateBlocksAfterThisBlock(blocks, blockIndex, block, maxIndex);
+                  updateBlocksBeforeThisBlock(blocks, blockIndex, block, minIndex);
+               }
+            } else {
+               // wenn der vorherige/nachfolgende char von Min/Max gleich
+               // block.char dann erhöhen/erniedrigen, da ein Feld leer sein
+               // muss.
+               int minIndex = block.getMinStartIndexNew();
+               int maxIndex = block.getMaxEndIndexNew();
+               while ((minIndex - 1 > -1) && matrix[minIndex - 1][getIndexOfColumn(column)] == block.getColorChar()) {
+                  minIndex++;
+                  block.setMinStartIndexNew(minIndex);
+               }
+               while ((maxIndex + 1 < riddle.getHeight()) && matrix[maxIndex + 1][getIndexOfColumn(column)] == block.getColorChar()) {
+                  maxIndex--;
+                  block.setMaxEndIndexNew(maxIndex);
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Erstellt alle Möglichkeiten, den Block innerhalb von minStartIndexNew und
+    * maxEndIndexNew zu platzieren und setzt die Felder in der Matrix, die bei
+    * allen Möglichkeiten gesetzt send.
+    * 
+    * @param row
+    * @throws Exception
+    */
+   private void overlapBlocksInRow(Row row) throws Exception {
+      // System.out.println("Row:" + getIndexOfRow(row));
+      // showMatrix();
+      // showBlockGoneTrue();
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks != null && blocks.size() > 0) {
+         for (Block block : blocks) {
+            if (!block.isGone()) {
+               int start = block.getMinStartIndexNew();
+               LinkedList<String> first = initializeBlockList(block, start);
+               LinkedList<String> workingList = new LinkedList<String>();
+               workingList.addAll(first);
+               LinkedList<Integer> result = new LinkedList<Integer>();
+               for (int i = 0; i < first.size(); i++) {
+                  if (!first.get(i).equals("-")) {
+                     result.add(i);
+                  }
+               }
+               // System.out.println(result);
+               String removed;
+               // so lange nach rechts verschieben, bis Ende erreicht und
+               // zu
+               // asd hinzufügen.
+               while (workingList.getLast().equals("-")) {
+                  removed = workingList.removeLast();
+                  workingList.addFirst(removed);
+                  int size = result.size();
+                  for (int i = size - 1; i > -1; i--) {
+                     Integer index = result.get(i);
+                     if (!first.get(index).equals(workingList.get(index))) {
+                        result.remove(result.get(i));
+                     }
+                  }
+               }
+               // System.out.println(result);
+               for (Integer column : result) {
+                  char charAt = first.get(column).charAt(0);
+                  writeCharInMatrix(getIndexOfRow(row), charAt, (column + start));
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Erstellt die erste Möglichkeit den Block zu setzten. Wird in
+    * overlapBlocksInColumn und overlapInRow aufgerufen.
+    * 
+    * @param block
+    * @param start
+    * @return
+    */
+   private LinkedList<String> initializeBlockList(Block block, int start) {
+      int end = block.getMaxEndIndexNew();
+      int colorsSet = 0;
+      LinkedList<String> first = new LinkedList<String>();
+      for (int i = 0; i < block.getHowMany(); i++) {
+         first.add(String.valueOf(block.getColour().getName()));
+         colorsSet++;
+      }
+      int ij = end - start + 1 - colorsSet;
+      while (ij > 0) {
+         first.add("-");
+         ij--;
+      }
+      return first;
+   }
+
+   /**
+    * Erstellt alle Möglichkeiten, den Block innerhalb von minStartIndexNew und
+    * maxEndIndexNew zu platzieren und setzt die Felder in der Matrix, die bei
+    * allen Möglichkeiten gesetzt send.
+    * 
+    * @param column
+    * @throws Exception
+    */
+   private void overlapBlocksInColumn(Column column) throws Exception {
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks != null && blocks.size() > 0) {
+         for (Block block : blocks) {
+            if (!block.isGone()) {
+               int start = block.getMinStartIndexNew();
+               LinkedList<String> first = initializeBlockList(block, start);
+               LinkedList<String> workingList = new LinkedList<String>();
+               workingList.addAll(first);
+               LinkedList<Integer> result = new LinkedList<Integer>();
+               for (int i = 0; i < first.size(); i++) {
+                  if (!first.get(i).equals("-")) {
+                     result.add(i);
+                  }
+               }
+               String removed;
+               // so lange nach rechts verschieben, bis Ende erreicht und
+               // zu
+               // asd hinzufügen.
+               while (workingList.getLast().equals("-")) {
+                  moveBlocksInList(workingList, first, result);
+               }
+               for (Integer row : result) {
+                  char charAt = first.get(row).charAt(0);
+                  writeCharInMatrix((row + start), charAt, getIndexOfColumn(column));
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Erstellt eine neue Matrix mit der Breite und Höhe des Rätsels und füllt
+    * diese mit '*'.
+    */
+   private void setupMatrix() {
+      // // String methodName = "setupBlocks()";
+      // // System.out.println(methodName);
+      // // long startTime = new Date().getTime();
+      matrix = new char[riddle.getHeight()][riddle.getWidth()];
+      for (int i = 0; i < riddle.getHeight(); i++) {
+         for (int j = 0; j < riddle.getWidth(); j++) {
+            matrix[i][j] = '*';
+         }
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Setzt die initialen Werte für minStartIndex und maxStartIndex. Wichtig für
+    * {@link #solveRecursive()}.
+    */
+   private void setupBlocks() {
+      // // String methodName = "setupBlocks()";
+      // // System.out.println(methodName);
+      // // long startTime = new Date().getTime();
+
+      // alle Reihen durchgehen.
+      for (Row row : getRows()) {
+         ArrayList<Block> blocks = row.getBlocks();
+         // int index = getIndexOfRow(row);
+         // // System.out.println(index);
+
+         // Blöcke durchgehen.
+         setupBlocksInRowAndColumn(blocks, riddle.getWidth());
+      }
+
+      for (Column column : getColumns()) {
+         ArrayList<Block> blocks = column.getBlocks();
+         // Blöcke durchgehen.
+         setupBlocksInRowAndColumn(blocks, riddle.getHeight());
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   // Iterativ
+
+   /**
+    * Geht durch die Spalten und sucht nach überlappenden Bereichen. Dabei
+    * werden die Blöcke aneinander gelegt und bis ans Ende der Spalten
+    * geschoben. An Stellen die immer gefüllt sind kann die Matrix gefüllt
+    * werden.
+    * 
+    * @throws Exception
+    *            falls eine Stelle in der Matrix schon mit einem anderen char
+    *            gefüllt ist.
+    */
+   private void findOverlappingAreasInColumn() throws Exception {
+      // String methodName = "findOverlappingAreasInColumn()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
+         // Liste, die zum schieben der Blöcke genutzt wird
+         LinkedList<String> workingList = new LinkedList<String>();
+         // Vergleichsliste
+         LinkedList<String> firstList = new LinkedList<String>();
+         Column column = riddle.getColumns().get(columnInt);
+         // // System.out.println(column);
+         ArrayList<Block> blocks = column.getBlocks();
+         // nur wenn es Blöcke gibt
+         if (blocks.size() != 0) {
+            Block lastBlock = null;
+            int resultIndex = 0;
+            // Blöcke durchgehen und Größen und mögliche Zwischenräume
+            // addieren
+            workingList = getFirstConditionOfColumn(blocks, lastBlock, resultIndex);
+            firstList.addAll(workingList);
+
+            // nur die Indeces der Farben in die ResultList schreiben
+            LinkedList<Integer> result = new LinkedList<Integer>();
+            for (int i = 0; i < firstList.size(); i++) {
+
+               if (!firstList.get(i).equals("-")) {
+                  result.add(i);
+               }
+            }
+            // eine Stelle nach hinten schieben
+            while (workingList.getLast().equals("-")) {
+               moveBlocksInList(workingList, firstList, result);
+            }
+            for (Integer rowIndex : result) {
+               char charAt = firstList.get(rowIndex).charAt(0);
+               writeCharInMatrix(rowIndex, charAt, columnInt);
+            }
+            // sonst: keine Blöcke, also mit '-' füllen
+         } else {
+            column.setGone(true);
+            fillAreaInColumnWithChar(columnInt, 0, riddle.getHeight(), '-');
+         }
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return;
+   }
+
+   /**
+    * Verschiebt das letzte Zeichen (immer ein -) von der letzten an die erste
+    * Position. Dann wird jede Position der workingList mit der Position in der
+    * firstList verglichen. Falls die Posiitonen nicht gleich sind wird die
+    * Position aus result gelöscht.
+    * 
+    * @param workingList
+    * @param firstList
+    * @param result
+    *           Liste mit Positionen (aus firstList) die gesetzt werden können.
+    */
+   private void moveBlocksInList(LinkedList<String> workingList, LinkedList<String> firstList, LinkedList<Integer> result) {
+      String removed = workingList.removeLast();
+      workingList.addFirst(removed);
+      int size = result.size();
+      // der eigentliche Vergleich
+      for (int i = size - 1; i > -1; i--) {
+         Integer index = result.get(i);
+         if (!firstList.get(index).equals(workingList.get(index))) {
+            result.remove(index);
+         }
+      }
+   }
+
+   /**
+    * Geht durch die Spalten und sucht nach überlappenden Bereichen. Dabei
+    * werden die Blöcke aneinander gelegt und bis ans Ende der Spalten
+    * geschoben. An Stellen die immer gefüllt sind kann die Matrix gefüllt
+    * werden.
+    * 
+    * @param matrix
+    * @return
+    * @throws Exception
+    */
+   private void findOverlappingAreasInRow() throws Exception {
+      // String methodName = "findOverlappingAreasInRow()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+         LinkedList<String> workingList = new LinkedList<String>();
+         LinkedList<String> first = new LinkedList<String>();
+         Row row = riddle.getRows().get(rowInt);
+         // // System.out.println(row);
+         ArrayList<Block> blocks = row.getBlocks();
+         // nur wenn es Blöcke gibt
+         if (blocks.size() != 0) {
+            Block lastBlock = null;
+            int resultIndex = 0;
+            // alle Blöcke so weit wie möglich nach links verschoben
+            workingList = getFirstConditionOfRow(blocks, lastBlock, resultIndex);
+            first.addAll(workingList);
+            LinkedList<Integer> result = new LinkedList<Integer>();
+            for (int i = 0; i < first.size(); i++) {
+               if (!first.get(i).equals("-")) {
+                  result.add(i);
+               }
+            }
+            String removed;
+            // so lange nach rechts verschieben, bis Ende erreicht und zu
+            // asd hinzufügen.
+            while (workingList.getLast().equals("-")) {
+               moveBlocksInList(workingList, first, result);
+            }
+            for (Integer column : result) {
+               char charAt = first.get(column).charAt(0);
+               writeCharInMatrix(rowInt, charAt, column);
+            }
+            // sonst: keine Blöcke, also mit - füllen
+         } else {
+            row.setGone(true);
+            fillAreaInRowWithChar(rowInt, 0, riddle.getWidth(), '-');
+         }
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return;
+   }
+
+   /**
+    * Spalte und Reihe wird mit '-' aufgefüllt, falls gone == true ist.
+    */
+   private void checkRowsAndColumnsForGone() {
+      // String methodName = "checkRowsAndColumnsForGone()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      for (Row row : getRows()) {
+         if (row.isGone()) {
+            fillRowWithFree(row);
+         }
+      }
+      for (Column column : getColumns()) {
+         if (column.isGone()) {
+            fillColumnWithFree(column);
+         }
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Füllt Blöcke am Ende der Spalten.
+    * 
+    * @return
+    * @throws Exception
+    */
+   private char[][] fillBlocksOnEndOfColumns() throws Exception {
+      // String methodName = "fillBlocksOnEndOfColumns()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      for (Column column : riddle.getColumns()) {
+         fillBlocksOnEndOfColumn(column, column.getBlocks().size() - 1, riddle.getHeight() - 1);
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return matrix;
+   }
+
+   /**
+    * Wenn eine Spalte mit einer Farbe endet wird der Block gefüllt. Auch
+    * angefangene Blöcke danach werden gefüllt.
+    * 
+    * @return
+    * @throws Exception
+    */
+   private void fillBlocksOnEndOfColumn(Column column, int blockIndex, int rowIndex) throws Exception {
+      // String methodName = "fillBlocksOnEndOfColumn()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      int block = blockIndex;
+      int rowInt = rowIndex;
+      boolean run = true;
+      // bis char != - weiterlaufen
+      while (run) {
+         if (rowInt > -1 && matrix[rowInt][getIndexOfColumn(column)] == '-') {
+            rowInt--;
+         } else {
+            run = false;
+         }
+      }
+      // nur wenn char eine Farbe ist Füllen
+      if (rowInt > -1 && matrix[rowInt][getIndexOfColumn(column)] != '*') {
+         ArrayList<Block> blocks = column.getBlocks();
+         if (blocks != null) {
+            Block colourBlock = blocks.get(block);
+            if (matrix[rowInt][getIndexOfColumn(column)] == colourBlock.getColour().getName()) {
+               fillAreaInColumnWithChar(getIndexOfColumn(column), (rowInt - colourBlock.getHowMany() + 1), (rowInt + 1), colourBlock.getColour().getName());
+               rowInt = rowInt - colourBlock.getHowMany();
+               colourBlock.setGone(true, rowInt + 1);
+               // weiter wenn es noch mehr Blöcke gibt
+               if (-1 < block - 1) {
+                  block--;
+                  Block nextBlock = blocks.get(block);
+                  // wenn nächster Block gleiche Farbe hat - setzen
+                  if (nextBlock != null && nextBlock.getColour().getName() == colourBlock.getColour().getName() && rowInt > -1) {
+                     fillAreaInColumnWithChar(getIndexOfColumn(column), rowInt, rowInt + 1, '-');
+                     rowInt--;
+                  }
+                  // nochmal aufrufen
+                  fillBlocksOnEndOfColumn(column, block, rowInt);
+               } else {
+                  // keine Blöcke mehr, also mit - füllen
+                  fillColumnWithFree(column);
+               }
+            } else {
+               solveState = 3;
+               throw new DataCollisionException("Char wurde nochmal in fillBlocksOnEndOfColumn gesetzt \nchar " + matrix[getIndexOfColumn(column)][rowInt] + " ungleich "
+                     + colourBlock.getColour().getName());
+            }
+
+         }
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Füllt Blöcke am Anfang der Spalten.
+    * 
+    * @return
+    * @throws Exception
+    */
+   private char[][] fillBlocksOnBeginningOfColumns() throws Exception {
+      // String methodName = "fillBlocksOnBeginningOfColumns()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      for (Column column : riddle.getColumns()) {
+         fillBlocksOnBeginningOfColumn(column, 0, 0);
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return matrix;
+   }
+
+   /**
+    * Füllt Blöcke am Anfang einer Spalte. Ruft sich rekursiv auf.
+    * 
+    * @param column
+    * @param blockIndex
+    * @throws Exception
+    */
+   private void fillBlocksOnBeginningOfColumn(Column column, int blockIndex, int rowIndex) throws Exception {
+      // String methodName = "fillBlocksOnBeginningOfColumn()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      if (!column.isGone()) {
+         int block = blockIndex;
+         int rowInt = rowIndex;
+         boolean run = true;
+         // '-' überspringen
+         while (run) {
+            if (rowInt < riddle.getHeight() && matrix[rowInt][getIndexOfColumn(column)] == '-') {
+               rowInt++;
+            } else {
+               run = false;
+            }
+         }
+         // Wenn kein '*' und nicht hinter dem Ende
+         if (rowInt < riddle.getHeight() && matrix[rowInt][getIndexOfColumn(column)] != '*') {
+            ArrayList<Block> blocks = column.getBlocks();
+            if (blocks != null) {
+               Block colourBlock = blocks.get(block);
+               // wenn die Farben übereinstimmen Matrix mit Block füllen
+               if ((rowInt + colourBlock.getHowMany()) < riddle.getHeight() && matrix[rowInt][getIndexOfColumn(column)] == colourBlock.getColour().getName()) {
+                  fillAreaInColumnWithChar(getIndexOfColumn(column), rowInt, (rowInt + colourBlock.getHowMany()), colourBlock.getColour().getName());
+                  colourBlock.setGone(true, rowInt);
+                  rowInt = rowInt + colourBlock.getHowMany();
+                  // wenn dahinter noch ein Block Methode wieder aufrufen
+                  if (blocks.size() > block + 1) {
+                     block++;
+                     Block nextBlock = blocks.get(block);
+                     if (nextBlock != null && nextBlock.getColour().getName() == colourBlock.getColour().getName()) {
+                        fillAreaInColumnWithChar(getIndexOfColumn(column), rowInt, rowInt + 1, '-');
+                        rowInt++;
+                     }
+                     fillBlocksOnBeginningOfColumn(column, block, rowInt);
+                     // falls kein Block dahinter kann Spalte mit '-'
+                     // gefüllt werden
+                  } else {
+                     fillColumnWithFree(column);
+                  }
+               } else {
+                  if ((rowInt + colourBlock.getHowMany()) < riddle.getHeight()) {
+                     solveState = 3;
+                     throw new DataCollisionException("Char wurde nochmal in fillBlocksOnEndOfColumn gesetzt \nchar " + matrix[rowInt][getIndexOfColumn(column)] + " at" + rowInt + "/"
+                           + getIndexOfColumn(column) + " ungleich " + colourBlock.getColour().getName());
+                  }
+               }
+
+            }
+         }
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Füllt Blöcke am Ende der Spalten.
+    * 
+    * @return
+    * @throws Exception
+    */
+   private char[][] fillBlocksOnEndOfRows() throws Exception {
+      // String methodName = "fillBlocksOnEndOfRows()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      for (Row row : riddle.getRows()) {
+         fillBlocksOnEndOfRow(row, row.getBlocks().size() - 1, riddle.getWidth() - 1);
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return matrix;
+   }
+
+   /**
+    * Wenn eine Spalte mit einer Farbe endet wird der Block gefüllt. Auch
+    * angefangene Blöcke danach werden gefüllt.
+    * 
+    * @return
+    * @throws Exception
+    */
+   private void fillBlocksOnEndOfRow(Row row, int blockIndex, int columnIndex) throws Exception {
+      // String methodName = "fillBlocksOnEndOfRow()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      int block = blockIndex;
+      int columnInt = columnIndex;
+      boolean run = true;
+      while (run) {
+         if (columnInt > -1 && matrix[getIndexOfRow(row)][columnInt] == '-') {
+            columnInt--;
+         } else {
+            run = false;
+         }
+      }
+      if (columnInt > -1 && matrix[getIndexOfRow(row)][columnInt] != '*') {
+         ArrayList<Block> blocks = row.getBlocks();
+         if (blocks != null) {
+            Block colourBlock = blocks.get(block);
+            if (matrix[getIndexOfRow(row)][columnInt] == colourBlock.getColour().getName()) {
+               fillAreaInRowWithChar(getIndexOfRow(row), (columnInt - colourBlock.getHowMany() + 1), (columnInt + 1), colourBlock.getColour().getName());
+               columnInt = columnInt - colourBlock.getHowMany();
+               colourBlock.setGone(true, columnInt + 1);
+               if (-1 < block - 1) {
+                  block--;
+                  Block nextBlock = blocks.get(block);
+                  if (nextBlock != null && nextBlock.getColour().getName() == colourBlock.getColour().getName()) {
+                     fillAreaInRowWithChar(getIndexOfRow(row), columnInt, columnInt + 1, '-');
+                     columnInt--;
+                  }
+                  fillBlocksOnEndOfRow(row, block, columnInt);
+               } else {
+                  fillRowWithFree(row);
+               }
+            } else {
+               solveState = 3;
+               throw new DataCollisionException("char " + matrix[getIndexOfRow(row)][columnInt] + " ungleich " + colourBlock.getColour().getName());
+            }
+
+         }
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Füllt Blöcke am Anfang der Spalten.
+    * 
+    * @return
+    * @throws Exception
+    */
+   private char[][] fillBlocksOnBeginningOfRows() throws Exception {
+      // String methodName = "fillBlocksOnBeginningOfRows()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      for (Row row : riddle.getRows()) {
+         fillBlocksOnBeginningOfRow(row, 0, 0);
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return matrix;
+   }
+
+   /**
+    * Füllt Blöcke am Anfang einer Spalte. Ruft sich rekursiv auf.
+    * 
+    * @param row
+    * @param blockIndex
+    * @throws Exception
+    */
+   private void fillBlocksOnBeginningOfRow(Row row, int blockIndex, int columnIndex) throws Exception {
+      // String methodName = "fillBlocksOnBeginningOfRow()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      if (!row.isGone()) {
+         // showMatrix();
+         int block = blockIndex;
+         int columnInt = columnIndex;
+         boolean run = true;
+         // '-' überspringen
+         while (run) {
+            if (columnInt < riddle.getWidth() && matrix[getIndexOfRow(row)][columnInt] == '-') {
+               columnInt++;
+            } else {
+               run = false;
+            }
+         }
+         // Wenn kein '*' und nicht hinter dem Ende
+         if (columnInt < riddle.getWidth() && matrix[getIndexOfRow(row)][columnInt] != '*') {
+            ArrayList<Block> blocks = row.getBlocks();
+            if (blocks != null) {
+               Block colourBlock = blocks.get(block);
+               // wenn die Farben übereinstimmen Matrix mit Block füllen
+               if ((columnInt + colourBlock.getHowMany()) <= riddle.getWidth() && matrix[getIndexOfRow(row)][columnInt] == colourBlock.getColour().getName()) {
+                  fillAreaInRowWithChar(getIndexOfRow(row), columnInt, (columnInt + colourBlock.getHowMany()), colourBlock.getColour().getName());
+                  colourBlock.setGone(true, columnInt);
+                  columnInt = columnInt + colourBlock.getHowMany();
+                  // wenn dahinter noch ein Block Methode wieder aufrufen
+                  if (blocks.size() > block + 1) {
+                     block++;
+                     Block nextBlock = blocks.get(block);
+                     if (nextBlock != null && nextBlock.getColour().getName() == colourBlock.getColour().getName()) {
+                        fillAreaInRowWithChar(getIndexOfRow(row), columnInt, columnInt + 1, '-');
+                        columnInt++;
+                     }
+                     fillBlocksOnBeginningOfRow(row, block, columnInt);
+                     // falls kein Block dahinter kann Spalte mit '-'
+                     // gefüllt werden
+                  } else {
+                     System.out.println("Hierjfjfj");
+                     fillRowWithFree(row);
+                  }
+               } else {
+                  if ((columnInt + colourBlock.getHowMany()) < riddle.getWidth()) {
+                     solveState = 3;
+                     throw new DataCollisionException("char " + matrix[columnInt][getIndexOfRow(row)] + " at" + columnInt + "/" + getIndexOfRow(row) + " ungleich " + colourBlock.getColour().getName());
+                  }
+               }
+
+            }
+         }
+      }
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+   }
+
+   // Rekursiv
+
+   /**
+    * Sucht nach einer Lösung nach einem rekursiven Ansatz. Es werden alle
+    * Möglichkeiten der Spalten und Reihen gesucht und nach und nach
+    * ausgeschlossen. Es werden auch die Schnittmengen in die Matrix
+    * geschrieben.
+    * 
+    * @throws Throwable
+    */
+   private void solveRecursive() throws Exception {
+      String methodName = "solveRecursive()";
+      System.out.println(methodName);
+
+      // long startTime = new Date().getTime();
+      boolean run = true;
+      for (Column column : getColumns()) {
+         System.out.println("first cond Column:" + getIndexOfColumn(column));
+         // // System.out.println("First condition of column:" +
+         // firstConditionOfColumn);
+         ArrayList<LinkedList<String>> possibilities = column.getPossibilities();
+         if (possibilities == null || possibilities.size() == 0) {
+            System.out.println("new");
+            LinkedList<String> firstConditionOfColumn = getFirstConditionOfColumn(column.getBlocks(), null, 0);
+            getPossibilitiesForRowOrColumn(getIndexOfColumn(column), true, column.getBlocks(), firstConditionOfColumn, possibilities, 0, 0);
+            if (run) {
+               possibilities.add(getFirstConditionOfColumn(column.getBlocks(), null, 0));
+            }
+            column.setPossibilities(possibilities);
+         }
+         possibilities = null;
+         // System.gc();
+      }
+      // läuft, bis keine Änderungen mehr vorkommen
+      // System.gc();
+      // System.out.println("after first poss");
+      while (run) {
+         run = false;
+         for (Row row : getRows()) {
+            // System.out.println("Row:" + getIndexOfRow(row));
+            // Initiale leere Liste
+            ArrayList<LinkedList<String>> possibilities = row.getPossibilities();
+            // // System.out.println("Pos1:" + possibilities);
+            if (row.getBlocks().size() > 0 && !row.isGone()) {
+               // Wenn es noch keine Liste mit Möglichkeiten gibt wir sie
+               // hier
+               // erstellt.
+               if (possibilities == null || possibilities.size() == 0) {
+                  // System.out.println("new");
+                  LinkedList<String> firstConditionOfRow = getFirstConditionOfRow(row.getBlocks(), null, 0);
+                  getPossibilitiesForRowOrColumn(getIndexOfRow(row), false, row.getBlocks(), firstConditionOfRow, possibilities, 0, 0);
+                  // Initiale Möglichkeit muss von HAnd hinzugefügt werden
+                  possibilities.add(getFirstConditionOfRow(row.getBlocks(), null, 0));
+                  row.setPossibilities(possibilities);
+               }
+               int posibillitiesBefore = possibilities.size();
+               System.out.println("Pos1 size:" + possibilities.size());
+               // Unmögliche Möglichkeiten entfernen
+               possibilities = erasePossibilitiesInRow(row, row.getPossibilities());
+               row.setPossibilities(possibilities);
+               // System.gc();
+               System.out.println("Pos2 size:" + possibilities.size());
+               int posibillitiesAfter = possibilities.size();
+               if (possibilities.size() > 0) {
+                  if (possibilities.size() == 1) {
+                     fillListIntoMatrixInRow(getIndexOfRow(row), possibilities.get(0));
+                  } else {
+                     // // System.out.println(possibilities);
+                     schnittmengeFindenInReihe(getIndexOfRow(row), possibilities);
+                  }
+               } else {
+                  throw new NotSolvableException("Not solvable!\n" + "Row " + getIndexOfRow(row) + ":\n" + row);
+               }
+               int difference = posibillitiesBefore - posibillitiesAfter;
+               // // System.out.println("Difference:" + difference);
+               if (difference > 0) {
+                  run = true;
+               }
+               // // System.out.println("------------");
+            } else {
+               fillRowWithFree(row);
+            }
+            possibilities = null;
+            // System.gc();
+         }
+         for (Column column : getColumns()) {
+            System.out.println("Column:" + getIndexOfColumn(column));
+            // showMatrix();
+            ArrayList<LinkedList<String>> possibilities = column.getPossibilities();
+            // // System.out.println("Pos1:" + possibilities);
+            if (column.getBlocks().size() > 0 && !column.isGone()) {
+               LinkedList<String> firstConditionOfRow = getFirstConditionOfColumn(column.getBlocks(), null, 0);
+               if (possibilities == null || possibilities.size() == 0) {
+                  System.out.println("new");
+                  getPossibilitiesForRowOrColumn(getIndexOfColumn(column), true, column.getBlocks(), firstConditionOfRow, possibilities, 0, 0);
+                  possibilities.add(getFirstConditionOfColumn(column.getBlocks(), null, 0));
+                  column.setPossibilities(possibilities);
+               }
+               int posibillitiesBefore = possibilities.size();
+               System.out.println("Pos1 size:" + possibilities.size());
+               possibilities = erasePossibilitiesInColumn(column, column.getPossibilities());
+               column.setPossibilities(possibilities);
+               System.out.println("Pos2 size:" + possibilities.size());
+               // System.gc();
+               int posibillitiesAfter = possibilities.size();
+               if (possibilities.size() > 0) {
+                  if (possibilities.size() == 1) {
+                     fillListIntoMatrixInColumn(getIndexOfColumn(column), possibilities.get(0));
+                  } else {
+                     // // System.out.println(possibilities);
+                     schnittmengeFindenInSpalte(getIndexOfColumn(column), possibilities);
+                  }
+               } else {
+                  throw new Exception("Not solvable!\n" + "Column " + getIndexOfColumn(column) + ":\n" + column);
+               }
+               int difference = posibillitiesBefore - posibillitiesAfter;
+               // // System.out.println("Difference:" + difference);
+               if (difference > 0) {
+                  run = true;
+               }
+               // // System.out.println("+++++++++++++++++++++");
+            }
+            possibilities = null;
+            // System.gc();
+         }
+         // showMatrix();
+      }
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+      // System.gc();
+   }
+
+   /**
+    * Findet chars, die in allen posibilities gesetzt sind. Diese können dann in
+    * die Matrix geschrieben werden.
+    * 
+    * @param indexOfRow
+    * @param possibilities
+    * @throws Exception
+    */
+   private void schnittmengeFindenInReihe(int indexOfRow, ArrayList<LinkedList<String>> possibilities) throws Exception {
+      // long startTime = new Date().getTime();
+      // String methodName = "schnittmengeFindenInReihe()";
+      // System.out.println(methodName);
+      // 1. Möglichkeit herausnehmen und Indeces in result schreiben.
+      LinkedList<String> firstLinkedList = possibilities.get(0);
+      ArrayList<Integer> results = new ArrayList<Integer>();
+      for (int j = 0; j < riddle.getWidth(); j++) {
+         results.add(new Integer(j));
+      }
+      // wenn strings an derselben Stelle nicht übereinstimmen herausstreichen
+      // aus results
+      Integer o;
+      for (LinkedList<String> list : possibilities) {
+         for (int i = 0; i < riddle.getWidth(); i++) {
+            o = new Integer(i);
+            if (results.contains(o)) {
+               if (!firstLinkedList.get(i).equals(list.get(i))) {
+                  results.remove(o);
+               }
+            }
+         }
+      }
+      o = null;
+      for (Integer index : results) {
+         writeCharInMatrix(indexOfRow, firstLinkedList.get(index).charAt(0), index);
+      }
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Findet chars, die in allen posibilities gesetzt sind. Diese können dann in
+    * die Matrix geschrieben werden.
+    * 
+    * @param indexOfColumn
+    * @param possibilities
+    * @throws Exception
+    */
+   private void schnittmengeFindenInSpalte(int indexOfColumn, ArrayList<LinkedList<String>> possibilities) throws Exception {
+      // long startTime = new Date().getTime();
+      // String methodName = "schnittmengeFindenInSpalte()";
+      // System.out.println(methodName);
+      // 1. Möglichkeit herausnehmen und Indeces in result schreiben.
+      LinkedList<String> firstLinkedList = possibilities.get(0);
+      ArrayList<Integer> results = new ArrayList<Integer>();
+      for (int j = 0; j < riddle.getHeight(); j++) {
+         results.add(new Integer(j));
+      }
+      // wenn strings an derselben Stelle nicht übereinstimmen herausstreichen
+      // aus results
+      Integer o;
+      for (LinkedList<String> list : possibilities) {
+         for (int i = 0; i < riddle.getHeight(); i++) {
+            o = new Integer(i);
+            if (results.contains(o)) {
+               if (!firstLinkedList.get(i).equals(list.get(i))) {
+                  results.remove(o);
+               }
+            }
+         }
+      }
+      o = null;
+      for (Integer index : results) {
+         writeCharInMatrix(index, firstLinkedList.get(index).charAt(0), indexOfColumn);
+      }
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Schreibt alle Möglichkeiten die Reihe oder Spalte mit den Blöcken zu
+    * belegen in possibilities. Die Methode ruft sich selber auf, um zwischen
+    * den Blöcken zu wechseln. Dabei wird der letzte Block nach hinten
+    * geschoben. Dann wird der vorletzte Block einen weiter nach hinten
+    * geschoben und der letzte wieder nach und nach nach hinten geschoben. Dies
+    * geschieht für alle Blöcke, bis alle Blöcke komplett bis zum Maximum nach
+    * hinten geschoben sind.
+    * 
+    * @param blocks1
+    * @param aa
+    * @param possibilities
+    * @param numberOfBlock
+    * @param add1
+    * @return
+    */
+   private ArrayList<LinkedList<String>> getPossibilitiesForRowOrColumn(int rowInt, boolean forColumn, ArrayList<Block> blocks1, LinkedList<String> aa, ArrayList<LinkedList<String>> possibilities2,
+         int numberOfBlock, int add1) {
+      // String methodName = "getPossibilitiesForRowOrColumn()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      int add = add1;
+      ArrayList<Block> blocks = new ArrayList<Block>(blocks1);
+      // ArrayList<LinkedList<String>> possibilities2 = new
+      // ArrayList<LinkedList<String>>(
+      // possibilities);
+      if (blocks.size() > 0) {
+         Block block = blocks.get(numberOfBlock);
+         int numberOfBlock2 = numberOfBlock + 1;
+         int start = block.getMinStartIndex() + add;
+         // verschieben des Blocks bis zum Maximum nach hinten.
+         for (int i = start; i + block.getHowMany() <= block.getMaxEndIndex(); i++) {
+            // rekursiv die Blöcke durchgehen
+            LinkedList<String> bb = new LinkedList<String>(aa);
+            if (numberOfBlock2 < blocks.size()) {
+               possibilities2 = getPossibilitiesForRowOrColumn(rowInt, forColumn, blocks, bb, possibilities2, numberOfBlock2, add);
+            }
+            bb = null;
+            //
+            if (aa.getLast().equals("-")) {
+               aa.removeLast();
+               aa.add(start, "-");
+               if (!forColumn) {
+                  if (isPossibilityGoodInRow(aa, rowInt)) {
+                     // // System.out.println("aaaaa" + aa);
+                     possibilities2.add(new LinkedList<String>(aa));
+                     // // System.out.println(aa);
+                  }
+               } else {
+                  if (isPossibilityGoodInColumn(aa, rowInt)) {
+                     // // System.out.println("aaaaa" + aa);
+                     possibilities2.add(new LinkedList<String>(aa));
+                     // // System.out.println(aa);
+                  }
+               }
+            } else {
+               if (!forColumn) {
+                  if (isPossibilityGoodInRow(aa, rowInt)) {
+                     // // System.out.println("aaaaa" + aa);
+                     possibilities2.add(new LinkedList<String>(aa));
+                     // // System.out.println(aa);
+                  }
+               } else {
+                  if (isPossibilityGoodInColumn(aa, rowInt)) {
+                     // // System.out.println("aaaaa" + aa);
+                     possibilities2.add(new LinkedList<String>(aa));
+                     // // System.out.println(aa);
+                  }
+               }
+            }
+            add++;
+         }
+      } else {
+         if (forColumn) {
+            LinkedList<String> list = new LinkedList<String>();
+            for (int i = 0; i < riddle.getHeight(); i++) {
+               list.add("-");
+            }
+            possibilities2.add(list);
+            list = null;
+         } else {
+            LinkedList<String> list = new LinkedList<String>();
+            for (int i = 0; i < riddle.getWidth(); i++) {
+               list.add("-");
+            }
+            possibilities2.add(list);
+            list = null;
+         }
+      }
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+      // // System.out.println("Possibilities:" + possibilities2.size());
+      return possibilities2;
+   }
+
+   /**
+    * Prüft, ob die Möglichkeit zu der Spielsituation passt. Falls sie nicht
+    * passt wird false zurück gegeben.
+    * 
+    * @param possibility
+    * @param rowInt
+    * @return boolean
+    */
+   private boolean isPossibilityGoodInRow(LinkedList<String> possibility, int rowInt) {
+      // String methodName = "isPossibilityGoodInRow()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      boolean isPossible = true;
+      // gegen Situation testen
+      for (int i = 0; i < riddle.getWidth(); i++) {
+         if (isPossible) {
+            char charInMatrix = matrix[rowInt][i];
+            char charInPoss = possibility.get(i).charAt(0);
+            if (charInMatrix != charInPoss && charInMatrix != '*') {
+               isPossible = false;
+            }
+            if (charInMatrix == '*' && getColumns().get(i).isGone() && charInPoss != '-') {
+               isPossible = false;
+            }
+            if (isPossible) {
+               // TODO: check this method, performance
+               // if (!checkPossibilityOfRowAgainstColumns(possibility,
+               // rowInt)) {
+               // isPossible = false;
+               // }
+            }
+         }
+      }
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+      return isPossible;
+   }
+
+   /**
+    * Prüft, ob die Möglichkeit zu der Spielsituation passt.
+    * 
+    * @param possibility
+    * @param rowInt
+    * @return boolean
+    */
+   private boolean isPossibilityGoodInColumn(LinkedList<String> possibility, int columnInt) {
+      // String methodName = "isPossibilityGoodInColumn()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      boolean isPossible = true;
+
+      for (int i = 0; i < riddle.getHeight(); i++) {
+         if (isPossible) {
+            char charInMatrix = matrix[i][columnInt];
+            char charInPoss = possibility.get(i).charAt(0);
+            if (charInMatrix != charInPoss && charInMatrix != '*') {
+               isPossible = false;
+            }
+            if (charInMatrix == '*' && getRows().get(i).isGone() && charInPoss != '-') {
+               isPossible = false;
+            }
+            // if (!checkPossibilityOfColumnAgainstRows(possibility,
+            // columnInt)) {
+            // isPossible = false;
+            // }
+         }
+      }
+      // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return isPossible;
+   }
+
+   /**
+    * Überprüft, ob jede Spalte in dieser Reihe mindestens eine Übereinstimmung
+    * in den Possibilities der jeweiligen Spalte hat. Ansonsten ist die
+    * Möglichkeit falsch.
+    * 
+    * @param possibility
+    * @param rowInt
+    * @return
+    */
+   private boolean checkPossibilityOfRowAgainstColumns(LinkedList<String> possibility, int rowInt) {
+      // String methodName = "checkPossibilityOfRowAgainstColumns()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      boolean isPossible = true;
+      if (isPossible) {
+         // String (Splaten durchgehen)
+         for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
+            Column column = getColumns().get(columnInt);
+            ArrayList<LinkedList<String>> possibilitiesOfColumn = column.getPossibilities();
+            if (isPossible && possibilitiesOfColumn != null && possibilitiesOfColumn.size() > 0) {
+               boolean isPossibleInColumn = false;
+               for (LinkedList<String> possibilityOfColumn : possibilitiesOfColumn) {
+                  if (possibilityOfColumn.get(rowInt).equals(possibility.get(columnInt))) {
+                     isPossibleInColumn = true;
+                  }
+               }
+               if (isPossible) {
+                  isPossible = isPossibleInColumn;
+               }
+            }
+         }
+      }
+      // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return isPossible;
+   }
+
+   // TODO row setEntries mit char...
+   /**
+    * Überprüft, ob jede Reihe(ein char) in dieser Spalte mindestens eine
+    * Übereinstimmung in den Possibilities der Reihe hat.
+    * 
+    * @param possibility
+    * @param rowInt
+    * @return
+    */
+   private boolean checkPossibilityOfColumnAgainstRows(LinkedList<String> possibility, int columnInt) {
+      // String methodName = "checkPossibilityOfColumnAgainstRows()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      boolean isPossible = true;
+      if (isPossible) {
+         // String (Splaten durchgehen)
+         for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+            ArrayList<LinkedList<String>> possibilities = getRows().get(rowInt).getPossibilities();
+            if (isPossible && possibilities != null && possibilities.size() > 0) {
+               boolean isPossibleInColumn = false;
+               for (LinkedList<String> possibilityOfRow : possibilities) {
+                  if (possibilityOfRow.get(columnInt).equals(possibility.get(rowInt))) {
+                     isPossibleInColumn = true;
+                  }
+               }
+               if (isPossible) {
+                  isPossible = isPossibleInColumn;
+               }
+            }
+            // if (isPossible) {
+            // char[][] checkMatrix = matrix;
+            // checkMatrix = fillListIntoMatrixInRow(checkMatrix, rowInt,
+            // possibility);
+            // isPossible = checkIfColumnsStateIsPossible(checkMatrix,
+            // columnInt);
+            // }
+         }
+      }
+      // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return isPossible;
+   }
+
+   /**
+    * Löscht eine Möglichkeit aus der Liste, nachdem sie in
+    * {@link #isPossibilityGoodInRow(LinkedList, int)} geprüft wurde.
+    * 
+    * @param row
+    * @param possibilities
+    * @return ArrayList<LinkedList<String>> weniger .
+    */
+   private ArrayList<LinkedList<String>> erasePossibilitiesInRow(Row row, ArrayList<LinkedList<String>> possibilities) {
+      // String methodName = "erasePossibilitiesInRow()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      ArrayList<LinkedList<String>> possibilities2 = new ArrayList<LinkedList<String>>(possibilities);
+      System.out.println("Row:" + getIndexOfRow(row));
+      for (LinkedList<String> possibility : possibilities) {
+         boolean possible = isPossibilityGoodInRow(possibility, getIndexOfRow(row));
+         if (!possible) {
+            possibilities2.remove(possibility);
+            // System.out.println(possibility + " erased");
+         }
+      }
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+      return possibilities2;
+   }
+
+   /**
+    * Löscht eine Möglichkeit aus der Liste, nachdem sie in
+    * {@link #isPossibilityGoodInColumn(LinkedList, int)} geprüft wurde.
+    * 
+    * @param row
+    * @param possibilities
+    * @return ArrayList<LinkedList<String>> weniger .
+    */
+   private ArrayList<LinkedList<String>> erasePossibilitiesInColumn(Column column, ArrayList<LinkedList<String>> possibilities) {
+      // String methodName = "erasePossibilitiesInColumn()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      ArrayList<LinkedList<String>> possibilities2 = new ArrayList<LinkedList<String>>(possibilities);
+      for (LinkedList<String> possibility : possibilities) {
+         // System.out.println(possibility);
+         boolean possible = isPossibilityGoodInColumn(possibility, getIndexOfColumn(column));
+         if (!possible) {
+            possibilities2.remove(possibility);
+            // System.out.println(possibility + " erased");
+         }
+      }
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+      return possibilities2;
+   }
+
+   // Helper
+
+   /**
+    * Liefert die initiale Belegung für die Reihe.
+    * 
+    * @param asd
+    * @param blocks
+    * @param lastBlock
+    * @param resultIndex
+    * @return
+    */
+   private LinkedList<String> getFirstConditionOfRow(ArrayList<Block> blocks, Block lastBlock, int resultIndex) {
+      // String methodName = "getFirstConditionOfRow()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      LinkedList<String> asd = new LinkedList<String>();
+      for (Block block : blocks) {
+         if (null != lastBlock && lastBlock.getColour().getName() == block.getColour().getName()) {
+            asd.add("-");
+            resultIndex++;
+         }
+
+         for (int i = 0; i < block.getHowMany(); i++) {
+            asd.add(String.valueOf(block.getColour().getName()));
+         }
+
+         resultIndex += block.getHowMany();
+         lastBlock = block;
+      }
+      for (int i = resultIndex; i < riddle.getWidth(); i++) {
+         asd.add("-");
+      }
+      // // System.out.println("firstCond:" + asd);
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+      // System.out.println("asd:" + asd);
+      return asd;
+   }
+
+   /**
+    * Liefert die initiale Belegung für die Spalte. Dabei werden alle Blöcke
+    * maximal nach oben geschoben.
+    * 
+    * @param asd
+    * @param blocks
+    * @param lastBlock
+    * @param resultIndex
+    * @return
+    */
+   private LinkedList<String> getFirstConditionOfColumn(ArrayList<Block> blocks, Block lastBlock, int resultIndex) {
+      // String methodName = "getFirstConditionOfColumn()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      LinkedList<String> asd = new LinkedList<String>();
+      for (Block block : blocks) {
+         if (null != lastBlock && lastBlock.getColour().getName() == block.getColour().getName()) {
+            asd.add("-");
+            resultIndex++;
+         }
+
+         for (int i = 0; i < block.getHowMany(); i++) {
+            asd.add(String.valueOf(block.getColour().getName()));
+         }
+
+         resultIndex += block.getHowMany();
+         lastBlock = block;
+      }
+      for (int i = resultIndex; i < riddle.getHeight(); i++) {
+         asd.add("-");
+      }
+      // // System.out.println("firstCond:" + asd);
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+      return asd;
+   }
+
+   /**
+    * Display the matrix.
+    * 
+    * @param matrix
+    * @throws Exception
+    */
+   private void showMatrix() {
+      // String methodName = "showMatrix()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      String out = "\n";
+      for (int i = 0; i < riddle.getHeight(); i++) {
+         out = showRow(out, i);
+      }
+      System.out.println(out);
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Returns the Row of the current mfatrix as String.
+    * 
+    * @param out
+    * @param i
+    * @return
+    */
+   private String showRow(String out, int i) {
+      for (int j = 0; j < riddle.getWidth(); j++) {
+         out += matrix[i][j];
+         out += "  ";
+      }
+      out += "\n";
+      return out;
+   }
+
+   private void showBlockGoneTrue() {
+      String methodName = "showBlockGoneTrue()";
+      System.out.println(methodName);
+      long startTime = new Date().getTime();
+      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+         Row row = getRows().get(rowInt);
+         System.out.println("Row:" + rowInt + " -- " + row.isGone());
+         ArrayList<Block> blocks = row.getBlocks();
+         if (null != blocks) {
+            for (Block block : blocks) {
+               System.out.println(block);
+            }
+         }
+      }
+      for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
+         Column column = getColumns().get(columnInt);
+         System.out.println("Column:" + columnInt + " -- " + column.isGone());
+         ArrayList<Block> blocks = column.getBlocks();
+         if (null != blocks) {
+            for (Block block : blocks) {
+               System.out.println(block);
+            }
+         }
+      }
+      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Füllt die Spalte mit '-'.
+    * 
+    * @param column
+    */
+   private void fillColumnWithFree(Column column) {
+      // // String methodName = "fillColumnWithFree()";
+      // // System.out.println(methodName);
+      // // long startTime = new Date().getTime();
+      LinkedList<String> list = new LinkedList<String>();
+      for (int row = 0; row < riddle.getHeight(); row++) {
+         int indexOfColumn = getIndexOfColumn(column);
+         if (matrix[row][indexOfColumn] == '*') {
+            matrix[row][indexOfColumn] = '-';
+         }
+         list.add("-");
+      }
+      ArrayList<LinkedList<String>> possibilities = column.getPossibilities();
+      if (possibilities == null || possibilities.size() == 0) {
+         possibilities.add(list);
+         column.setPossibilities(possibilities);
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Füllt die Reihe mit '-'.
+    * 
+    * @param row
+    */
+   private void fillRowWithFree(Row row) {
+      // // String methodName = "fillRowWithFree()";
+      // // System.out.println(methodName);
+      // // long startTime = new Date().getTime();
+      for (int column = 0; column < riddle.getWidth(); column++) {
+         int indexOfRow = getIndexOfRow(row);
+         if (matrix[indexOfRow][column] == '*') {
+            matrix[indexOfRow][column] = '-';
+         }
+      }
+
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Setzt die initialen Werte für minStartIndex und maxStartIndex für eine
+    * Reihe oder Spalte.
+    * 
+    * @param blocks
+    * @param size
+    */
+   private void setupBlocksInRowAndColumn(ArrayList<Block> blocks, int size) {
+      // // String methodName = "setupBlocksInRowAndColumn()";
+      // // System.out.println(methodName);
+      // // long startTime = new Date().getTime();
+      for (int i = 0; i < blocks.size(); i++) {
+         Block block = blocks.get(i);
+         if (blocks.size() == 0) {
+            block.setMinStartIndex(0);
+            block.setMaxEndIndex(size - 1);
+         } else if (blocks.size() == 1) {
+            block.setMinStartIndex(0);
+            block.setMaxEndIndex(size - 1);
+         } else {
+            if (i == 0) {
+               block.setMinStartIndex(0);
+               block.setMaxEndIndex(getMaxEndIndexOfBlock(blocks, i, size));
+            } else if (i == blocks.size() - 1) {
+               block.setMinStartIndex(getMinStartIndexOfBlock(blocks, i, size));
+               block.setMaxEndIndex(size - 1);
+            } else {
+               block.setMinStartIndex(getMinStartIndexOfBlock(blocks, i, size));
+               block.setMaxEndIndex(getMaxEndIndexOfBlock(blocks, i, size));
+            }
+         }
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Berechnet den minimalen Startindex eines Blockes, indem die Größen der
+    * vorherigen Blöcke unter Berücksichtigung etwaiger Zwischenräume addiert
+    * werden.
+    * 
+    * @param blocks
+    * @param indexOfBlock
+    * @param widthOfRiddle
+    * @return
+    */
+   private int getMinStartIndexOfBlock(ArrayList<Block> blocks, int indexOfBlock, int widthOfRiddle) {
+      // String methodName = "getMinStartIndexOfBlock()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      int index = 0;
+      Block lastBlock = blocks.get(indexOfBlock);
+      for (int i = indexOfBlock - 1; i >= 0; i--) {
+         Block block = blocks.get(i);
+         index += block.getHowMany();
+         if (null != lastBlock && lastBlock.getColour().getName() == block.getColour().getName()) {
+            index++;
+         }
+         lastBlock = block;
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return index;
+   }
+
+   /**
+    * Berechnet den maximalen Index für einen Block.
+    * 
+    * @param blocks
+    * @param indexOfBlock
+    * @param size
+    * @return
+    */
+   private int getMaxEndIndexOfBlock(ArrayList<Block> blocks, int indexOfBlock, int size) {
+      // String methodName = "getMaxEndIndexOfBlock()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      int index = 0;
+      Block lastBlock = blocks.get(indexOfBlock);
+      for (int i = indexOfBlock + 1; i < blocks.size(); i++) {
+         Block block = blocks.get(i);
+         index += block.getHowMany();
+         if (lastBlock.getColour().getName() == block.getColour().getName()) {
+            index++;
+         }
+         lastBlock = block;
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return (size - 1 - index);
+   }
+
+   /**
+    * Gibt alle Spalten des Rätsels zurück.
+    * 
+    * @return
+    */
+   private LinkedList<Column> getColumns() {
+      return riddle.getColumns();
+   }
+
+   /**
+    * Display the matrix.
+    * 
+    * @param matrix
+    * @throws Exception
+    */
+   private void showAMatrix(String[][] matrix) {
+      // String methodName = "showAMatrix()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      for (int i = 0; i < riddle.getHeight(); i++) {
+         String out = "";
+         for (int j = 0; j < riddle.getWidth(); j++) {
+            out += matrix[i][j];
+            out += "  ";
+         }
+         // // System.out.println(out);
+      }
+      // // System.out.println();
+      // showBlockGoneTrue(matrix);
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Gibt alle Reihen des Rätsels zurück.
+    * 
+    * @return
+    */
+   private LinkedList<Row> getRows() {
+      return riddle.getRows();
+   }
+
+   private int getIndexOfColumn(Column column) {
+      return getColumns().indexOf(column);
+   }
+
+   private int getIndexOfRow(Row row) {
+      return getRows().indexOf(row);
+   }
+
+   /**
+    * Füllt den Bereich in der column zwischen rowBegin (inklusive) und rowEnd
+    * (exklusive) mit dem char c.
+    * 
+    * @param matrix
+    * @param columnIndex
+    * @param rowBegin
+    * @param rowEnd
+    * @param c
+    * @return
+    * @throws Exception
+    */
+   private char[][] fillAreaInColumnWithChar(int columnIndex, int rowBegin, int rowEnd, char c) throws Exception {
+      // String methodName = "fillAreaInColumnWithChar()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      for (int row = rowBegin; row < rowEnd; row++) {
+         writeCharInMatrix(row, c, columnIndex);
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return matrix;
+   }
+
+   /**
+    * Füllt den Bereich in der row zwischen columnBegin (inklusive) und
+    * columnEnd (exklusive) mit dem char c.
+    * 
+    * @param matrix
+    * @param columnIndex
+    * @param rowBegin
+    * @param rowEnd
+    * @param c
+    * @return
+    * @throws Exception
+    */
+   private void fillAreaInRowWithChar(int rowIndex, int columnBegin, int columnEnd, char c) throws Exception {
+      // String methodName = "fillAreaInRowWithChar()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      for (int column = columnBegin; column < columnEnd; column++) {
+         writeCharInMatrix(rowIndex, c, column);
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Füllt die Stelle in der Matrix.
+    * 
+    * @param rowIndex
+    *           Nummer der Reihe in der Matrix.
+    * @param c
+    *           Farbe
+    * @param columnIndex
+    *           rowIndex Nummer der Reihe in der Matrix.
+    * @throws Exception
+    *            falls an der Stelle bereits ein anderer char als c oder '*'
+    *            steht.
+    */
+   private void writeCharInMatrix(int rowIndex, char c, int columnIndex) throws Exception {
+      // String methodName = "writeCharInMatrix()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      // System.out.println(matrix.length);
+      // System.out.println(rowIndex);
+      // System.out.println(columnIndex);
+      // if (columnIndex == -1) {
+      // showBlockGoneTrue();
+      // }
+      if (matrix[rowIndex][columnIndex] != '*' && matrix[rowIndex][columnIndex] != c) {
+         solveState = 3;
+         throw new DataCollisionException("Fehler: row:" + rowIndex + " column:" + columnIndex + " " + c + " ungleich " + matrix[rowIndex][columnIndex]);
+      }
+      if (matrix[rowIndex][columnIndex] != c) {
+         matrix[rowIndex][columnIndex] = c;
+         if (matrix[rowIndex][columnIndex] != '-') {
+            if (getRows().get(rowIndex).setEntriesSet(columnIndex)) {
+               fillRowWithFree(getRows().get(rowIndex));
+               // TODO vieleicht noch benötigt
+               // LinkedList<String> list = new LinkedList<String>();
+               // ArrayList<LinkedList<String>> list2 = new
+               // ArrayList<LinkedList<String>>();
+               // for (int column = 0; column < riddle.getWidth();
+               // column++) {
+               // list.add(String.valueOf(matrix[rowIndex][column]));
+               // }
+               // list2.add(list);
+               // getRows().get(rowIndex).setPossibilities(list2);
+            }
+            if (getColumns().get(columnIndex).setEntriesSet(rowIndex)) {
+               fillColumnWithFree(getColumns().get(columnIndex));
+               // TODO vieleicht noch benötigt
+               // LinkedList<String> list = new LinkedList<String>();
+               // ArrayList<LinkedList<String>> list2 = new
+               // ArrayList<LinkedList<String>>();
+               // for (int row = 0; row < riddle.getHeight(); row++) {
+               // list.add(String.valueOf(matrix[row][columnIndex]));
+               // }
+               // list2.add(list);
+               // getColumns().get(columnIndex).setPossibilities(list2);
+            }
+         }
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Füllt den Inhalt einer zutreffenden Möglichkeit aus
+    * {@link #solveRecursive()} in die Matrix.
+    * 
+    * @param row
+    * @param possibilitiy
+    * @throws Throwable
+    */
+   private void fillListIntoMatrixInRow(int row, LinkedList<String> possibilitiy) throws Exception {
+      // String methodName = "fillListIntoMatrixInRow()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      getRows().get(row).setGone(true);
+      for (int i = 0; i < riddle.getWidth(); i++) {
+         char c = possibilitiy.get(i).charAt(0);
+         if (matrix[row][i] != c) {
+            matrix[row][i] = c;
+            if (c != '-') {
+               if (getRows().get(row).setEntriesSet(i)) {
+                  fillRowWithFree(getRows().get(row));
+               }
+               if (getColumns().get(i).setEntriesSet(row)) {
+                  fillColumnWithFree(getColumns().get(i));
+               }
+            }
+         }
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Füllt den Inhalt einer zutreffenden Möglichkeit aus
+    * {@link #solveRecursive()} in die Matrix.
+    * 
+    * @param row
+    * @param possibilitiy
+    * @throws Throwable
+    */
+   private char[][] fillListIntoMatrixInRow(char[][] checkMatrix, int row, LinkedList<String> possibilitiy) {
+      // String methodName = "fillListIntoMatrixInRow()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      getRows().get(row).setGone(true);
+      for (int i = 0; i < riddle.getWidth(); i++) {
+         char c = possibilitiy.get(i).charAt(0);
+         if (checkMatrix[row][i] != c) {
+            checkMatrix[row][i] = c;
+            if (c != '-') {
+               if (getRows().get(row).setEntriesSet(i)) {
+                  fillRowWithFree(getRows().get(row));
+               }
+               if (getColumns().get(i).setEntriesSet(row)) {
+                  fillColumnWithFree(getColumns().get(i));
+               }
+            }
+         }
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+      return checkMatrix;
+   }
+
+   /**
+    * Füllt den Inhalt einer zutreffenden Möglichkeit aus
+    * {@link #solveRecursive()} in die Matrix.
+    * 
+    * @param row
+    * @param possibilitiy
+    */
+   private void fillListIntoMatrixInColumn(int column, LinkedList<String> possibilities) {
+      // String methodName = "fillListIntoMatrixInColumn()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      getColumns().get(column).setGone(true);
+      for (int i = 0; i < riddle.getHeight(); i++) {
+         char c = possibilities.get(i).charAt(0);
+         if (matrix[i][column] != c) {
+            matrix[i][column] = c;
+            if (c != '-') {
+               if (getRows().get(i).setEntriesSet(column)) {
+                  fillRowWithFree(getRows().get(i));
+               }
+               if (getColumns().get(column).setEntriesSet(i)) {
+                  fillColumnWithFree(getColumns().get(column));
+               }
+            }
+         }
+      }
+      // // System.out.println("Time for " + methodName + ": " + (new
+      // Date().getTime() - startTime) + " ms");
+   }
+
+   /**
+    * Gibt die Anzahl der nicht belegten Felder zurück.
+    * 
+    * @return
+    */
+   private int getStarCountInRiddle() {
+      // String methodName = "getStarCountInRiddle()";
+      // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      int starCount = 0;
+
+      for (Row row : getRows()) {
+         for (int i = 0; i < riddle.getWidth(); i++) {
+            if (matrix[getIndexOfRow(row)][i] == '*') {
+               starCount++;
+            }
+         }
+      }
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+      return starCount;
+   }
+
+   private int getRowWithSmallestSizesOfPossibilities() {
+      // String methodName = "getSizesOfPossibilities()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      int smallestRowInt = 0;
+      Integer sizesmallestRowInt = null;
+      for (Row row : getRows()) {
+         int size = row.getPossibilities().size();
+         if (sizesmallestRowInt == null || (size < sizesmallestRowInt && size != 1)) {
+            sizesmallestRowInt = size;
+            smallestRowInt = getIndexOfRow(row);
+         }
+         // // System.out.println("Row " + getIndexOfRow(row) +
+         // " pssibilities size:" + size);
+      }
+      return smallestRowInt;
+   }
+
+   private void getSizesOfPossibilities() {
+      // String methodName = "getSizesOfPossibilities()";
+      // // System.out.println(methodName);
+      // long startTime = new Date().getTime();
+      long rowPosSize = getPossibillitySizeOfRow();
+      long columnPosSize = getPossibillitySizeOfColumn();
+      // System.out.println("RowPos: " + rowPosSize + "\n" + "ColPos: "
+      // + columnPosSize);
+      // System.out.println("Time for " + methodName + ": "
+      // + (new Date().getTime() - startTime) + " ms");
+   }
+
+   private long getPossibillitySizeOfColumn() {
+      long columnPosSize = 1;
+      for (Column column : getColumns()) {
+         // System.out.println("Column " + getIndexOfColumn(column)
+         // + " pssibilities size:" + column.getPossibilities().size());
+         // // System.out.println(column.getPossibilities());
+         columnPosSize *= column.getPossibilities().size();
+         // System.out.println();
+      }
+      return columnPosSize;
+   }
+
+   private long getPossibillitySizeOfRow() {
+      long rowPosSize = 1;
+
+      for (Row row : getRows()) {
+         // System.out.println("Row " + getIndexOfRow(row)
+         // + " pssibilities size:" + row.getPossibilities().size());
+         rowPosSize *= row.getPossibilities().size();
+         // // System.out.println(row.getPossibilities());
+      }
+      return rowPosSize;
+   }
+
+   /**
+    * @return the solveState
+    */
+   public int getSolveState() {
+      return solveState;
+   }
+
+   /**
+    * @param solveState
+    *           the solveState to set
+    */
+   public void setSolveState(int solveState) {
+      this.solveState = solveState;
+   }
 
 }
