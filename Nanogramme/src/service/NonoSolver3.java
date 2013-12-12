@@ -358,9 +358,8 @@ public class NonoSolver3 implements INonogramSolver {
          if (matrix[rowInt][columnInt] == '*') {
             LinkedList<Integer> blockInts = new LinkedList<Integer>();
             for (Block block : blocks) {
-               if (!block.isGone() && columnInt >= block.getMinStartIndexNew() && columnInt <= block.getMaxEndIndexNew()) {
+               if (columnInt >= block.getMinStartIndexNew() && columnInt <= block.getMaxEndIndexNew()) {
                   blockInts.add(blocks.indexOf(block));
-
                }
             }
             // System.out.println("row:" + rowInt + "columnInt: " +
@@ -408,9 +407,8 @@ public class NonoSolver3 implements INonogramSolver {
          if (c != '*' && c != '-') {
             LinkedList<Integer> blockInts = new LinkedList<Integer>();
             for (Block block : blocks) {
-               if (columnInt >= block.getMinStartIndexNew() && columnInt <= block.getMaxEndIndexNew()) {
+               if (columnInt >= block.getMinStartIndexNew() && columnInt <= block.getMaxEndIndexNew() && c == block.getColorChar()) {
                   blockInts.add(blocks.indexOf(block));
-
                }
             }
             // "*" gehört nur zu einem Block
@@ -453,7 +451,7 @@ public class NonoSolver3 implements INonogramSolver {
          if (c != '*' && c != '-') {
             LinkedList<Integer> blockInts = new LinkedList<Integer>();
             for (Block block : blocks) {
-               if (rowInt >= block.getMinStartIndexNew() && rowInt <= block.getMaxEndIndexNew()) {
+               if (rowInt >= block.getMinStartIndexNew() && rowInt <= block.getMaxEndIndexNew() && c == block.getColorChar()) {
                   blockInts.add(blocks.indexOf(block));
 
                }
@@ -496,7 +494,7 @@ public class NonoSolver3 implements INonogramSolver {
          if (matrix[rowInt][columnInt] == '*') {
             LinkedList<Integer> blockInts = new LinkedList<Integer>();
             for (Block block : blocks) {
-               if (!block.isGone() && rowInt >= block.getMinStartIndexNew() && rowInt <= block.getMaxEndIndexNew()) {
+               if (rowInt >= block.getMinStartIndexNew() && rowInt <= block.getMaxEndIndexNew()) {
                   blockInts.add(blocks.indexOf(block));
 
                }
@@ -945,6 +943,10 @@ public class NonoSolver3 implements INonogramSolver {
       for (Row row : getRows()) {
          // System.out.println("ROWROWROWROWROWOROWRO" + getIndexOfRow(row));
          updateMinAndMaxIndexOfBlocks(row);
+         if (getIndexOfRow(row) == 2) {
+        	 System.out.println("dsf");
+        	 showMatrix();showBlockGoneTrue();
+         }
          updateMinAndMaxIndexOfBlocks2(row);
          checkStarBelongingToBlockForRow(row);
          checkEmptyBelongingToBlockForRow(row);
@@ -1134,8 +1136,9 @@ public class NonoSolver3 implements INonogramSolver {
    /**
     * 
     * @param row
+ * @throws Exception 
     */
-   private void checkEmptyInBetweenBlock(Row row) {
+   private void checkEmptyInBetweenBlock(Row row) throws Exception {
 
       ArrayList<Block> blocks = row.getBlocks();
       if (blocks == null || blocks.size() == 0) {
@@ -1160,7 +1163,7 @@ public class NonoSolver3 implements INonogramSolver {
       }
    }
 
-   private void checkEmptyInBetweenBlock(Column column) {
+   private void checkEmptyInBetweenBlock(Column column) throws Exception {
 
       ArrayList<Block> blocks = column.getBlocks();
       if (blocks == null || blocks.size() == 0) {
@@ -1205,10 +1208,6 @@ public class NonoSolver3 implements INonogramSolver {
             if (indeces.size() > 1) {
                for (int column = indeces.first() + 1; column < indeces.last(); column++) {
                   if (!indeces.contains(column)) {
-                     if (getIndexOfRow(row) == 2 && (column == 8 || column == 9)) {
-                        throw new Exception();
-                     }
-                     indeces.add(column);
                      block.increaseEntriesSet(column);
                      writeCharInMatrix(getIndexOfRow(row), block.getColourString().charAt(0), column);
                   }
@@ -1238,7 +1237,6 @@ public class NonoSolver3 implements INonogramSolver {
             if (indeces.size() > 1) {
                for (int row = indeces.first() + 1; row < indeces.last(); row++) {
                   if (!indeces.contains(row)) {
-                     indeces.add(row);
                      block.increaseEntriesSet(row);
                      writeCharInMatrix(row, block.getColourString().charAt(0), getIndexOfColumn(column));
                   }
@@ -1256,8 +1254,9 @@ public class NonoSolver3 implements INonogramSolver {
     * Blockfarbe ist und passt dann die Werte an.
     * 
     * @param row
+ * @throws Exception 
     */
-   private void updateMinAndMaxIndexOfBlocks(Row row) {
+   private void updateMinAndMaxIndexOfBlocks(Row row) throws Exception {
       // System.out.println("updateMinAndMaxIndexOfBlocks:" +
       // getIndexOfRow(row));
       // showBlockGoneTrue();
@@ -1308,8 +1307,9 @@ public class NonoSolver3 implements INonogramSolver {
     * wird.
     * 
     * @param row
+ * @throws Exception 
     */
-   private void updateMinAndMaxIndexOfBlocks2(Row row) {
+   private void updateMinAndMaxIndexOfBlocks2(Row row) throws Exception {
       // System.out.println("updateMinAndMaxIndexOfBlocks2:");
       ArrayList<Block> blocks = row.getBlocks();
       if (blocks != null && blocks.size() > 1) {
@@ -1319,7 +1319,7 @@ public class NonoSolver3 implements INonogramSolver {
             if (matrix[getIndexOfRow(row)][block.getMaxEndIndexNew()] != '*' && matrix[getIndexOfRow(row)][block.getMaxEndIndexNew()] != block.getColorChar()) {
                block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
             }
-            if (matrix[getIndexOfRow(row)][block.getMaxEndIndexNew()] != '*' && matrix[getIndexOfRow(row)][block.getMaxEndIndexNew()] != block.getColorChar()) {
+            if (matrix[getIndexOfRow(row)][block.getMinStartIndexNew()] != '*' && matrix[getIndexOfRow(row)][block.getMinStartIndexNew()] != block.getColorChar()) {
                block.setMinStartIndexNew(block.getMinStartIndexNew() + 1);
             }
             // es gibt noch einen nächsteb Block
@@ -1371,8 +1371,9 @@ public class NonoSolver3 implements INonogramSolver {
     * hier der 2. Block angepasst wird.
     * 
     * @param column
+ * @throws Exception 
     */
-   private void updateMinAndMaxIndexOfBlocks2(Column column) {
+   private void updateMinAndMaxIndexOfBlocks2(Column column) throws Exception {
       // System.out.println("updateMinAndMaxIndexOfBlocks2:");
       ArrayList<Block> blocks = column.getBlocks();
       if (blocks != null && blocks.size() > 1) {
@@ -1435,8 +1436,9 @@ public class NonoSolver3 implements INonogramSolver {
     * @param blockIndex
     * @param block
     * @param minIndex
+ * @throws Exception 
     */
-   private void updateBlocksBeforeThisBlock(ArrayList<Block> blocks, int blockIndex, Block block, int minIndex) {
+   private void updateBlocksBeforeThisBlock(ArrayList<Block> blocks, int blockIndex, Block block, int minIndex) throws Exception {
       for (int newIndex = (blockIndex - 1); newIndex > -1; newIndex--) {
          Block checkBlock = blocks.get(newIndex);
          if (!checkBlock.isGone()) {
@@ -1458,8 +1460,9 @@ public class NonoSolver3 implements INonogramSolver {
     * @param blockIndex
     * @param block
     * @param maxIndex
+ * @throws Exception 
     */
-   private void updateBlocksAfterThisBlock(ArrayList<Block> blocks, int blockIndex, Block block, int maxIndex) {
+   private void updateBlocksAfterThisBlock(ArrayList<Block> blocks, int blockIndex, Block block, int maxIndex) throws Exception {
       for (int newIndex = (blockIndex + 1); newIndex < blocks.size(); newIndex++) {
          Block checkBlock = blocks.get(newIndex);
          if (!checkBlock.isGone()) {
@@ -1482,8 +1485,9 @@ public class NonoSolver3 implements INonogramSolver {
     * Blockfarbe ist und passt dann die Werte an.
     * 
     * @param column
+ * @throws Exception 
     */
-   private void updateMinAndMaxIndexOfBlocks(Column column) {
+   private void updateMinAndMaxIndexOfBlocks(Column column) throws Exception {
       ArrayList<Block> blocks = column.getBlocks();
       if (blocks != null && blocks.size() > 1) {
          for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {

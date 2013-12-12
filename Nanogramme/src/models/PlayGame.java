@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.swing.JLabel;
 
+import service.NonoSolver3;
 import service.RiddleService;
 
 public class PlayGame implements IPlaygame {
@@ -60,11 +61,9 @@ public class PlayGame implements IPlaygame {
 				matrixNeu[i][j] = matrix[i][j];
 			}
 		}
-		// NonoSolver3 solver = new NonoSolver3(matrixNeu, riddle);
-		// solutions = solver.getSolution();
-		// TODO nur für debuggen!!!
-		// if (solutions != null) {
-		if (true) {
+		NonoSolver3 solver = new NonoSolver3(matrixNeu, riddle);
+		solutions = solver.getSolution();
+		if (solutions != null) {
 			listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(),
 					riddle.getRows(), riddle.getColumns());
 			listener.setColours(riddle.getColours());
@@ -86,20 +85,20 @@ public class PlayGame implements IPlaygame {
 				setupMatrix();
 			}
 		} else {
-			// switch (solver.getSolveState()) {
-			// case 0:
-			// listener.showAlert("Fehler beim Laden");
-			// break;
-			// case 2:
-			// listener.showAlert("Dieses Rätsel hat mehr als eine Lösung!");
-			// break;
-			// case 3:
-			// listener.showAlert("Dieses Rätsel hat keine Lösung!");
-			// break;
-			// default:
-			// listener.showAlert("Fehler beim Laden");
-			// break;
-			// }
+			 switch (solver.getSolveState()) {
+			 case 0:
+			 listener.showAlert("Fehler beim Laden");
+			 break;
+			 case 2:
+			 listener.showAlert("Dieses Rätsel hat mehr als eine Lösung!");
+			 break;
+			 case 3:
+			 listener.showAlert("Dieses Rätsel hat keine Lösung!");
+			 break;
+			 default:
+			 listener.showAlert("Fehler beim Laden");
+			 break;
+			 }
 		}
 	}
 

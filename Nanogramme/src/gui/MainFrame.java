@@ -57,12 +57,14 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 	private static File lastSelectedDir = null;
 
 	// Services und Listener
-	private PictureService ps = new PictureService();
-	private RiddleService riddleService = new RiddleService();
+	private PictureService ps;
+	private RiddleService riddleService;
 	private IPlaygame playGame;
 
 	public MainFrame() {
 		playGame = new PlayGame(this);
+		riddleService = new RiddleService();
+		ps = new PictureService();
 		init();
 	}
 
@@ -70,7 +72,9 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 	 * Lädt den JFrame.
 	 */
 	private void init() {
-
+		playGame = new PlayGame(this);
+		riddleService = new RiddleService();
+		ps = new PictureService();
 		applikation = new JFrame("Main");
 		container = applikation.getContentPane();
 
@@ -88,11 +92,16 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 
 		applikation.setVisible(true);
 	}
+	
+	private JScrollPane scrollbar;
 
 	@Override
 	public void setupUIMatrix(int rowInt, int columnInt, List<Row> rows,
 			List<Column> columns) {
 		System.out.println("setupMatrix in MainFrame");
+		if (scrollbar != null) {
+			container.remove(scrollbar);
+		}
 		labels = new JLabel[rowInt][columnInt];
 
 		JPanel panel = new JPanel(new GridBagLayout());
@@ -104,7 +113,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 
 		c.fill = GridBagConstraints.NONE;
 		setupRowAndColumns(rowInt, columnInt, rows, columns, panel, c);
-		JScrollPane scrollbar = new JScrollPane(panel);
+		scrollbar = new JScrollPane(panel);
 		container.add(scrollbar, BorderLayout.CENTER);
 	}
 
@@ -268,12 +277,17 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 			File file = getFileOrDirectryFromChooser(applikation,
 					JFileChooser.OPEN_DIALOG);
 			if (file != null && file.getAbsoluteFile() != null) {
+				if (!file.getName().endsWith("nono")) {
+					showAlert("Nur .nono Dateien laden.");
+					return;
+				}
 				System.out.println(file.getAbsoluteFile());
 				toolbar = new JToolBar();
 				applikation.add(toolbar, BorderLayout.SOUTH);
 
 				if (!playGame.openRiddleFromFile(file.getAbsoluteFile().toString())) {
 					showAlert("Fehler beim Laden!");
+					return;
 				}
 
 			} else {
@@ -281,41 +295,45 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 			}
 			// nicht Laden, also Erstellen!
 		} else {
-			File file = getFileOrDirectryFromChooser(applikation,
-					JFileChooser.OPEN_DIALOG);
-			if (file != null && file.getAbsoluteFile() != null) {
-				System.out.println(file.getAbsoluteFile());
-
-				// Abfrage der Größe
-				String height = JOptionPane.showInputDialog(null, "Höhe:",
-						"Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
-				String width = JOptionPane.showInputDialog(null, "Breite",
-						"Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
-				String numberOfColors = JOptionPane.showInputDialog(null,
-						"Anzahl der Farben", "Eine Eingabeaufforderung",
-						JOptionPane.PLAIN_MESSAGE);
-
-				// Laden, Verkleinern und Farben herrunterrechnen
-				BufferedImage image = ps
-						.loadAndDowColorPicture(file.getAbsoluteFile()
-								.toString(), Integer.valueOf(height), Integer
-								.valueOf(width), Integer
-								.valueOf(numberOfColors));
-
-				// Das Rätsel aufbauen
-				Riddle riddle = riddleService.createRiddle(image);
-				toolbar = new JToolBar();
-				applikation.add(toolbar, BorderLayout.SOUTH);
-				System.out.println("colors:");
-				System.out.println(riddle.getColours());
-				playGame.setupIt(riddle);
-			}
+			createRiddle();
 		}
 
 		// String eingabe =
 		// JOptionPane.showInputDialog(null,"Geben Sie Ihren Namen ein",
 		// "Eine Eingabeaufforderung",
 		// JOptionPane.PLAIN_MESSAGE);
+	}
+
+	private void createRiddle() {
+		File file = getFileOrDirectryFromChooser(applikation,
+				JFileChooser.OPEN_DIALOG);
+		if (file != null && file.getAbsoluteFile() != null) {
+			System.out.println(file.getAbsoluteFile());
+
+			// Abfrage der Größe
+			String height = JOptionPane.showInputDialog(null, "Höhe:",
+					"Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
+			String width = JOptionPane.showInputDialog(null, "Breite",
+					"Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
+			String numberOfColors = JOptionPane.showInputDialog(null,
+					"Anzahl der Farben", "Eine Eingabeaufforderung",
+					JOptionPane.PLAIN_MESSAGE);
+
+			// Laden, Verkleinern und Farben herrunterrechnen
+			BufferedImage image = ps
+					.loadAndDowColorPicture(file.getAbsoluteFile()
+							.toString(), Integer.valueOf(height), Integer
+							.valueOf(width), Integer
+							.valueOf(numberOfColors));
+
+			// Das Rätsel aufbauen
+			Riddle riddle = riddleService.createRiddle(image);
+			toolbar = new JToolBar();
+			applikation.add(toolbar, BorderLayout.SOUTH);
+			System.out.println("colors:");
+			System.out.println(riddle.getColours());
+			playGame.setupIt(riddle);
+		}
 	}
 
 	/**
@@ -374,10 +392,19 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 		}
 		return false;
 	}
-
+//TODO: Button!!!!
 	@Override
 	public void setColours(List<Colour> colours) {
+		applikation.remove(toolbar);
+		toolbar = new JToolBar();
+		applikation.add(toolbar, BorderLayout.SOUTH);
 		toolbar.setName("Farben");
+		for (int i = 0; i < toolbar.getComponentCount(); i++) {
+			Component comp = toolbar.getComponent(i);
+			comp.setVisible(false);
+			toolbar.remove(i);
+			toolbar.validate();
+		}
 		JButton backgroundButton = new JButton("-");
 		backgroundButton.setForeground(Color.DARK_GRAY);
 		backgroundButton.addActionListener(playGame);
@@ -395,7 +422,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 			JButton comp = new JButton(String.valueOf(colour.getName()));
 			comp.setForeground(color);
 			comp.addActionListener(playGame);
-			comp.setToolTipText("Diese Farbe auswählen um ein Feld zu setzen.");
+			comp.setToolTipText("Diese Farbe auswählen, um ein Feld zu setzen.");
 			toolbar.add(comp);
 		}
 	}
