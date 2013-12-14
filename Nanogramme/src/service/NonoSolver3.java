@@ -70,7 +70,7 @@ public class NonoSolver3 implements INonogramSolver {
    public void openFile(String arg0) throws IOException {
       // // String methodName = "openFile(" + arg0 + ")";
       // // System.out.println(methodName);
-      riddleLoader = new RiddleService();
+      riddleLoader = new RiddleService(null);
       riddle = riddleLoader.readFile(arg0);
       matrix = riddleLoader.matrix;
    }

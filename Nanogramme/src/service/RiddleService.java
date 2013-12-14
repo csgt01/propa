@@ -17,6 +17,7 @@ import java.util.Scanner;
 import models.Block;
 import models.Colour;
 import models.Column;
+import models.IUIListener;
 import models.Riddle;
 import models.Row;
 
@@ -30,6 +31,12 @@ public class RiddleService {
 	private int contentColumn;
 
 	public char[][] matrix;
+	
+	private IUIListener listener;
+	
+	public RiddleService (IUIListener listener) {
+	   this.listener = listener;
+	}
 
 	/**
 	 * Lädt eine Datei ein und parst das Rätsel Reihe für Reihe in
@@ -299,6 +306,7 @@ public class RiddleService {
 		System.out.println(colors.size());
 		LinkedList<Colour> col = new LinkedList<Colour>();
 		int co = 0;
+		
 		HashMap<Color, Colour> colarMap = new HashMap<Color, Colour>();
 		for (Color color : colors) {
 			Colour colour = new Colour();
@@ -313,7 +321,10 @@ public class RiddleService {
 		riddle.setColours(col);
 		LinkedList<Row> rows = new LinkedList<Row>();
 		LinkedList<Column> columns = new LinkedList<Column>();
-		Colour backgroundCol = col.get(0);
+		
+		Colour backgroundCol = listener.getBackgroundColour(col);
+		
+//		Colour backgroundCol = col.get(1);
 		for (int i = 0; i < image.getHeight(); i++) {
 			Row row = new Row();
 			ArrayList<Block> blocks = new ArrayList<Block>();
@@ -407,8 +418,6 @@ public class RiddleService {
 		System.out.println(riddle);
 		riddle.getColours().remove(backgroundCol);
 		System.out.println(riddle);
-		// setupMatrix(riddle.getHeight(), riddle.getWidth(),
-		// riddle.getRows(), riddle.getColumns());
 		return riddle;
 	}
 

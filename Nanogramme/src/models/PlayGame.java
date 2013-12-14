@@ -28,7 +28,7 @@ public class PlayGame implements IPlaygame {
 
 	public PlayGame(IUIListener listener) {
 		this.listener = listener;
-		riddleLoader = new RiddleService();
+		riddleLoader = new RiddleService(listener);
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class PlayGame implements IPlaygame {
 		try {
 			String methodName = "openFile(" + arg0 + ")";
 			System.out.println(methodName);
-			riddleLoader = new RiddleService();
+			riddleLoader = new RiddleService(listener);
 			riddle = riddleLoader.readFile(arg0);
 			setupIt(riddle);
 			return true;

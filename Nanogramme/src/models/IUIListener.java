@@ -1,5 +1,6 @@
 package models;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -60,5 +61,7 @@ public interface IUIListener {
 	 * @param string
 	 */
 	void showAlert(String string);
+
+   Colour getBackgroundColour(LinkedList<Colour> col);
 
 }
