@@ -16,6 +16,7 @@ public class Main {
             System.out.println(tester.test());
         } else {
             MainFrame mainFrame = new MainFrame();
+            mainFrame.init();
         }
 
     }

@@ -3,6 +3,7 @@ package models;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.Date;
 
 import javax.swing.JLabel;
@@ -45,61 +46,69 @@ public class PlayGame implements IPlaygame {
 			return false;
 		}
 	}
-
+	
 	@Override
 	public void setupIt(Riddle riddle) {
-		backGroundColour = new Colour();
-		backGroundColour.setName('-');
-		backGroundColour.setRed(Color.WHITE.getRed());
-		backGroundColour.setGreen(Color.WHITE.getGreen());
-		backGroundColour.setBlue(Color.WHITE.getBlue());
-		this.riddle = riddle;
-		setupMatrix();
-		char[][] matrixNeu = new char[riddle.getHeight()][riddle.getWidth()];
-		for (int i = 0; i < riddle.getHeight(); i++) {
-			for (int j = 0; j < riddle.getWidth(); j++) {
-				matrixNeu[i][j] = matrix[i][j];
-			}
-		}
-		NonoSolver3 solver = new NonoSolver3(matrixNeu, riddle);
-		solutions = solver.getSolution();
-		if (solutions != null) {
-			listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(),
-					riddle.getRows(), riddle.getColumns());
-			listener.setColours(riddle.getColours());
-			matrix = riddleLoader.matrix;
-			// ist nur ungleich null, wenn ein Rätsel neu erstellt wird!
-			if (matrix != null) {
-				for (int i = 0; i < riddle.getHeight(); i++) {
-					for (int j = 0; j < riddle.getWidth(); j++) {
-						if (matrix[i][j] != '*' && matrix[i][j] != '-') {
-							listener.placeAField(i, j, riddle
-									.getColourByName(String
-											.valueOf(matrix[i][j])));
-						} else if (matrix[i][j] == '-') {
-							listener.placeAField(i, j, backGroundColour);
-						}
-					}
-				}
-			} else {
-				setupMatrix();
-			}
-		} else {
-			 switch (solver.getSolveState()) {
-			 case 0:
-			 listener.showAlert("Fehler beim Laden");
-			 break;
-			 case 2:
-			 listener.showAlert("Dieses Rätsel hat mehr als eine Lösung!");
-			 break;
-			 case 3:
-			 listener.showAlert("Dieses Rätsel hat keine Lösung!");
-			 break;
-			 default:
-			 listener.showAlert("Fehler beim Laden");
-			 break;
-			 }
-		}
+	   backGroundColour = new Colour();
+      backGroundColour.setName('-');
+      backGroundColour.setRed(Color.WHITE.getRed());
+      backGroundColour.setGreen(Color.WHITE.getGreen());
+      backGroundColour.setBlue(Color.WHITE.getBlue());
+      this.riddle = riddle;
+      setupMatrix();
+      char[][] matrixNeu = new char[riddle.getHeight()][riddle.getWidth()];
+      for (int i = 0; i < riddle.getHeight(); i++) {
+         for (int j = 0; j < riddle.getWidth(); j++) {
+            matrixNeu[i][j] = matrix[i][j];
+         }
+      }
+      NonoSolver3 solver = new NonoSolver3(matrixNeu, riddle);
+      solutions = solver.getSolution();
+      if (solutions != null) {
+         listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(),
+               riddle.getRows(), riddle.getColumns());
+         listener.setColours(riddle.getColours());
+         matrix = riddleLoader.matrix;
+         // ist nur gleich null, wenn ein Rätsel neu erstellt wird!
+         if (matrix != null) {
+            for (int i = 0; i < riddle.getHeight(); i++) {
+               for (int j = 0; j < riddle.getWidth(); j++) {
+                  if (matrix[i][j] != '*' && matrix[i][j] != '-') {
+                     listener.placeAField(i, j, riddle
+                           .getColourByName(String
+                                 .valueOf(matrix[i][j])));
+                  } else if (matrix[i][j] == '-') {
+                     listener.placeAField(i, j, backGroundColour);
+                  }
+               }
+            }
+         } else {
+            setupMatrix();
+         }
+      } else {
+          switch (solver.getSolveState()) {
+          case 0:
+          listener.showAlert("Fehler beim Laden");
+          break;
+          case 2:
+          listener.showAlert("Dieses Rätsel hat mehr als eine Lösung!");
+          break;
+          case 3:
+          listener.showAlert("Dieses Rätsel hat keine Lösung!");
+          break;
+          default:
+          listener.showAlert("Fehler beim Laden");
+          break;
+          }
+      }
+	   
+	}
+
+	@Override
+	public Riddle createRiddle(BufferedImage image) {
+	   this.riddle = riddleLoader.createRiddle(image);
+		setupIt(this.riddle);
+		return this.riddle;
 	}
 
 	@Override

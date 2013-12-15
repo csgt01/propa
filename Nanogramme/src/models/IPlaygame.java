@@ -2,6 +2,7 @@ package models;
 
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 
 public interface IPlaygame extends ActionListener, MouseListener {
 
@@ -18,6 +19,8 @@ public interface IPlaygame extends ActionListener, MouseListener {
 	 * 
 	 * @param riddle
 	 */
-	void setupIt(Riddle riddle);
+   void setupIt(Riddle riddle);
+   
+   Riddle createRiddle(BufferedImage image);
 
 }

@@ -191,7 +191,7 @@ public class NonoSolver3 implements INonogramSolver {
          while (run1) {
             int starCount = getStarCountInRiddle();
             solveIterative();
-//            solveRecursive();
+            // solveRecursive();
             // solveWithPossibilities();
             if (starCount <= getStarCountInRiddle()) {
                // setFirstStarToSomething();
@@ -524,9 +524,8 @@ public class NonoSolver3 implements INonogramSolver {
 
    /**
     * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
-    * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. TODO: Wenn in
-    * der Mitte prüfen, ob davor oder danach noch Platz für Block ist und
-    * gegebenfalls anpassen.
+    * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert.
+    * Wird in {@link #checkByBlock()} aufgerufen.
     * 
     * @param row
     * @throws Exception
@@ -554,24 +553,28 @@ public class NonoSolver3 implements INonogramSolver {
    }
 
    /**
-    * TODO why not dom
+    * TODO why not dom 
+    * Prüft, ob nach bzw. vor dem leeren Feld noch genug Platz
+    * für den Block ist. falls nicht, wird minStartIndexNey bzw maxEndIndexNew
+    * angepasst. Wird in {@link #checkEmptyBelongingToBlockForRow(Row)} und
+    * {@link #checkEmptyBelongingToBlockForColumn(Column)} aufgerufen.
     * 
     * @param block
     * @param columnInt
+    * @throws Exception
     */
-   private void checkSizesBeforeAndAfterEmptyInBlockRange(Block block, int columnInt) {
+   private void checkSizesBeforeAndAfterEmptyInBlockRange(Block block, int columnInt) throws Exception {
       if ((columnInt - block.getMinStartIndexNew()) < block.getHowMany()) {
-         // block.setMinStartIndexNew(columnInt +1);
+         block.setMinStartIndexNew(columnInt + 1);
       } else if (block.getMaxEndIndexNew() - columnInt < block.getHowMany()) {
-         // block.setMaxEndIndexNew(columnInt - 1);
+         block.setMaxEndIndexNew(columnInt - 1);
       }
    }
 
    /**
     * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
-    * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. TODO: Wenn in
-    * der Mitte prüfen, ob davor oder danach noch Platz für Block ist und
-    * gegebenfalls anpassen.
+    * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. 
+    * Wird in {@link #checkByBlock()} aufgerufen.
     * 
     * @param column
     * @throws Exception
@@ -661,13 +664,13 @@ public class NonoSolver3 implements INonogramSolver {
 
       // String methodName = "checkStateOfWrittenMatrix()";
       // System.out.println(methodName);
-      Date startTime = new Date();
-
-      // Array anlegen
-      // System.out.println("XXXXXXXXXXX");
-      for (ArrayList<String> list : returnList) {
-         // System.out.println(list);
-      }
+      // Date startTime = new Date();
+      //
+      // // Array anlegen
+      // // System.out.println("XXXXXXXXXXX");
+      // for (ArrayList<String> list : returnList) {
+      // // System.out.println(list);
+      // }
 
       // eigentliche Tests:
       int columnInt = 0;
@@ -796,13 +799,13 @@ public class NonoSolver3 implements INonogramSolver {
 
       // String methodName = "checkStateOfWrittenMatrix()";
       // System.out.println(methodName);
-      Date startTime = new Date();
+      // Date startTime = new Date();
 
       // Array anlegen
       // System.out.println("XXXXXXXXXXX");
-      for (ArrayList<String> list : returnList) {
-         // System.out.println(list);
-      }
+      // for (ArrayList<String> list : returnList) {
+      // // System.out.println(list);
+      // }
 
       // eigentliche Tests:
       int rowInt = 0;
@@ -944,8 +947,9 @@ public class NonoSolver3 implements INonogramSolver {
          // System.out.println("ROWROWROWROWROWOROWRO" + getIndexOfRow(row));
          updateMinAndMaxIndexOfBlocks(row);
          if (getIndexOfRow(row) == 2) {
-        	 System.out.println("dsf");
-        	 showMatrix();showBlockGoneTrue();
+            System.out.println("dsf");
+            showMatrix();
+            showBlockGoneTrue();
          }
          updateMinAndMaxIndexOfBlocks2(row);
          checkStarBelongingToBlockForRow(row);
@@ -1136,7 +1140,7 @@ public class NonoSolver3 implements INonogramSolver {
    /**
     * 
     * @param row
- * @throws Exception 
+    * @throws Exception
     */
    private void checkEmptyInBetweenBlock(Row row) throws Exception {
 
@@ -1254,7 +1258,7 @@ public class NonoSolver3 implements INonogramSolver {
     * Blockfarbe ist und passt dann die Werte an.
     * 
     * @param row
- * @throws Exception 
+    * @throws Exception
     */
    private void updateMinAndMaxIndexOfBlocks(Row row) throws Exception {
       // System.out.println("updateMinAndMaxIndexOfBlocks:" +
@@ -1307,7 +1311,7 @@ public class NonoSolver3 implements INonogramSolver {
     * wird.
     * 
     * @param row
- * @throws Exception 
+    * @throws Exception
     */
    private void updateMinAndMaxIndexOfBlocks2(Row row) throws Exception {
       // System.out.println("updateMinAndMaxIndexOfBlocks2:");
@@ -1371,7 +1375,7 @@ public class NonoSolver3 implements INonogramSolver {
     * hier der 2. Block angepasst wird.
     * 
     * @param column
- * @throws Exception 
+    * @throws Exception
     */
    private void updateMinAndMaxIndexOfBlocks2(Column column) throws Exception {
       // System.out.println("updateMinAndMaxIndexOfBlocks2:");
@@ -1399,7 +1403,7 @@ public class NonoSolver3 implements INonogramSolver {
                      block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() - 1);
                   }
                }
-               
+
                if (block.getColorChar() != nextBlock.getColorChar()) {
                   if (block.getMinStartIndexNew() + block.getHowMany() > nextBlock.getMinStartIndexNew()) {
                      nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany());
@@ -1436,7 +1440,7 @@ public class NonoSolver3 implements INonogramSolver {
     * @param blockIndex
     * @param block
     * @param minIndex
- * @throws Exception 
+    * @throws Exception
     */
    private void updateBlocksBeforeThisBlock(ArrayList<Block> blocks, int blockIndex, Block block, int minIndex) throws Exception {
       for (int newIndex = (blockIndex - 1); newIndex > -1; newIndex--) {
@@ -1460,7 +1464,7 @@ public class NonoSolver3 implements INonogramSolver {
     * @param blockIndex
     * @param block
     * @param maxIndex
- * @throws Exception 
+    * @throws Exception
     */
    private void updateBlocksAfterThisBlock(ArrayList<Block> blocks, int blockIndex, Block block, int maxIndex) throws Exception {
       for (int newIndex = (blockIndex + 1); newIndex < blocks.size(); newIndex++) {
@@ -1485,7 +1489,7 @@ public class NonoSolver3 implements INonogramSolver {
     * Blockfarbe ist und passt dann die Werte an.
     * 
     * @param column
- * @throws Exception 
+    * @throws Exception
     */
    private void updateMinAndMaxIndexOfBlocks(Column column) throws Exception {
       ArrayList<Block> blocks = column.getBlocks();
@@ -1622,7 +1626,7 @@ public class NonoSolver3 implements INonogramSolver {
                      result.add(i);
                   }
                }
-               String removed;
+               // String removed;
                // so lange nach rechts verschieben, bis Ende erreicht und
                // zu
                // asd hinzufügen.
@@ -1801,7 +1805,7 @@ public class NonoSolver3 implements INonogramSolver {
                   result.add(i);
                }
             }
-            String removed;
+            // String removed;
             // so lange nach rechts verschieben, bis Ende erreicht und zu
             // asd hinzufügen.
             while (workingList.getLast().equals("-")) {
@@ -2953,14 +2957,14 @@ public class NonoSolver3 implements INonogramSolver {
       // String methodName = "showAMatrix()";
       // // System.out.println(methodName);
       // long startTime = new Date().getTime();
-      for (int i = 0; i < riddle.getHeight(); i++) {
-         String out = "";
-         for (int j = 0; j < riddle.getWidth(); j++) {
-            out += matrix[i][j];
-            out += "  ";
-         }
-         // // System.out.println(out);
-      }
+      // for (int i = 0; i < riddle.getHeight(); i++) {
+      // String out = "";
+      // for (int j = 0; j < riddle.getWidth(); j++) {
+      // out += matrix[i][j];
+      // out += "  ";
+      // }
+      // // // System.out.println(out);
+      // }
       // // System.out.println();
       // showBlockGoneTrue(matrix);
       // // System.out.println("Time for " + methodName + ": " + (new
@@ -3129,7 +3133,7 @@ public class NonoSolver3 implements INonogramSolver {
     * 
     * @param row
     * @param possibilitiy
-    * @throws Exception 
+    * @throws Exception
     * @throws Throwable
     */
    private char[][] fillListIntoMatrixInRow(char[][] checkMatrix, int row, LinkedList<String> possibilitiy) throws Exception {
@@ -3162,7 +3166,7 @@ public class NonoSolver3 implements INonogramSolver {
     * 
     * @param row
     * @param possibilitiy
-    * @throws Exception 
+    * @throws Exception
     */
    private void fillListIntoMatrixInColumn(int column, LinkedList<String> possibilities) throws Exception {
       // String methodName = "fillListIntoMatrixInColumn()";
@@ -3232,8 +3236,8 @@ public class NonoSolver3 implements INonogramSolver {
       // String methodName = "getSizesOfPossibilities()";
       // // System.out.println(methodName);
       // long startTime = new Date().getTime();
-      long rowPosSize = getPossibillitySizeOfRow();
-      long columnPosSize = getPossibillitySizeOfColumn();
+      // long rowPosSize = getPossibillitySizeOfRow();
+      // long columnPosSize = getPossibillitySizeOfColumn();
       // System.out.println("RowPos: " + rowPosSize + "\n" + "ColPos: "
       // + columnPosSize);
       // System.out.println("Time for " + methodName + ": "

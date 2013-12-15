@@ -259,6 +259,9 @@ public class PictureService {
 				}
 			}
 		}
+		if (similiar1 != null && similiar2 != null) {
+		   
+		}
 		Node node1 = less.getNode(sim1);
 		Node node2 = less.getNode(sim2);
 		if (node1 != null && node2 != null) {

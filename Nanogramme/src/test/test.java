@@ -195,80 +195,80 @@ public class test {
 
    }
 
-   private ArrayList<LinkedList<String>> statisch(Block block1, Block block2,
-
-   Block block3, ArrayList<LinkedList<String>> possibilities,
-
-   LinkedList<String> aa) {
-
-      int add = 0;
-
-      ArrayList<LinkedList<String>> possibilities2 = new ArrayList<LinkedList<String>>(
-
-      possibilities);
-
-      for (int i = block1.start; i <= block1.max; i++) {
-
-         LinkedList<String> bb = new LinkedList<String>(aa);
-
-         block2.start = block2.min + add;
-
-         for (int j = block2.end + add; j < block2.max; j++) {
-
-            LinkedList<String> cc = new LinkedList<String>(bb);
-
-            block3.start = block3.min + add;
-
-            for (int k = block3.end + add; k < block3.max; k++) {
-
-               if (cc.getLast() == "-") {
-
-                  cc.removeLast();
-
-                  cc.add(block3.start, "-");
-
-                  possibilities2.add(cc);
-
-                  System.out.println(cc + "k:" + add);
-
-               }
-
-            }
-
-            if (bb.getLast() == "-") {
-
-               bb.removeLast();
-
-               bb.add(block2.start, "-");
-
-               possibilities2.add(bb);
-
-               System.out.println(bb + "j:" + add);
-
-            }
-
-         }
-
-         if (aa.getLast() == "-") {
-
-            aa.removeLast();
-
-            aa.add(block1.start, "-");
-
-            possibilities2.add(aa);
-
-            System.out.println(aa + "i:" + add);
-
-         }
-
-         block1.start++;
-
-         add++;
-
-      }
-
-      return possibilities2;
-
-   }
+//   private ArrayList<LinkedList<String>> statisch(Block block1, Block block2,
+//
+//   Block block3, ArrayList<LinkedList<String>> possibilities,
+//
+//   LinkedList<String> aa) {
+//
+//      int add = 0;
+//
+//      ArrayList<LinkedList<String>> possibilities2 = new ArrayList<LinkedList<String>>(
+//
+//      possibilities);
+//
+//      for (int i = block1.start; i <= block1.max; i++) {
+//
+//         LinkedList<String> bb = new LinkedList<String>(aa);
+//
+//         block2.start = block2.min + add;
+//
+//         for (int j = block2.end + add; j < block2.max; j++) {
+//
+//            LinkedList<String> cc = new LinkedList<String>(bb);
+//
+//            block3.start = block3.min + add;
+//
+//            for (int k = block3.end + add; k < block3.max; k++) {
+//
+//               if (cc.getLast() == "-") {
+//
+//                  cc.removeLast();
+//
+//                  cc.add(block3.start, "-");
+//
+//                  possibilities2.add(cc);
+//
+//                  System.out.println(cc + "k:" + add);
+//
+//               }
+//
+//            }
+//
+//            if (bb.getLast() == "-") {
+//
+//               bb.removeLast();
+//
+//               bb.add(block2.start, "-");
+//
+//               possibilities2.add(bb);
+//
+//               System.out.println(bb + "j:" + add);
+//
+//            }
+//
+//         }
+//
+//         if (aa.getLast() == "-") {
+//
+//            aa.removeLast();
+//
+//            aa.add(block1.start, "-");
+//
+//            possibilities2.add(aa);
+//
+//            System.out.println(aa + "i:" + add);
+//
+//         }
+//
+//         block1.start++;
+//
+//         add++;
+//
+//      }
+//
+//      return possibilities2;
+//
+//   }
 
 }

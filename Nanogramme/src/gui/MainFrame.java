@@ -34,10 +34,8 @@ import models.Column;
 import models.IPlaygame;
 import models.IUIListener;
 import models.PlayGame;
-import models.Riddle;
 import models.Row;
 import picture.PictureService;
-import service.RiddleService;
 
 /**
  * Das MainFraim der App.
@@ -60,19 +58,17 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 
    // Services und Listener
    private PictureService ps;
-   private RiddleService riddleService;
    private IPlaygame playGame;
 
    public MainFrame() {
-      init();
+      
    }
 
    /**
     * Lädt den JFrame.
     */
-   private void init() {
+   protected void init() {
       playGame = new PlayGame(this);
-      riddleService = new RiddleService(this);
       ps = new PictureService();
       applikation = new JFrame("Main");
       container = applikation.getContentPane();
@@ -319,10 +315,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
          BufferedImage image = ps.loadAndDowColorPicture(file.getAbsoluteFile().toString(), Integer.valueOf(height), Integer.valueOf(width), Integer.valueOf(numberOfColors));
 
          // Das Rätsel aufbauen
-         Riddle riddle = riddleService.createRiddle(image);
-         System.out.println("colors:");
-         System.out.println(riddle.getColours());
-         playGame.setupIt(riddle);
+         playGame.createRiddle(image);
       }
    }
 
@@ -379,7 +372,6 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
       return false;
    }
 
-   // TODO: Button!!!!
    @Override
    public void setColours(List<Colour> colours) {
       if (toolbar != null) {
@@ -387,7 +379,6 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
          applikation.validate();
          applikation.repaint();
       }
-
       toolbar = new JToolBar();
       applikation.add(toolbar, BorderLayout.SOUTH);
       toolbar.setName("Farben");
