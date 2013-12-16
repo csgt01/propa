@@ -28,11 +28,11 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 
+import Interfaces.IPlaygame;
+import Interfaces.IUIListener;
 import models.Block;
 import models.Colour;
 import models.Column;
-import models.IPlaygame;
-import models.IUIListener;
 import models.PlayGame;
 import models.Row;
 import picture.PictureService;

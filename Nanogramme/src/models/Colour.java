@@ -1,67 +1,104 @@
 package models;
 
 public class Colour {
-    
+
 	/**
 	 * Rotwert der Farbe.
 	 */
-    private int red;
-    
-    /**
+	private int red;
+
+	/**
 	 * Grünwert der Farbe.
 	 */
-    private int green;
-    
-    /**
+	private int green;
+
+	/**
 	 * Blauwert der Farbe.
 	 */
-    private int blue;
-    
-    /**
+	private int blue;
+
+	/**
 	 * Name der Farbe.
 	 */
-    private char name;
-    
-   
+	private char name;
+
+	/**
+	 * 
+	 * @return Rotwert
+	 */
 	public int getRed() {
-        return red;
-    }
+		return red;
+	}
 
-    public void setRed(Integer red) {
-        this.red = red;
-    }
+	/**
+	 * Setzt den Rotwert.
+	 * 
+	 * @param red
+	 *            Rotwert
+	 */
+	public void setRed(Integer red) {
+		this.red = red;
+	}
 
-    public int getGreen() {
-        return green;
-    }
+	/**
+	 * 
+	 * @return Grünwert
+	 */
+	public int getGreen() {
+		return green;
+	}
 
-    public void setGreen(Integer green) {
-        this.green = green;
-    }
+	/**
+	 * Setzt den Grünwert
+	 * 
+	 * @param green
+	 *            Grünwert
+	 */
+	public void setGreen(Integer green) {
+		this.green = green;
+	}
 
-    public int getBlue() {
-        return blue;
-    }
+	/**
+	 * 
+	 * @return Blauwert
+	 */
+	public int getBlue() {
+		return blue;
+	}
 
-    public void setBlue(Integer blue) {
-        this.blue = blue;
-    }
+	/**
+	 * Setzt Blauwert
+	 * @param blue Blauwert
+	 */
+	public void setBlue(Integer blue) {
+		this.blue = blue;
+	}
 
-    public char getName() {
-        return name;
-    }
+	/**
+	 * 
+	 * @return Namen der Farbe als char
+	 */
+	public char getName() {
+		return name;
+	}
 
-    public void setName(char name) {
-        this.name = name;
-    }
+	/**
+	 * Setzt den char-Namen
+	 * @param name charName
+	 */
+	public void setName(char name) {
+		this.name = name;
+	}
 
-    @Override
-    public String toString() {
-        return "Colour [red=" + red + ", green=" + green + ", blue="
-                + blue + ", name=" + name + "]";
-    }
+	@Override
+	public String toString() {
+		return "Colour [red=" + red + ", green=" + green + ", blue=" + blue
+				+ ", name=" + name + "]";
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -74,7 +111,9 @@ public class Colour {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -94,5 +133,5 @@ public class Colour {
 			return false;
 		return true;
 	}
-    
+
 }

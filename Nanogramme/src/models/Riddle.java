@@ -4,28 +4,32 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-
 /**
+ * Die Klasse hält alle Informationen über das Rätsel.
+ * 
  * @author cschulte
- *
+ * 
  */
 public class Riddle {
 
-    private List<Colour> colours;
-    
-    private int width;
-    private int height;
-    
-    private LinkedList<Row> rows;
-    private LinkedList<Column> columns;
-    
-    private String nono;
-    
-    public Riddle() {
-        colours = new ArrayList<Colour>();
-    }
-    
-    public Riddle(List<Colour> colours, int width, int height,
+	/**
+	 * Liste der {@link Colour} des Rätsels.
+	 */
+	private List<Colour> colours;
+
+	private int width;
+	private int height;
+
+	private LinkedList<Row> rows;
+	private LinkedList<Column> columns;
+
+	private String nono;
+
+	public Riddle() {
+		colours = new ArrayList<Colour>();
+	}
+
+	public Riddle(List<Colour> colours, int width, int height,
 			LinkedList<Row> rows, LinkedList<Column> columns, String nono) {
 		super();
 		this.colours = colours;
@@ -37,7 +41,7 @@ public class Riddle {
 		}
 		this.columns = new LinkedList<Column>();
 		for (Column column : columns) {
-			this.columns.add(new Column(column));	
+			this.columns.add(new Column(column));
 		}
 		this.nono = nono;
 	}
@@ -50,88 +54,89 @@ public class Riddle {
 	}
 
 	/**
-	 * @param nono the nono to set
+	 * @param nono
+	 *            the nono to set
 	 */
 	public void setNono(String nono) {
 		this.nono = nono;
 	}
 
 	public List<Colour> getColours() {
-        return colours;
-    }
+		return colours;
+	}
 
-    public void setColours(List<Colour> colours) {
-        this.colours = colours;
-    }
+	public void setColours(List<Colour> colours) {
+		this.colours = colours;
+	}
 
-    public int getWidth() {
-        return width;
-    }
+	public int getWidth() {
+		return width;
+	}
 
-    public void setWidth(Integer width) {
-        this.width = width;
-    }
+	public void setWidth(Integer width) {
+		this.width = width;
+	}
 
-    public int getHeight() {
-        return height;
-    }
+	public int getHeight() {
+		return height;
+	}
 
-    public void setHeight(Integer height) {
-        this.height = height;
-    }
-    
-    public void addColour(Colour colour) {
-        if (null == colours) {
-            colours = new ArrayList<Colour>();
-        }
-        colours.add(colour);
-    }
-    
-    public void addRow(Row row) {
-        if (null == rows) {
-            rows = new LinkedList<Row>();
-        }
-        rows.add(row);
-    }
-    
-    public void addColumn(Column column) {
-        if (null == columns) {
-            columns = new LinkedList<Column>();
-        }
-        columns.add(column);
-    }
-    
-    public Colour getColourByName(String name) {
-        Colour returnColour = null;
-        for (Colour colour : colours) {
-            if (colour.getName() == (name.charAt(0))) {
-                returnColour = colour;
-            }
-        }
-        return returnColour;
-    }
-    
-    public LinkedList<Row> getRows() {
-        return rows;
-    }
+	public void setHeight(Integer height) {
+		this.height = height;
+	}
 
-    public void setRows(LinkedList<Row> rows) {
-        this.rows = rows;
-    }
+	public void addColour(Colour colour) {
+		if (null == colours) {
+			colours = new ArrayList<Colour>();
+		}
+		colours.add(colour);
+	}
 
-    public LinkedList<Column> getColumns() {
-        return columns;
-    }
+	public void addRow(Row row) {
+		if (null == rows) {
+			rows = new LinkedList<Row>();
+		}
+		rows.add(row);
+	}
 
-    public void setColumns(LinkedList<Column> columns) {
-        this.columns = columns;
-    }
+	public void addColumn(Column column) {
+		if (null == columns) {
+			columns = new LinkedList<Column>();
+		}
+		columns.add(column);
+	}
 
-    @Override
-    public String toString() {
-        return "Riddle [colours=" + colours + ", \nwidth=" + width
-                + ", height=" + height + ", \nrows=" + rows
-                + ", \ncolumns=" + columns + "]";
-    }
-    
+	public Colour getColourByName(String name) {
+		Colour returnColour = null;
+		for (Colour colour : colours) {
+			if (colour.getName() == (name.charAt(0))) {
+				returnColour = colour;
+			}
+		}
+		return returnColour;
+	}
+
+	public LinkedList<Row> getRows() {
+		return rows;
+	}
+
+	public void setRows(LinkedList<Row> rows) {
+		this.rows = rows;
+	}
+
+	public LinkedList<Column> getColumns() {
+		return columns;
+	}
+
+	public void setColumns(LinkedList<Column> columns) {
+		this.columns = columns;
+	}
+
+	@Override
+	public String toString() {
+		return "Riddle [colours=" + colours + ", \nwidth=" + width
+				+ ", height=" + height + ", \nrows=" + rows + ", \ncolumns="
+				+ columns + "]";
+	}
+
 }

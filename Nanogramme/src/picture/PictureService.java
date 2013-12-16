@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
-import javax.media.j3d.Light;
 
 /**
  * Diese Klasse ist für das Erstellen eines Rätsels aus einem Bild zuständig.
@@ -20,36 +19,40 @@ import javax.media.j3d.Light;
  */
 public class PictureService {
 
+	/**
+	 * ID für die Nodes.
+	 */
 	int count = 0;
 
-	/**
-	 * Rechnet die Farben mit Hilfe eines Octrees auf die gewünschte Anzahl
-	 * Farben herunter. Ruft
-	 * {@link #mapPictureToColors(BufferedImage, LinkedList)} auf, um die Farben
-	 * des Originalbildes anzupassen. Gibt das Bild mit herruntergerechneten
-	 * Farben zurück.
-	 * 
-	 * @param resizedImage
-	 * @param numberOfColors
-	 * @return Farbreduziertes Bild.
-	 */
-	private BufferedImage getDownColoredPicture(BufferedImage resizedImage,
-			int numberOfColors) {
-		Node root = new Node();
-		root.setCount(0);
-
-		for (int i = 0; i < resizedImage.getHeight(); i++) {
-			for (int j = 0; j < resizedImage.getWidth(); j++) {
-				insertNode(new Color(resizedImage.getRGB(j, i)), root);
-			}
-		}
-		// System.out.println(root);
-		LinkedList<Color> colors = new LinkedList<Color>();
-		colors = getColorsOfLeafs(root, colors);
-		// System.out.println(colors);
-
-		return mapPictureToColors(resizedImage, colors);
-	}
+	// /**
+	// * Rechnet die Farben mit Hilfe eines Octrees auf die gewünschte Anzahl
+	// * Farben herunter. Ruft
+	// * {@link #mapPictureToColors(BufferedImage, LinkedList)} auf, um die
+	// Farben
+	// * des Originalbildes anzupassen. Gibt das Bild mit herruntergerechneten
+	// * Farben zurück.
+	// *
+	// * @param resizedImage
+	// * @param numberOfColors
+	// * @return Farbreduziertes Bild.
+	// */
+	// private BufferedImage getDownColoredPicture(BufferedImage resizedImage,
+	// int numberOfColors) {
+	// Node root = new Node();
+	// root.setCount(0);
+	//
+	// for (int i = 0; i < resizedImage.getHeight(); i++) {
+	// for (int j = 0; j < resizedImage.getWidth(); j++) {
+	// insertNode(new Color(resizedImage.getRGB(j, i)), root);
+	// }
+	// }
+	// // System.out.println(root);
+	// LinkedList<Color> colors = new LinkedList<Color>();
+	// colors = getColorsOfLeafs(root, colors);
+	// // System.out.println(colors);
+	//
+	// return mapPictureToColors(resizedImage, colors);
+	// }
 
 	/**
 	 * Rechnet die Farben mit Hilfe eines Octrees auf die gewünschte Anzahl
@@ -331,12 +334,12 @@ public class PictureService {
 	 */
 	private Double getDistance(Node node1, Node node2) {
 		if (node1.getReferences() != 0 && node2.getReferences() != 0) {
-			float r1 = node1.red / node1.getReferences();
-			float g1 = node1.green / node1.getReferences();
-			float b1 = node1.blue / node1.getReferences();
-			float r2 = node2.red / node2.getReferences();
-			float g2 = node2.green / node2.getReferences();
-			float b2 = node2.blue / node2.getReferences();
+			float r1 = node1.getRed() / node1.getReferences();
+			float g1 = node1.getGreen() / node1.getReferences();
+			float b1 = node1.getBlue() / node1.getReferences();
+			float r2 = node2.getRed() / node2.getReferences();
+			float g2 = node2.getGreen() / node2.getReferences();
+			float b2 = node2.getBlue() / node2.getReferences();
 			return Math.sqrt((Math.pow((r2 - r1), 2.0)
 					+ Math.pow((g2 - g1), 2.0) + Math.pow((b2 - b1), 2.0)));
 		} else {
@@ -344,12 +347,28 @@ public class PictureService {
 		}
 	}
 
+	/**
+	 * Berechnet die Ähnlichkeit con zwei Farben.
+	 * 
+	 * @param color1
+	 * @param color2
+	 * @return Ähnlichkeit
+	 */
 	private Double getDistance(Color color1, Color color2) {
 		return Math.sqrt((Math.pow((color2.getRed() - color1.getRed()), 2.0)
 				+ Math.pow((color2.getGreen() - color1.getGreen()), 2.0) + Math
 				.pow((color2.getBlue() - color2.getBlue()), 2.0)));
 	}
 
+	/**
+	 * Sucht zu jedem Pixel die Ähnlichsre Farbe aus colors und setzt diese als
+	 * neue Farbe des Pixels. Dadurch wird das Bild auf die Anzahl der Farben in
+	 * colors herruntergerechnet.
+	 * 
+	 * @param resizedImage
+	 * @param colors
+	 * @return
+	 */
 	private BufferedImage mapPictureToColors(BufferedImage resizedImage,
 			LinkedList<Color> colors) {
 		for (int i = 0; i < resizedImage.getHeight(); i++) {
@@ -366,6 +385,15 @@ public class PictureService {
 		return resizedImage;
 	}
 
+	/**
+	 * Sucht aus colors die ähnlichste Farbe aus colors.
+	 * 
+	 * @param rgb
+	 *            der zu ersetzenden Farbe
+	 * @param colors
+	 *            Liste der Vergleichsfarben
+	 * @return den rgb-Wert der ähnlichsten Farbe.
+	 */
 	private int getBestColor(int rgb, LinkedList<Color> colors) {
 		Color color = colors.get(0);
 		Color testColor = new Color(rgb);
@@ -381,6 +409,12 @@ public class PictureService {
 		return color.getRGB();
 	}
 
+	/**
+	 * Gibt die Anzahl der Kinder in {@link Node#getNodes()} zurück.
+	 * 
+	 * @param node
+	 * @return Anzahl der Kinder.
+	 */
 	private int getChildrenOfNode(Node node) {
 		int children = 0;
 		for (Node child : node.getNodes()) {
@@ -391,6 +425,15 @@ public class PictureService {
 		return children;
 	}
 
+	/**
+	 * Alle Kinder dieses Knotens werden in diesem Knoten zusammengefasst. Falls
+	 * der Vater dieses Knotens danach nur Blätter als Kinder hat, wird dieser
+	 * fathers hinzugefügt.
+	 * 
+	 * @param fathers
+	 *            Liste der Väter von nur Blättern im Octree.
+	 * @return Aktuallisierte Liste der Väter von nur Blättern im Octree.
+	 */
 	private TreeSet<Node> reduceColorsInFathers(TreeSet<Node> fathers) {
 		Node node = fathers.first();
 		fathers.remove(node);
@@ -413,6 +456,9 @@ public class PictureService {
 			node.setGreen(green);
 			Node father = node.getFather();
 			boolean isGood = true;
+			// Falls ein Kind des Vaters kein Blatt iat, wird isGood false, dann
+			// ist der
+			// Knoten kein Vater von nur Blättern.
 			for (Node child : father.getNodes()) {
 				if (null != child) {
 					for (Node childsChild : child.getNodes()) {

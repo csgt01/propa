@@ -8,6 +8,8 @@ import java.util.Date;
 
 import javax.swing.JLabel;
 
+import Interfaces.IPlaygame;
+import Interfaces.IUIListener;
 import service.NonoSolver3;
 import service.RiddleService;
 

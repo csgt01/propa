@@ -1,8 +1,10 @@
-package models;
+package Interfaces;
 
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+
+import models.Riddle;
 
 public interface IPlaygame extends ActionListener, MouseListener {
 

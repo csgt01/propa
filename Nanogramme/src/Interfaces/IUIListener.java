@@ -1,7 +1,11 @@
-package models;
+package Interfaces;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import models.Colour;
+import models.Column;
+import models.Row;
 
 /**
  * Interface für die Kommunikation zum MainFrame.

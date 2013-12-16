@@ -15,10 +15,10 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+import Interfaces.IUIListener;
 import models.Block;
 import models.Colour;
 import models.Column;
-import models.IUIListener;
 import models.Riddle;
 import models.Row;
 

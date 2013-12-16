@@ -2,24 +2,49 @@ package picture;
 
 import java.util.Arrays;
 
+/**
+ * Diese Klasse kapselt einen Knoten im Octree für das Runterrechnen der Farben
+ * in einem Bild.
+ * 
+ * @author cschulte
+ * 
+ */
 public class Node implements Comparable<Node> {
-	
+
+	/**
+	 * Kinder von diesem Knoten.
+	 */
 	private Node[] nodes = new Node[8];
 
-	Integer references = 0;
-	
+	/**
+	 * Anzahl der Referenzen.
+	 */
+	private Integer references = 0;
+
+	/**
+	 * ID.
+	 */
 	private Integer count = 0;
 
-	int red;
-	int green;
-	int blue;
-	int redSum;
-	int greenSum;
-	int blueSum;
-	
+	/**
+	 * Rotwert.
+	 */
+	private int red;
+	/**
+	 * Grünwert.
+	 */
+	private int green;
+	/**
+	 * Blauwert.
+	 */
+	private int blue;
+
+	/**
+	 * Anzahl der Kinder.
+	 */
 	int children;
-	
-	Node father;
+
+	private Node father;
 
 	/**
 	 * @return the father
@@ -29,74 +54,77 @@ public class Node implements Comparable<Node> {
 	}
 
 	/**
-	 * @param father the father to set
+	 * @param father
+	 *            the father to set
 	 */
 	public void setFather(Node father) {
 		this.father = father;
 	}
 
-	Integer referencesOfChilds = 0;
+	// private void copyChildSums() {
+	// if (getChildSum() == 0) {
+	// return;
+	// }
+	// redSum = 0;
+	// greenSum = 0;
+	// blueSum = 0;
+	// references = 0;
+	// children = 0;
+	// for (int i = 0; i < nodes.length; i++) {
+	// Node child = nodes[i];
+	// if (child != null) {
+	// child.copyChildSums();
+	// red += child.red;
+	// green += child.green;
+	// blue += child.blue;
+	//
+	// referencesOfChilds += child.references;
+	// if (child.getReferencesOfChilds() != null) {
+	// referencesOfChilds += child.getReferencesOfChilds();
+	// }
+	// children++;
+	// }
+	// }
+	// }
 
-	public void copyChildSums() {
-		if (getChildSum() == 0) {
-			return;
-		}
-		redSum = 0;
-		greenSum = 0;
-		blueSum = 0;
-		references = 0;
-		children = 0;
-		for (int i = 0; i < nodes.length; i++) {
-			Node child = nodes[i];
-			if (child != null) {
-				child.copyChildSums();
-				red += child.red;
-				green += child.green;
-				blue += child.blue;
-				
-				referencesOfChilds += child.references;
-				if (child.getReferencesOfChilds() != null) {
-					referencesOfChilds += child.getReferencesOfChilds();
-				}
-				children++;
-			}
-		}
-	}
+	// private int getChildSum() {
+	// int sum = 0;
+	// for (int i = 0; i < nodes.length; i++) {
+	// if (nodes[i] != null) {
+	// sum++;
+	// }
+	// }
+	// return sum;
+	// }
 
-	private int getChildSum() {
-		int sum = 0;
-		for (int i = 0; i < nodes.length; i++) {
-			if (nodes[i] != null) {
-				sum++;
-			}
-		}
-		return sum;
-	}
-
-	public Integer getReferencesOfChilds() {
-		return referencesOfChilds;
-	}
-
-	public void setReferencesOfChilds() {
-		if (null == referencesOfChilds) {
-			referencesOfChilds = 1;
-		} else {
-			referencesOfChilds++;
-		}
-	}
-
-	public void setReferencesOfChilds(Integer refs) {
-		this.referencesOfChilds = refs;
-	}
-
+	/**
+	 * Gibt die Kinder des Knotens zurück.
+	 * 
+	 * @return Node[]
+	 */
 	public Node[] getNodes() {
 		return nodes;
 	}
 
+	/**
+	 * Gibt den Knoten an der Position index zurück.
+	 * 
+	 * @param index
+	 *            Position
+	 * @return Node an Position
+	 */
 	public Node getNode(int index) {
 		return nodes[index];
 	}
 
+	/**
+	 * Setzt den Node an der Position neu.
+	 * 
+	 * @param index
+	 *            Position
+	 * @param node
+	 *            Node
+	 */
 	public void setNode(int index, Node node) {
 		nodes[index] = node;
 	}
@@ -161,10 +189,18 @@ public class Node implements Comparable<Node> {
 		this.blue = blue;
 	}
 
+	/**
+	 * Gibt die ID zurück
+	 * @return
+	 */
 	public Integer getCount() {
 		return count;
 	}
 
+	/**
+	 * Setzt die ID.
+	 * @param count
+	 */
 	public void setCount(int count) {
 		this.count = count;
 	}
@@ -176,10 +212,10 @@ public class Node implements Comparable<Node> {
 	 */
 	@Override
 	public String toString() {
-		return "Node \n{count=" + count + ", references=" + references + ", children=" + children + ", red=" + red + ", green="
-				+ green + ", blue=" + blue + ", referencesOfChilds="
-				+ referencesOfChilds + ", \nnodes=" + Arrays.toString(nodes)
-				+ "}";
+		return "Node \n{count=" + count + ", references=" + references
+				+ ", children=" + children + ", red=" + red + ", green="
+				+ green + ", blue=" + blue + ", \nnodes="
+				+ Arrays.toString(nodes) + "}";
 	}
 
 	@Override
@@ -191,7 +227,9 @@ public class Node implements Comparable<Node> {
 		return returnInt;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -199,24 +237,19 @@ public class Node implements Comparable<Node> {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + blue;
-		result = prime * result + blueSum;
 		result = prime * result + children;
 		result = prime * result + ((father == null) ? 0 : father.hashCode());
 		result = prime * result + green;
-		result = prime * result + greenSum;
 		result = prime * result + Arrays.hashCode(nodes);
 		result = prime * result + red;
-		result = prime * result + redSum;
 		result = prime * result
 				+ ((references == null) ? 0 : references.hashCode());
-		result = prime
-				* result
-				+ ((referencesOfChilds == null) ? 0 : referencesOfChilds
-						.hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -228,8 +261,6 @@ public class Node implements Comparable<Node> {
 		Node other = (Node) obj;
 		if (blue != other.blue)
 			return false;
-		if (blueSum != other.blueSum)
-			return false;
 		if (children != other.children)
 			return false;
 		if (father == null) {
@@ -239,27 +270,16 @@ public class Node implements Comparable<Node> {
 			return false;
 		if (green != other.green)
 			return false;
-		if (greenSum != other.greenSum)
-			return false;
 		if (!Arrays.equals(nodes, other.nodes))
 			return false;
 		if (red != other.red)
-			return false;
-		if (redSum != other.redSum)
 			return false;
 		if (references == null) {
 			if (other.references != null)
 				return false;
 		} else if (!references.equals(other.references))
 			return false;
-		if (referencesOfChilds == null) {
-			if (other.referencesOfChilds != null)
-				return false;
-		} else if (!referencesOfChilds.equals(other.referencesOfChilds))
-			return false;
 		return true;
 	}
-	
-	
 
 }

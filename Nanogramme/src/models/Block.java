@@ -80,12 +80,21 @@ public class Block {
 		this.indeces = indeces;
 	}
 
+	/**
+	 * Konstruktor.
+	 */
 	public Block() {
 		startIndex = null;
 		endIndex = null;
 		gone = false;
 	}
 
+	/**
+	 * Konstruktor, der aus einem Block ein neues Objekt erzeugt. Benötigt für
+	 * das Raten der Lösung.
+	 * 
+	 * @param block
+	 */
 	public Block(Block block) {
 		super();
 		this.howMany = block.howMany;
@@ -133,6 +142,8 @@ public class Block {
 	}
 
 	/**
+	 * Setzt die Colour, den colourString und den colorChar.
+	 * 
 	 * @param colour
 	 *            the colour to set
 	 */
@@ -268,17 +279,18 @@ public class Block {
 	 * @throws Exception
 	 */
 	public void setMinStartIndexNew(Integer minStartIndexNew) throws Exception {
-	   if (minStartIndexNew > this.maxEndIndexNew) {
-		   throw new Exception();
-	   }
-      if (minStartIndexNew > this.minStartIndexNew) {
-         this.minStartIndexNew = minStartIndexNew;
-      }
-      if ((this.minStartIndexNew + howMany) == (this.maxEndIndexNew + 1) && !isGone()) {
-    	  increaseEntriesSet(this.minStartIndexNew);
-    	  increaseEntriesSet(this.maxEndIndexNew);
-      }
-   }
+		if (minStartIndexNew > this.maxEndIndexNew) {
+			throw new Exception();
+		}
+		if (minStartIndexNew > this.minStartIndexNew) {
+			this.minStartIndexNew = minStartIndexNew;
+		}
+		if ((this.minStartIndexNew + howMany) == (this.maxEndIndexNew + 1)
+				&& !isGone()) {
+			increaseEntriesSet(this.minStartIndexNew);
+			increaseEntriesSet(this.maxEndIndexNew);
+		}
+	}
 
 	/**
 	 * @return the maxEndIndexNew
@@ -301,8 +313,8 @@ public class Block {
 	 */
 	public void setMaxEndIndexNew(Integer maxEndIndexNew) throws Exception {
 		if (this.minStartIndexNew > maxEndIndexNew) {
-			   throw new Exception();
-		   }
+			throw new Exception();
+		}
 		if (maxEndIndexNew < this.maxEndIndexNew) {
 			this.maxEndIndexNew = maxEndIndexNew;
 		}
@@ -359,9 +371,5 @@ public class Block {
 				+ ", color=" + colorString + ", colorChar=" + colorChar
 				+ ", entriesSet=" + entriesSet + ", indeces=" + indeces + "]\n";
 	}
-
-	// public void setEntriesSet(int entriesSet) {
-	// this.entriesSet = entriesSet;
-	// }
 
 }

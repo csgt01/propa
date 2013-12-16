@@ -25,13 +25,25 @@ public class Column {
 	 */
 	private int maxEntries = 0;
 
+	/**
+	 * List der Möglichkeiten, die Spalte zu setzen.
+	 */
 	private ArrayList<LinkedList<String>> possibilities;
 
+	/**
+	 * Konstruktor
+	 */
 	public Column() {
 		blocks = new ArrayList<Block>();
 		possibilities = new ArrayList<LinkedList<String>>();
 	}
 
+	/**
+	 * Konstruktor, der aus einer Column ein neues Objekt erzeugt. Gebraucht für
+	 * das Raten.
+	 * 
+	 * @param column
+	 */
 	public Column(Column column) {
 		this.blocks = new ArrayList<Block>();
 		for (Block block : column.getBlocks()) {
@@ -39,7 +51,8 @@ public class Column {
 		}
 		this.entriesSet = column.entriesSet;
 		this.isGone = column.isGone;
-		this.possibilities = new ArrayList<LinkedList<String>>(column.getPossibilities());
+		this.possibilities = new ArrayList<LinkedList<String>>(
+				column.getPossibilities());
 	}
 
 	/**
@@ -56,6 +69,10 @@ public class Column {
 		maxEntries += block.getHowMany();
 	}
 
+	/**
+	 * 
+	 * @return Ist die Column fertig.
+	 */
 	public boolean isGone() {
 		return isGone;
 	}
@@ -75,10 +92,20 @@ public class Column {
 		}
 	}
 
+	/**
+	 * Gibt die Blöcke der Column zurück.
+	 * 
+	 * @return Blöcke
+	 */
 	public ArrayList<Block> getBlocks() {
 		return blocks;
 	}
 
+	/**
+	 * Gibt die Anzahl der gesetzten Felder in der Column zurück.
+	 * 
+	 * @return Anzahl gesetzter Felder.
+	 */
 	public int getEntriesSet() {
 		return entriesSet;
 	}
@@ -103,7 +130,7 @@ public class Column {
 	 * zugehörigen Block die entriesSet erhöht, falls der Block eindeutig ist.
 	 * 
 	 * @return true wenn alle Felder gesetzt sind.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public boolean setEntriesSet(int row) throws Exception {
 		entriesSet++;
