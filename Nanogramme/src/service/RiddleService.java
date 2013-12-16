@@ -246,7 +246,7 @@ public class RiddleService {
 				nono = nonoSplit[0];
 			}
 			writer.write(nono);
-			writer.write("content" + System.lineSeparator());
+			writer.write("content" + System.getProperty("line.separator"));
 			for (int row = 0; row < riddle.getHeight(); row++) {
 				String rowString = "";
 				for (int column = 0; column < riddle.getWidth(); column++) {
@@ -433,16 +433,16 @@ public class RiddleService {
 	   String nono = "";
 	   StringBuilder sb = new StringBuilder();
 	   sb.append(String.format("width %1d", riddle.getWidth()));
-	   sb.append(System.lineSeparator());
+	   sb.append(System.getProperty("line.separator"));
 	   sb.append(String.format("height %1d", riddle.getHeight()));
-	   sb.append(System.lineSeparator());
+	   sb.append(System.getProperty("line.separator"));
 	   sb.append("colors");
 	   for (Colour colour : riddle.getColours()) {
 	      sb.append(String.format("%1s %2d, %3d, %4d", String.valueOf(colour.getName()), colour.getRed(), colour.getGreen(), colour.getBlue()));
-	      sb.append(System.lineSeparator());
+	      sb.append(System.getProperty("line.separator"));
 	   }
 	   sb.append("rows");
-      sb.append(System.lineSeparator());
+      sb.append(System.getProperty("line.separator"));
       for (Row row : riddle.getRows()) {
          if (row.getBlocks() != null && row.getBlocks().size() > 0) {
             for (int i = 0; i < row.getBlocks().size(); i++) {
@@ -452,14 +452,14 @@ public class RiddleService {
                }
                sb.append(String.format("%1d%2s", block.getHowMany(), block.getColourString()));
             }
-            sb.append(System.lineSeparator());
+            sb.append(System.getProperty("line.separator"));
          } else {
             sb.append("0");
-            sb.append(System.lineSeparator());
+            sb.append(System.getProperty("line.separator"));
          }
       }
       sb.append("columns");
-      sb.append(System.lineSeparator());
+      sb.append(System.getProperty("line.separator"));
       for (Column column : riddle.getColumns()) {
          if (column.getBlocks() != null && column.getBlocks().size() > 0) {
             for (int i = 0; i < column.getBlocks().size(); i++) {
@@ -469,10 +469,10 @@ public class RiddleService {
                }
                sb.append(String.format("%d1%2s", block.getHowMany(), block.getColourString()));
             }
-            sb.append(System.lineSeparator());
+            sb.append(System.getProperty("line.separator"));
          } else {
             sb.append("0");
-            sb.append(System.lineSeparator());
+            sb.append(System.getProperty("line.separator"));
          }
       }
       nono = sb.toString();

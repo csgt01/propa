@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
+import javax.media.j3d.Light;
 
 /**
  * Diese Klasse ist für das Erstellen eines Rätsels aus einem Bild zuständig.
@@ -21,7 +22,18 @@ public class PictureService {
 
 	int count = 0;
 
-	public BufferedImage getDownColoredPicture(BufferedImage resizedImage,
+	/**
+	 * Rechnet die Farben mit Hilfe eines Octrees auf die gewünschte Anzahl
+	 * Farben herunter. Ruft
+	 * {@link #mapPictureToColors(BufferedImage, LinkedList)} auf, um die Farben
+	 * des Originalbildes anzupassen. Gibt das Bild mit herruntergerechneten
+	 * Farben zurück.
+	 * 
+	 * @param resizedImage
+	 * @param numberOfColors
+	 * @return Farbreduziertes Bild.
+	 */
+	private BufferedImage getDownColoredPicture(BufferedImage resizedImage,
 			int numberOfColors) {
 		Node root = new Node();
 		root.setCount(0);
@@ -39,7 +51,25 @@ public class PictureService {
 		return mapPictureToColors(resizedImage, colors);
 	}
 
-	public BufferedImage loadAndDowColorPicture(String file, int height, int width, int numberOfColors) {
+	/**
+	 * Rechnet die Farben mit Hilfe eines Octrees auf die gewünschte Anzahl
+	 * Farben herunter. Ruft
+	 * {@link #mapPictureToColors(BufferedImage, LinkedList)} auf, um die Farben
+	 * des Originalbildes anzupassen. Gibt das Bild mit herruntergerechneten
+	 * Farben zurück.
+	 * 
+	 * @param file
+	 *            Pfad zum Bild
+	 * @param height
+	 *            Höhe des neuen Bildes
+	 * @param width
+	 *            Breite des neuen Bildes
+	 * @param numberOfColors
+	 *            Anzahl der Farben
+	 * @return herruntergerechnetes Bild
+	 */
+	public BufferedImage loadAndDowColorPicture(String file, int height,
+			int width, int numberOfColors) {
 		BufferedImage resizedImage = null;
 		try {
 			BufferedImage oi = ImageIO.read(new File(file));
@@ -48,7 +78,7 @@ public class PictureService {
 			ImageIO.write(oi, "jpg", new File("testBla.jpg"));
 			resizedImage = scalePicture(width, height, oi, type);
 			ImageIO.write(resizedImage, "jpg", new File("testResi.jpg"));
-			
+
 			Node root = new Node();
 
 			for (int i = 0; i < resizedImage.getHeight(); i++) {
@@ -57,22 +87,19 @@ public class PictureService {
 				}
 			}
 			TreeSet<Node> fathers = new TreeSet<Node>();
-			fathers = getFathersOfLeafs(root, true, fathers);
+			fathers = getFathersOfLeafs(root, fathers);
 
-			while (getNumbersOfLeafs(root, false) > numberOfColors) {
-				if (getChildrenOfNode(fathers.first()) > (getNumbersOfLeafs(
-						root, false) - numberOfColors)) {
+			while (getNumbersOfLeafs(root) > numberOfColors) {
+				if (getChildrenOfNode(fathers.first()) > (getNumbersOfLeafs(root) - numberOfColors)) {
 					cluster(fathers.first());
 				} else {
-				   fathers = reduceColorsInFathers(fathers);
+					fathers = reduceColorsInFathers(fathers);
 				}
 			}
 			LinkedList<Color> colors = new LinkedList<Color>();
 			colors = getColorsOfLeafs(root, colors);
 			resizedImage = mapPictureToColors(resizedImage, colors);
-			
-						
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -89,7 +116,7 @@ public class PictureService {
 	 * @param root
 	 *            Das root Element, in das alle Pixel hinzugefügt werden.
 	 */
-	public void insertNode(Color color, Node root) {
+	private void insertNode(Color color, Node root) {
 		int red = color.getRed();
 		int green = color.getGreen();
 		int blue = color.getBlue();
@@ -147,9 +174,17 @@ public class PictureService {
 	/**
 	 * Skalliert das Bild.
 	 * 
+	 * @param width
+	 *            Breite des skallierten Bildes.
+	 * @param height
+	 *            Höhe des skallierten Bildes.
 	 * @param originalImage
+	 *            zu skallierende Bild
+	 * @param type
+	 *            Typ
+	 * @return Das skallierte Bild
 	 */
-	public BufferedImage scalePicture(int width, int height,
+	private BufferedImage scalePicture(int width, int height,
 			Image originalImage, int type) {
 		BufferedImage bi = new BufferedImage(width, height, type);
 		Graphics2D g = bi.createGraphics();
@@ -158,43 +193,39 @@ public class PictureService {
 		return bi;
 	}
 
-//	public Node findNodeWithLessChildsReferences(Node root) {
-//		Node node = root;
-//		for (int i = 0; i < root.getNodes().length; i++) {
-//			if (root.getNode(i) != null) {
-//				Node node2 = findNodeWithLessChildsReferences(root.getNode(i));
-//				// if (node == null && ) {
-//				//
-//				// }
-//				// else
-//				if (node2.getReferencesOfChilds() <= node
-//						.getReferencesOfChilds() && node2.children > 1) {
-//					node = node2;
-//				}
-//			}
-//		}
-//		return node;
-//	}
-
-	public TreeSet<Node> getFathersOfLeafs(Node root, boolean debug,
-			TreeSet<Node> fathers) {
+	/**
+	 * Fügt fathers alle Väter der Blätter hinzu.
+	 * 
+	 * @param root
+	 *            Startelement
+	 * @param fathers
+	 *            Liste der Väter der Blätter.
+	 * @return Liste der Väter
+	 */
+	private TreeSet<Node> getFathersOfLeafs(Node root, TreeSet<Node> fathers) {
 		Node[] nodes = root.getNodes();
 		boolean isLeaf = true;
 		for (int i = 0; i < nodes.length; i++) {
 			if (nodes[i] != null) {
 				isLeaf = false;
-				fathers = (getFathersOfLeafs(nodes[i], debug, fathers));
+				fathers = (getFathersOfLeafs(nodes[i], fathers));
 			}
 		}
 		if (isLeaf) {
 			if (root.getFather() != null) {
-				fathers.add(root.getFather());				
+				fathers.add(root.getFather());
 			}
 		}
 		return fathers;
 	}
 
-	public int getNumbersOfLeafs(Node root, boolean debug) {
+	/**
+	 * Gibt die Anzahl der Blätter im Octree zurück.
+	 * 
+	 * @param root
+	 * @return
+	 */
+	private int getNumbersOfLeafs(Node root) {
 		int result = 0;
 
 		Node[] nodes = root.getNodes();
@@ -202,20 +233,26 @@ public class PictureService {
 		for (int i = 0; i < nodes.length; i++) {
 			if (nodes[i] != null) {
 				isLeaf = false;
-				result += getNumbersOfLeafs(nodes[i], debug);
+				result += getNumbersOfLeafs(nodes[i]);
 			}
 		}
 		if (isLeaf) {
-			if (debug) {
-				// System.out.println("Father:" + root.getFather());
-				// System.out.println("YYYYYYYYYYYYYYYY:");
-			}
 			result = 1;
 		}
 		return result;
 	}
 
-	public LinkedList<Color> getColorsOfLeafs(Node root,
+	/**
+	 * Liefert eine Liste der im Octree vorhandenen Farben. Ruft sich rekursiv
+	 * auf.
+	 * 
+	 * @param root
+	 *            Basiselement.
+	 * @param colors
+	 *            Liste der bereits hinzugefügten Farben.
+	 * @return Liste der Farben im Octree.
+	 */
+	private LinkedList<Color> getColorsOfLeafs(Node root,
 			LinkedList<Color> colors) {
 		Node[] nodes = root.getNodes();
 		boolean isLeaf = true;
@@ -233,13 +270,20 @@ public class PictureService {
 		return colors;
 	}
 
-	public void cluster(Node less) {
+	/**
+	 * Merged die beiden Blätter, dessen Farben am ähnlichsten sind miteinander.
+	 * 
+	 * @param less
+	 *            Der Knoten, dessen ähnlichste Blätter gemerged werden sollen.
+	 */
+	private void cluster(Node less) {
 		Node similiar1 = null;
 		Node similiar2 = null;
 		int sim1 = 0;
 		int sim2 = 0;
 		double distance = 800.0;
 		// System.out.println(less.getNodes().length);
+		// suche die ähnlichsten Blätter
 		for (int i = 0; i < less.getNodes().length; i++) {
 			Node node1 = less.getNode(i);
 			if (node1 != null) {
@@ -260,8 +304,9 @@ public class PictureService {
 			}
 		}
 		if (similiar1 != null && similiar2 != null) {
-		   
+
 		}
+		// merge die Ähnlichsten
 		Node node1 = less.getNode(sim1);
 		Node node2 = less.getNode(sim2);
 		if (node1 != null && node2 != null) {
@@ -276,6 +321,14 @@ public class PictureService {
 		}
 	}
 
+	/**
+	 * Liefert den Abstand der Farben der Blätter zueinander (entspricht der
+	 * Ähnlichkeit der Farben).
+	 * 
+	 * @param node1
+	 * @param node2
+	 * @return
+	 */
 	private Double getDistance(Node node1, Node node2) {
 		if (node1.getReferences() != 0 && node2.getReferences() != 0) {
 			float r1 = node1.red / node1.getReferences();
@@ -297,7 +350,7 @@ public class PictureService {
 				.pow((color2.getBlue() - color2.getBlue()), 2.0)));
 	}
 
-	public BufferedImage mapPictureToColors(BufferedImage resizedImage,
+	private BufferedImage mapPictureToColors(BufferedImage resizedImage,
 			LinkedList<Color> colors) {
 		for (int i = 0; i < resizedImage.getHeight(); i++) {
 			for (int j = 0; j < resizedImage.getWidth(); j++) {
@@ -328,7 +381,7 @@ public class PictureService {
 		return color.getRGB();
 	}
 
-	public int getChildrenOfNode(Node node) {
+	private int getChildrenOfNode(Node node) {
 		int children = 0;
 		for (Node child : node.getNodes()) {
 			if (null != child) {
@@ -338,7 +391,7 @@ public class PictureService {
 		return children;
 	}
 
-	public TreeSet<Node> reduceColorsInFathers(TreeSet<Node> fathers) {
+	private TreeSet<Node> reduceColorsInFathers(TreeSet<Node> fathers) {
 		Node node = fathers.first();
 		fathers.remove(node);
 		int red = 0;
