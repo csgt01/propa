@@ -1,4 +1,4 @@
-package models;
+package service;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -8,10 +8,10 @@ import java.util.Date;
 
 import javax.swing.JLabel;
 
+import models.Colour;
+import models.Riddle;
 import Interfaces.IPlaygame;
 import Interfaces.IUIListener;
-import service.NonoSolver3;
-import service.RiddleService;
 
 public class PlayGame implements IPlaygame {
 

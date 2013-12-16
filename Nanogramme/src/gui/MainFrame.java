@@ -33,9 +33,9 @@ import Interfaces.IUIListener;
 import models.Block;
 import models.Colour;
 import models.Column;
-import models.PlayGame;
 import models.Row;
 import picture.PictureService;
+import service.PlayGame;
 
 /**
  * Das MainFraim der App.
