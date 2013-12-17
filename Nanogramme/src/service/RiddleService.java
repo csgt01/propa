@@ -24,27 +24,49 @@ import models.Row;
 
 public class RiddleService {
 
+	/**
+	 * Das Rätsel.
+	 */
 	private Riddle riddle = new Riddle();
 
-	private int state = 0;
+	/**
+	 * Hilfsvariable beim Parsen.
+	 */
+	private int parsingState = 0;
 
+	/**
+	 * Hilfsvariable beim Parsen.
+	 */
 	private int contentRow;
+	/**
+	 * Hilfsvariable beim Parsen.
+	 */
 	private int contentColumn;
 
+	/**
+	 * Spielmatrix.
+	 */
 	public char[][] matrix;
-	
+
+	/**
+	 * Verbundene UI.
+	 */
 	private IUIListener listener;
-	
-	public RiddleService (IUIListener listener) {
-	   this.listener = listener;
+
+	/**
+	 * Konstruktor.
+	 * @param listener
+	 */
+	public RiddleService(IUIListener listener) {
+		this.listener = listener;
 	}
 
 	/**
 	 * Lädt eine Datei ein und parst das Rätsel Reihe für Reihe in
 	 * {@link #analyzeLine(String)}.
 	 * 
-	 * @param filename
-	 * @return
+	 * @param filename Pfad zum Rätsel.
+	 * @return Riddle
 	 */
 	public Riddle readFile(String filename) {
 		String nono = "";
@@ -109,7 +131,7 @@ public class RiddleService {
 		str = str.trim();
 		if (!str.startsWith("#")) {
 			// TODO: regex wgitespace and tab
-			switch (state) {
+			switch (parsingState) {
 			case 0:
 				if (str.startsWith("width")) {
 					String splitted = str.split("width ")[1];
@@ -117,12 +139,12 @@ public class RiddleService {
 				} else if (str.startsWith("height")) {
 					riddle.setHeight(Integer.valueOf(str.split("height ")[1]));
 				} else if (str.startsWith("color")) {
-					state = 1;
+					parsingState = 1;
 				}
 				break;
 			case 1:
 				if (str.startsWith("rows")) {
-					state = 2;
+					parsingState = 2;
 				} else {
 					String[] splits = str.split(" ");
 					Colour colour = new Colour();
@@ -137,7 +159,7 @@ public class RiddleService {
 				break;
 			case 2:
 				if (str.startsWith("column")) {
-					state = 3;
+					parsingState = 3;
 				} else {
 					str = str.trim();
 					Row row = new Row();
@@ -163,7 +185,7 @@ public class RiddleService {
 				if (str.startsWith("content")) {
 					contentColumn = 0;
 					contentRow = 0;
-					state = 4;
+					parsingState = 4;
 				} else {
 					str = str.trim();
 					Column column = new Column();
@@ -212,22 +234,18 @@ public class RiddleService {
 	 * diese mit '*'.
 	 */
 	private void setupMatrix() {
-		// String methodName = "setupBlocks()";
-		// System.out.println(methodName);
-		// long startTime = new Date().getTime();
 		matrix = new char[riddle.getHeight()][riddle.getWidth()];
 		for (int i = 0; i < riddle.getHeight(); i++) {
 			for (int j = 0; j < riddle.getWidth(); j++) {
 				matrix[i][j] = '*';
 			}
 		}
-		// System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime) + " ms");
 	}
 
 	// TODO: better and save twice!!!!
 	/**
 	 * Speichert das Rätsel als nono-Datei.
+	 * 
 	 * @param matrix
 	 */
 	public boolean save(char[][] matrix) {
@@ -235,8 +253,8 @@ public class RiddleService {
 		boolean saved = false;
 		System.out.println(riddle);
 		try {
-			writer = new BufferedWriter
-               (new OutputStreamWriter(new FileOutputStream("save.nono"),"UTF-8"));
+			writer = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream("save.nono"), "UTF-8"));
 			String nono = riddle.getNono();
 			if (nono == null) {
 				nono = createNono(riddle);
@@ -263,12 +281,12 @@ public class RiddleService {
 				if (writer != null)
 					writer.close();
 			} catch (IOException e) {
-				
-			} 
+
+			}
 		}
 		return saved;
 	}
-	
+
 	/**
 	 * Erstellt das Rätsel.
 	 * 
@@ -288,7 +306,7 @@ public class RiddleService {
 			}
 		}
 		System.out.println(colors.size());
-		
+
 		HashMap<Integer, String> mapping = new HashMap<Integer, String>();
 		mapping.put(0, "A");
 		mapping.put(1, "B");
@@ -308,7 +326,7 @@ public class RiddleService {
 		System.out.println(colors.size());
 		LinkedList<Colour> col = new LinkedList<Colour>();
 		int co = 0;
-		
+		// awt.Color zu models.Colour mappen
 		HashMap<Color, Colour> colarMap = new HashMap<Color, Colour>();
 		for (Color color : colors) {
 			Colour colour = new Colour();
@@ -324,9 +342,10 @@ public class RiddleService {
 		LinkedList<Row> rows = new LinkedList<Row>();
 		LinkedList<Column> columns = new LinkedList<Column>();
 		
+		// setzen der Hintergrundfarbe
 		Colour backgroundCol = listener.getBackgroundColour(col);
-		
-//		Colour backgroundCol = col.get(1);
+
+		// setzen der Blöcke in Reihe und Spalte
 		for (int i = 0; i < image.getHeight(); i++) {
 			Row row = new Row();
 			ArrayList<Block> blocks = new ArrayList<Block>();
@@ -334,9 +353,9 @@ public class RiddleService {
 			Integer blockSize = null;
 			for (int j = 0; j < image.getWidth(); j++) {
 				Color c = new Color(image.getRGB(j, i));
-//				System.out.println(i + "/" + j + ":" + c);
+				// System.out.println(i + "/" + j + ":" + c);
 				Colour currentColour = colarMap.get(c);
-//				System.out.println(currentColour);
+				// System.out.println(currentColour);
 				if (block == null) {
 					if (!currentColour.equals(backgroundCol)) {
 						block = new Block();
@@ -379,9 +398,9 @@ public class RiddleService {
 			Integer blockSize = null;
 			for (int j = 0; j < image.getHeight(); j++) {
 				Color c = new Color(image.getRGB(i, j));
-//				System.out.println(i + "/" + j + ":" + c);
+				// System.out.println(i + "/" + j + ":" + c);
 				Colour currentColour = colarMap.get(c);
-//				System.out.println(currentColour);
+				// System.out.println(currentColour);
 				if (block == null) {
 					if (!currentColour.equals(backgroundCol)) {
 						block = new Block();
@@ -418,7 +437,7 @@ public class RiddleService {
 		}
 		riddle.setColumns(columns);
 		riddle.getColours().remove(backgroundCol);
-		System.out.println("riddle in create in rs:"+riddle);
+		System.out.println("riddle in create in rs:" + riddle);
 		this.riddle = riddle;
 		return riddle;
 	}
@@ -430,54 +449,58 @@ public class RiddleService {
 	 * @return
 	 */
 	private String createNono(Riddle riddle2) {
-	   String nono = "";
-	   StringBuilder sb = new StringBuilder();
-	   sb.append(String.format("width %1d", riddle.getWidth()));
-	   sb.append(System.getProperty("line.separator"));
-	   sb.append(String.format("height %1d", riddle.getHeight()));
-	   sb.append(System.getProperty("line.separator"));
-	   sb.append("colors");
-	   for (Colour colour : riddle.getColours()) {
-	      sb.append(String.format("%1s %2d, %3d, %4d", String.valueOf(colour.getName()), colour.getRed(), colour.getGreen(), colour.getBlue()));
-	      sb.append(System.getProperty("line.separator"));
-	   }
-	   sb.append("rows");
-      sb.append(System.getProperty("line.separator"));
-      for (Row row : riddle.getRows()) {
-         if (row.getBlocks() != null && row.getBlocks().size() > 0) {
-            for (int i = 0; i < row.getBlocks().size(); i++) {
-               Block block = row.getBlocks().get(i);
-               if (i > 0) {
-                  sb.append(",");
-               }
-               sb.append(String.format("%1d%2s", block.getHowMany(), block.getColourString()));
-            }
-            sb.append(System.getProperty("line.separator"));
-         } else {
-            sb.append("0");
-            sb.append(System.getProperty("line.separator"));
-         }
-      }
-      sb.append("columns");
-      sb.append(System.getProperty("line.separator"));
-      for (Column column : riddle.getColumns()) {
-         if (column.getBlocks() != null && column.getBlocks().size() > 0) {
-            for (int i = 0; i < column.getBlocks().size(); i++) {
-               Block block = column.getBlocks().get(i);
-               if (i > 0) {
-                  sb.append(",");
-               }
-               sb.append(String.format("%d1%2s", block.getHowMany(), block.getColourString()));
-            }
-            sb.append(System.getProperty("line.separator"));
-         } else {
-            sb.append("0");
-            sb.append(System.getProperty("line.separator"));
-         }
-      }
-      nono = sb.toString();
-      System.out.println("nono:" + nono);
-      riddle.setNono(nono);
+		String nono = "";
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("width %1d", riddle.getWidth()));
+		sb.append(System.getProperty("line.separator"));
+		sb.append(String.format("height %1d", riddle.getHeight()));
+		sb.append(System.getProperty("line.separator"));
+		sb.append("colors");
+		for (Colour colour : riddle.getColours()) {
+			sb.append(String.format("%1s %2d, %3d, %4d",
+					String.valueOf(colour.getName()), colour.getRed(),
+					colour.getGreen(), colour.getBlue()));
+			sb.append(System.getProperty("line.separator"));
+		}
+		sb.append("rows");
+		sb.append(System.getProperty("line.separator"));
+		for (Row row : riddle.getRows()) {
+			if (row.getBlocks() != null && row.getBlocks().size() > 0) {
+				for (int i = 0; i < row.getBlocks().size(); i++) {
+					Block block = row.getBlocks().get(i);
+					if (i > 0) {
+						sb.append(",");
+					}
+					sb.append(String.format("%1d%2s", block.getHowMany(),
+							block.getColourString()));
+				}
+				sb.append(System.getProperty("line.separator"));
+			} else {
+				sb.append("0");
+				sb.append(System.getProperty("line.separator"));
+			}
+		}
+		sb.append("columns");
+		sb.append(System.getProperty("line.separator"));
+		for (Column column : riddle.getColumns()) {
+			if (column.getBlocks() != null && column.getBlocks().size() > 0) {
+				for (int i = 0; i < column.getBlocks().size(); i++) {
+					Block block = column.getBlocks().get(i);
+					if (i > 0) {
+						sb.append(",");
+					}
+					sb.append(String.format("%d1%2s", block.getHowMany(),
+							block.getColourString()));
+				}
+				sb.append(System.getProperty("line.separator"));
+			} else {
+				sb.append("0");
+				sb.append(System.getProperty("line.separator"));
+			}
+		}
+		nono = sb.toString();
+		System.out.println("nono:" + nono);
+		riddle.setNono(nono);
 		return nono;
 	}
 

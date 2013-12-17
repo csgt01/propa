@@ -15,20 +15,45 @@ import Interfaces.IUIListener;
 
 public class PlayGame implements IPlaygame {
 
+	/**
+	 * Spielmatrix.
+	 */
 	private char[][] matrix;
 
+	/**
+	 * Colour, die zum Setzten eingestellt ist.
+	 */
 	private Colour currentColor;
 
+	/**
+	 * Hintergrungfarbe des Rätsels.
+	 */
 	private Colour backGroundColour;
 
+	/**
+	 * Zu nutzender {@link RiddleService} 
+	 */
 	private RiddleService riddleLoader;
 
+	/**
+	 * Das Rätsel.
+	 */
 	private Riddle riddle;
 
+	/**
+	 * Verbundene UI.
+	 */
 	private IUIListener listener;
 
+	/**
+	 * Die Lösung des Rätsels.
+	 */
 	private char[][] solutions;
 
+	/**
+	 * Konstruktor.
+	 * @param listener
+	 */
 	public PlayGame(IUIListener listener) {
 		this.listener = listener;
 		riddleLoader = new RiddleService(listener);
@@ -136,7 +161,8 @@ public class PlayGame implements IPlaygame {
 	}
 
 	/**
-	 * Prüft, ob das vom User gelöste Rätsel mit der Lösung übereinstimmt. TODO:
+	 * Prüft, ob das vom User gelöste Rätsel mit der Lösung übereinstimmt. 
+	 * TODO:
 	 * Zwischenprüfung! und vielleicht Fehler anzeigen
 	 * 
 	 * @return
@@ -213,6 +239,9 @@ public class PlayGame implements IPlaygame {
 
 	}
 
+	/**
+	 * Zeigt die Matrix zum Debuggen an.
+	 */
 	private void showMatrix() {
 		String methodName = "showMatrix()";
 		System.out.println(methodName);
@@ -226,7 +255,6 @@ public class PlayGame implements IPlaygame {
 			System.out.println(out);
 		}
 		System.out.println();
-		// showBlockGoneTrue(matrix);
 		System.out.println("Time for " + methodName + ": "
 				+ (new Date().getTime() - startTime) + " ms");
 	}

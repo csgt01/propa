@@ -420,6 +420,11 @@ public class NonoSolver3 implements INonogramSolver {
 				} else if (blockInts.size() == 0) {
 					// System.out.println("EMPTYEMPTYEMPTY");
 					fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1, '-');
+				} else if (blockInts.size() > 1) {
+					System.out.println("> 1 Row:" + rowInt + " col:" + columnInt);
+					for (Integer i : blockInts) {
+						System.out.println(blocks.get(i));
+					}
 				}
 				// System.out.println("JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ");
 			}
