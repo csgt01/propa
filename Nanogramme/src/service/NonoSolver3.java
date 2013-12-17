@@ -505,6 +505,13 @@ public class NonoSolver3 implements INonogramSolver {
 						blockInts.add(blocks.indexOf(block));
 
 					}
+					// TODO check what to do
+//					else
+//					if (rowInt >= block.getMinStartIndexNew()
+//							&& rowInt <= block.getMaxEndIndexNew()) {
+//						System.out.println("row:" + rowInt + " column:" + columnInt + " other color:" + c + " block:" + block);
+//
+//					}
 				}
 				if (blockInts.size() == 1) {
 					Block block = blocks.get(blockInts.get(0));
