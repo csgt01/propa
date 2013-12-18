@@ -97,19 +97,24 @@ public class Block {
 	 */
 	public Block(Block block) {
 		super();
-		this.howMany = block.howMany;
+		this.howMany = new Integer(block.howMany);
 		this.colour = block.colour;
-		this.startIndex = block.startIndex;
-		this.endIndex = block.endIndex;
+		if (block.getStartIndex() != null && block.getEndIndex() != null) {
+			this.startIndex = new Integer(block.startIndex);
+			this.endIndex = new Integer(block.endIndex);
+		}
 		this.gone = block.gone;
-		this.minStartIndex = block.minStartIndex;
-		this.maxEndIndex = block.maxEndIndex;
-		this.minStartIndexNew = block.minStartIndexNew;
-		this.maxEndIndexNew = block.maxEndIndexNew;
+		this.minStartIndex = new Integer(block.minStartIndex);
+		this.maxEndIndex = new Integer(block.maxEndIndex);
+		this.minStartIndexNew = new Integer(block.minStartIndexNew);
+		this.maxEndIndexNew = new Integer(block.maxEndIndexNew);
 		this.colorString = block.colorString;
 		this.colorChar = block.colorChar;
-		this.entriesSet = block.entriesSet;
-		this.indeces = block.indeces;
+		this.entriesSet = new Integer(block.entriesSet);
+		this.indeces = new TreeSet<Integer>();
+				for(Integer i :block.indeces) {
+					this.indeces.add(new Integer(i));
+				}
 	}
 
 	/**
@@ -345,7 +350,7 @@ public class Block {
 	 * @throws Exception
 	 */
 	public boolean increaseEntriesSet(int index) throws Exception {
-		// System.out.println("increaseEntriesSet()");
+		// //     System.out.println("increaseEntriesSet()");
 		if (!indeces.add(index)) {
 			this.entriesSet++;
 		}
