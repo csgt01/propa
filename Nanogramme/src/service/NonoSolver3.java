@@ -168,7 +168,7 @@ public class NonoSolver3 implements INonogramSolver {
 					switch (solutionsFromGuising.size()) {
 					case 0:
 						showMatrix();
-						return matrix;
+						return null;
 					case 1:
 						matrix = solutionsFromGuising.get(0);
 						showMatrix();

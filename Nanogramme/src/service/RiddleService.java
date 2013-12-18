@@ -264,14 +264,14 @@ public class RiddleService {
 				nono = nonoSplit[0];
 			}
 			writer.write(nono);
-			writer.write("content" + System.getProperty("line.separator"));
+			writer.write(System.getProperty("line.separator") + "content" + System.getProperty("line.separator"));
 			for (int row = 0; row < riddle.getHeight(); row++) {
 				String rowString = "";
 				for (int column = 0; column < riddle.getWidth(); column++) {
 					rowString += matrix[row][column];
 				}
 				System.out.println(rowString + "\n");
-				writer.write(rowString + "\n");
+				writer.write(rowString + System.getProperty("line.separator"));
 			}
 			saved = true;
 		} catch (IOException e) {
@@ -351,7 +351,7 @@ public class RiddleService {
 			ArrayList<Block> blocks = new ArrayList<Block>();
 			Block block = null;
 			Integer blockSize = null;
-			for (int j = 0; j < image.getWidth(); j++) {
+			for (int j = 0; j < image.getHeight(); j++) {
 				Color c = new Color(image.getRGB(j, i));
 				// System.out.println(i + "/" + j + ":" + c);
 				Colour currentColour = colarMap.get(c);
@@ -456,8 +456,9 @@ public class RiddleService {
 		sb.append(String.format("height %1d", riddle.getHeight()));
 		sb.append(System.getProperty("line.separator"));
 		sb.append("colors");
+		sb.append(System.getProperty("line.separator"));
 		for (Colour colour : riddle.getColours()) {
-			sb.append(String.format("%1s %2d, %3d, %4d",
+			sb.append(String.format("%1s %2d,%3d,%4d",
 					String.valueOf(colour.getName()), colour.getRed(),
 					colour.getGreen(), colour.getBlue()));
 			sb.append(System.getProperty("line.separator"));
