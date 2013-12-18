@@ -119,6 +119,8 @@ public class NonoSolver3 implements INonogramSolver {
 						case 0:
 							return matrix;
 						case 1:
+							matrix = solutionsFromGuising.get(0);
+							showMatrix();
 							return solutionsFromGuising.get(0);
 						default:
 							return null;
@@ -132,7 +134,7 @@ public class NonoSolver3 implements INonogramSolver {
 						// System.out.println("null");
 						// showMatrix();
 						// showBlockGoneTrue();
-						// showMatrix();
+						 showMatrix();
 						return matrix;
 						// return null;
 					} else {
@@ -140,6 +142,8 @@ public class NonoSolver3 implements INonogramSolver {
 						// showMatrix();
 						// showBlockGoneTrue();
 						// showMatrix();
+						matrix = solutionsFromGuising.get(0);
+						showMatrix();
 						return solutionsFromGuising.get(0);
 					}
 				}
@@ -166,6 +170,8 @@ public class NonoSolver3 implements INonogramSolver {
 						showMatrix();
 						return matrix;
 					case 1:
+						matrix = solutionsFromGuising.get(0);
+						showMatrix();
 						return solutionsFromGuising.get(0);
 					default:
 						return null;
