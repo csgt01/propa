@@ -382,6 +382,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
       toolbar = new JToolBar();
       applikation.add(toolbar, BorderLayout.SOUTH);
       toolbar.setName("Farben");
+      toolbar.setBackground(Color.white);
       JButton backgroundButton = new JButton("-");
       backgroundButton.setForeground(Color.DARK_GRAY);
       backgroundButton.addActionListener(playGame);

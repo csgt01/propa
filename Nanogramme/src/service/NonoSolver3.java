@@ -10,6 +10,7 @@ import models.Block;
 import models.Column;
 import models.Riddle;
 import models.Row;
+import models.SolveStateEnum;
 import models.StackHolder;
 import de.feu.propra.nonogramme.interfaces.INonogramSolver;
 
@@ -34,7 +35,7 @@ public class NonoSolver3 implements INonogramSolver {
 	/**
 	 * Der Status beim Lösen. 0 = lösend 1 = 2 =
 	 */
-	private int solveState = 0;
+	private SolveStateEnum solveState = SolveStateEnum.SOLVING;
 	/**
 	 * Lösungen, die beim raten der Lösung gefunden wurden.
 	 */
@@ -106,20 +107,18 @@ public class NonoSolver3 implements INonogramSolver {
 			setupMatrix();
 		}
 		setupBlocks();
-		while (solveState != 1) {
-			if (solveState == 2) {
+		while (solveState != SolveStateEnum.SOLVED) {
+			if (solveState == SolveStateEnum.STATE_2) {
 				// System.out.println("solveState:2");
 				if (stacks != null && stacks.size() > 0) {
-					// showMatrix();
-					// showBlockGoneTrue();
-					// showMatrix();
-					// return matrix;
 					if (!changeLastStacksMember()) {
 						switch (solutionsFromGuising.size()) {
 						case 0:
+							solveState = SolveStateEnum.NO_SOLUTION;
 							return matrix;
 						case 1:
 							matrix = solutionsFromGuising.get(0);
+							solveState = SolveStateEnum.SOLVED;
 							showMatrix();
 							return solutionsFromGuising.get(0);
 						default:
@@ -143,11 +142,12 @@ public class NonoSolver3 implements INonogramSolver {
 						// showBlockGoneTrue();
 						// showMatrix();
 						matrix = solutionsFromGuising.get(0);
+						solveState = SolveStateEnum.SOLVED;
 						showMatrix();
 						return solutionsFromGuising.get(0);
 					}
 				}
-			} else if (solveState == 3) {
+			} else if (solveState == SolveStateEnum.ERROR) {
 				// System.out.println("solveState:3");
 				try {
 					// System.out.println("solveState:3");
@@ -156,12 +156,12 @@ public class NonoSolver3 implements INonogramSolver {
 					// showMatrix();
 					// return matrix;
 					setFirstStarToSomething();
-					solveState = 0;
+					solveState = SolveStateEnum.SOLVING;
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if (solveState == 4) {
+			} else if (solveState == SolveStateEnum.STATE_4) {
 				// System.out.println("solveState:4");
 				// return matrix;
 				if (!changeLastStacksMember()) {
@@ -177,9 +177,9 @@ public class NonoSolver3 implements INonogramSolver {
 						return null;
 					}
 				}
-				solveState = 0;
+				solveState = SolveStateEnum.SOLVING;
 			}
-			solveState = 0;
+			solveState = SolveStateEnum.SOLVING;
 			solve();
 		}
 		// // System.out.println("Time for " + methodName + ": "
@@ -202,7 +202,7 @@ public class NonoSolver3 implements INonogramSolver {
 	 * 
 	 * @return solveState:
 	 */
-	private int solve() {
+	private SolveStateEnum solve() {
 		// System.out.println("solve()");
 		try {
 			findOverlappingAreasInColumn();
@@ -214,14 +214,14 @@ public class NonoSolver3 implements INonogramSolver {
 				// solveRecursive();
 				// solveWithPossibilities();
 				if (starCount <= getStarCountInRiddle()) {
-					solveState = 3;
+					solveState = SolveStateEnum.ERROR;
 					run1 = false;
 				}
 				// mögliche Lösung gefunden
 				if (getStarCountInRiddle() == 0) {
 					// direkte Lösung, da vorher nicht geraten wurde
 					if (stacks == null || stacks.size() == 0) {
-						solveState = 1;
+						solveState = SolveStateEnum.SOLVED;
 						run1 = false;
 						if (solutionFromTryingOk()) {
 							// TODO: testen ob Möglichkeit ok!
@@ -232,7 +232,7 @@ public class NonoSolver3 implements INonogramSolver {
 						run1 = false;
 						// TODO: testen ob Möglichkeit ok!
 						solutionsFromGuising.add(matrix);
-						solveState = 4;
+						solveState = SolveStateEnum.STATE_4;
 					}
 				}
 			}
@@ -240,7 +240,7 @@ public class NonoSolver3 implements INonogramSolver {
 			// e.printStackTrace();
 			// showMatrix();
 			// // System.out.println(stacks.size());
-			solveState = 2;
+			solveState = SolveStateEnum.STATE_2;
 		} finally {
 			// showMatrix();
 			// showBlockGoneTrue();
@@ -1957,7 +1957,7 @@ public class NonoSolver3 implements INonogramSolver {
 						fillColumnWithFree(column);
 					}
 				} else {
-					solveState = 3;
+					solveState = SolveStateEnum.ERROR;
 					throw new DataCollisionException(
 							"Char wurde nochmal in fillBlocksOnEndOfColumn gesetzt \nchar "
 									+ matrix[getIndexOfColumn(column)][rowInt]
@@ -2051,7 +2051,7 @@ public class NonoSolver3 implements INonogramSolver {
 					} else {
 						if ((rowInt + colourBlock.getHowMany()) < riddle
 								.getHeight()) {
-							solveState = 3;
+							solveState = SolveStateEnum.ERROR;
 							throw new DataCollisionException(
 									"Char wurde nochmal in fillBlocksOnEndOfColumn gesetzt \nchar "
 											+ matrix[rowInt][getIndexOfColumn(column)]
@@ -2136,7 +2136,7 @@ public class NonoSolver3 implements INonogramSolver {
 						fillRowWithFree(row);
 					}
 				} else {
-					solveState = 3;
+					solveState = SolveStateEnum.ERROR;
 					throw new DataCollisionException("char "
 							+ matrix[getIndexOfRow(row)][columnInt]
 							+ " ungleich " + colourBlock.getColour().getName());
@@ -2229,7 +2229,7 @@ public class NonoSolver3 implements INonogramSolver {
 					} else {
 						if ((columnInt + colourBlock.getHowMany()) < riddle
 								.getWidth()) {
-							solveState = 3;
+							solveState = SolveStateEnum.ERROR;
 							throw new DataCollisionException("char "
 									+ matrix[columnInt][getIndexOfRow(row)]
 									+ " at" + columnInt + "/"
@@ -2641,7 +2641,7 @@ public class NonoSolver3 implements INonogramSolver {
 		// }
 		if (matrix[rowIndex][columnIndex] != '*'
 				&& matrix[rowIndex][columnIndex] != c) {
-			solveState = 3;
+			solveState = SolveStateEnum.ERROR;
 			throw new DataCollisionException("Fehler: row:" + rowIndex
 					+ " column:" + columnIndex + " " + c + " ungleich "
 					+ matrix[rowIndex][columnIndex]);
@@ -2710,7 +2710,7 @@ public class NonoSolver3 implements INonogramSolver {
 	/**
 	 * @return the solveState
 	 */
-	public int getSolveState() {
+	public SolveStateEnum getSolveState() {
 		return solveState;
 	}
 
@@ -2718,7 +2718,7 @@ public class NonoSolver3 implements INonogramSolver {
 	 * @param solveState
 	 *            the solveState to set
 	 */
-	public void setSolveState(int solveState) {
+	public void setSolveState(SolveStateEnum solveState) {
 		this.solveState = solveState;
 	}
 

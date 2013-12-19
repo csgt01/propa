@@ -449,6 +449,7 @@ public class RiddleService {
 	 * @return
 	 */
 	private String createNono(Riddle riddle2) {
+		System.out.println("CREATENONO:" + riddle2);
 		String nono = "";
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format("width %1d", riddle.getWidth()));
@@ -458,7 +459,7 @@ public class RiddleService {
 		sb.append("colors");
 		sb.append(System.getProperty("line.separator"));
 		for (Colour colour : riddle.getColours()) {
-			sb.append(String.format("%1s %2d,%3d,%4d",
+			sb.append(String.format("%1s %d,%d,%d",
 					String.valueOf(colour.getName()), colour.getRed(),
 					colour.getGreen(), colour.getBlue()));
 			sb.append(System.getProperty("line.separator"));
@@ -472,7 +473,7 @@ public class RiddleService {
 					if (i > 0) {
 						sb.append(",");
 					}
-					sb.append(String.format("%1d%2s", block.getHowMany(),
+					sb.append(String.format("%d%s", block.getHowMany(),
 							block.getColourString()));
 				}
 				sb.append(System.getProperty("line.separator"));
@@ -484,13 +485,14 @@ public class RiddleService {
 		sb.append("columns");
 		sb.append(System.getProperty("line.separator"));
 		for (Column column : riddle.getColumns()) {
-			if (column.getBlocks() != null && column.getBlocks().size() > 0) {
-				for (int i = 0; i < column.getBlocks().size(); i++) {
-					Block block = column.getBlocks().get(i);
+			ArrayList<Block> blocks = column.getBlocks();
+			if (blocks != null && blocks.size() > 0) {
+				for (int i = 0; i < blocks.size(); i++) {
+					Block block = blocks.get(i);
 					if (i > 0) {
 						sb.append(",");
 					}
-					sb.append(String.format("%d1%2s", block.getHowMany(),
+					sb.append(String.format("%d%s", block.getHowMany(),
 							block.getColourString()));
 				}
 				sb.append(System.getProperty("line.separator"));
