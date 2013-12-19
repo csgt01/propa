@@ -100,16 +100,12 @@ public class NonoSolver3 implements INonogramSolver {
 
 	@Override
 	public char[][] getSolution() {
-		// String methodName = "getSolution()";
-		// // System.out.println(methodName);
-		// long startTime = new Date().getTime();
 		if (matrix == null) {
 			setupMatrix();
 		}
 		setupBlocks();
 		while (solveState != SolveStateEnum.SOLVED) {
-			if (solveState == SolveStateEnum.STATE_2) {
-				// System.out.println("solveState:2");
+			if (solveState == SolveStateEnum.ERROR) {
 				if (stacks != null && stacks.size() > 0) {
 					if (!changeLastStacksMember()) {
 						switch (solutionsFromGuising.size()) {
@@ -126,54 +122,38 @@ public class NonoSolver3 implements INonogramSolver {
 						}
 					}
 				} else {
-					// System.out.println("out");
 					if (solutionsFromGuising == null
 							|| solutionsFromGuising.size() != 1) {
-						// System.out.println(solutionsFromGuising);
-						// System.out.println("null");
-						// showMatrix();
-						// showBlockGoneTrue();
-						 showMatrix();
+						showMatrix();
 						return matrix;
-						// return null;
 					} else {
-						// // System.out.println(matrix);
-						// showMatrix();
-						// showBlockGoneTrue();
-						// showMatrix();
 						matrix = solutionsFromGuising.get(0);
 						solveState = SolveStateEnum.SOLVED;
 						showMatrix();
 						return solutionsFromGuising.get(0);
 					}
 				}
-			} else if (solveState == SolveStateEnum.ERROR) {
-				// System.out.println("solveState:3");
+			} else if (solveState == SolveStateEnum.MUST_GUESS) {
 				try {
-					// System.out.println("solveState:3");
-					// showMatrix();
-					// showBlockGoneTrue();
-					// showMatrix();
-					// return matrix;
 					setFirstStarToSomething();
 					solveState = SolveStateEnum.SOLVING;
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if (solveState == SolveStateEnum.STATE_4) {
-				// System.out.println("solveState:4");
-				// return matrix;
+			} else if (solveState == SolveStateEnum.FOUND_SOLUTION_WITH_STACK) {
 				if (!changeLastStacksMember()) {
 					switch (solutionsFromGuising.size()) {
 					case 0:
 						showMatrix();
+						solveState = SolveStateEnum.NO_SOLUTION;
 						return null;
 					case 1:
 						matrix = solutionsFromGuising.get(0);
+						solveState = SolveStateEnum.SOLVED;
 						showMatrix();
 						return solutionsFromGuising.get(0);
 					default:
+					   solveState = SolveStateEnum.MULTIPLE_SOLUTIONS;
 						return null;
 					}
 				}
@@ -182,19 +162,8 @@ public class NonoSolver3 implements INonogramSolver {
 			solveState = SolveStateEnum.SOLVING;
 			solve();
 		}
-		// // System.out.println("Time for " + methodName + ": "
-		// + (new Date().getTime() - startTime) + " ms");
-		// if (solveState == 1) {
-		// // System.out.println("Good");
-		// showMatrix();
-		// showBlockGoneTrue();
-		// showMatrix();
 		showMatrix();
 		return matrix;
-		// } else {
-		// // System.out.println("Bad");
-		// return null;
-		// }
 	}
 
 	/**
@@ -211,10 +180,8 @@ public class NonoSolver3 implements INonogramSolver {
 			while (run1) {
 				int starCount = getStarCountInRiddle();
 				solveIterative();
-				// solveRecursive();
-				// solveWithPossibilities();
 				if (starCount <= getStarCountInRiddle()) {
-					solveState = SolveStateEnum.ERROR;
+					solveState = SolveStateEnum.MUST_GUESS;
 					run1 = false;
 				}
 				// mögliche Lösung gefunden
@@ -232,15 +199,13 @@ public class NonoSolver3 implements INonogramSolver {
 						run1 = false;
 						// TODO: testen ob Möglichkeit ok!
 						solutionsFromGuising.add(matrix);
-						solveState = SolveStateEnum.STATE_4;
+						solveState = SolveStateEnum.FOUND_SOLUTION_WITH_STACK;
 					}
 				}
 			}
 		} catch (Exception e) {
-			// e.printStackTrace();
-			// showMatrix();
-			// // System.out.println(stacks.size());
-			solveState = SolveStateEnum.STATE_2;
+//		   e.printStackTrace();
+			solveState = SolveStateEnum.ERROR;
 		} finally {
 			// showMatrix();
 			// showBlockGoneTrue();
@@ -262,44 +227,35 @@ public class NonoSolver3 implements INonogramSolver {
 	 * @return
 	 */
 	private boolean checkStateOfWrittenMatrixByRow(char[][] checkMatrix, int rowIn) {
-
 		// String methodName = "checkStateOfWrittenMatrix()";
 		// // System.out.println(methodName);
 		// Date startTime = new Date();
-
-		// Array anlegen
-		// // System.out.println("XXXXXXXXXXX");
-		// for (ArrayList<String> list : returnList) {
-		// // // System.out.println(list);
-		// }
-
-		// eigentliche Tests:
+	   String out = "";
+	   out = showRow(out, rowIn);
+	   System.out.println(rowIn);
+	   System.out.println(out);
 		int rowInt = rowIn;
 		char empty = '-';
-		Row column = getRows().get(rowInt);
-		ArrayList<Block> blocks = column.getBlocks();
+		Row row = getRows().get(rowInt);
+		ArrayList<Block> blocks = row.getBlocks();
 		if (blocks != null && blocks.size() > 0) {
 			int columnInt = 0;
 			int blockInt = 0;
 			while (columnInt < riddle.getWidth()) {
-				if (checkMatrix[columnInt][rowInt] == empty) {
+				if (checkMatrix[rowInt][columnInt] == empty) {
 					columnInt++;
 				} else {
 					// Ist eine Farbe, aber keine Blöcke mehr!
 					if (blockInt >= blocks.size()) {
-						// // // System.out.println("false1: row: " + roInt +
-						// " column: "
-						// + columnInt);
+					   System.out.println("false");
 						return false;
 					} else {
 						// Block prüfen
 						Block block = blocks.get(blockInt);
 						for (int i = 0; i < block.getHowMany(); i++) {
-							if (!(checkMatrix[columnInt][rowInt] ==
+							if (!(checkMatrix[rowInt][columnInt] ==
 									block.getColorChar())) {
-								// // System.out.println("false2: row: " +
-								// rowInt
-								// + " column: " + columnInt);
+							   System.out.println("false");
 								return false;
 							}
 						}
@@ -310,9 +266,8 @@ public class NonoSolver3 implements INonogramSolver {
 								&& block.getColourString().equals(
 										blocks.get(blockInt + 1)
 												.getColourString())
-								&& !(checkMatrix[columnInt][rowInt] == empty)) {
-							// // System.out.println("false3: row: " + rowInt
-							// + " column: " + columnInt);
+								&& !(checkMatrix[rowInt][columnInt] == empty)) {
+						   System.out.println("false");
 							return false;
 						}
 						blockInt++;
@@ -322,18 +277,14 @@ public class NonoSolver3 implements INonogramSolver {
 		} else {
 			// nur - !!!
 			for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-				if (!(checkMatrix[columnInt][rowInt] == empty)) {
+				if (!(checkMatrix[rowInt][columnInt] == empty)) {
 					// // System.out.println("false4: row: " + rowInt
 					// + " column: " + columnInt);
+				   System.out.println("false");
 					return false;
 				}
 			}
 		}
-
-		// // // System.out.println("YYYYYYYYYYY");
-		// showAMatrix(testMatrix);
-		// // // System.out.println("Time for " + methodName + ": " + (new
-		// Date().getTime() - startTime.getTime()) + " ms");
 		return true;
 	}
 
@@ -816,19 +767,21 @@ public class NonoSolver3 implements INonogramSolver {
 		boolean run = true;
 		while (run) {
 			int starCountInRiddle = getStarCountInRiddle();
-			// showMatrix();
 			fillBlocksOnBeginningOfColumns();
-			// showMatrix();
 			fillBlocksOnEndOfColumns();
-			// showMatrix();
 			fillBlocksOnBeginningOfRows();
-			// showMatrix();
 			fillBlocksOnEndOfRows();
-			// showMatrix();
 			checkRowsAndColumnsForGone();
-			// showMatrix();
 			checkByBlock();
 			fillBlocksOnEndOfColumns();
+			fillBlocksOnEndOfRows();
+//			for (Row row : getRows()) {
+//			   if (row.isGone() && !checkStateOfWrittenMatrixByRow(matrix, getIndexOfRow(row))) {
+//			      System.out.println(getIndexOfRow(row));
+//			      showMatrix();
+//			      throw new Exception("" + getIndexOfRow(row));
+//			   }
+//			}
 			if (starCountInRiddle <= getStarCountInRiddle()) {
 				run = false;
 			}
@@ -2641,7 +2594,7 @@ public class NonoSolver3 implements INonogramSolver {
 		// }
 		if (matrix[rowIndex][columnIndex] != '*'
 				&& matrix[rowIndex][columnIndex] != c) {
-			solveState = SolveStateEnum.ERROR;
+			solveState = SolveStateEnum.MUST_GUESS;
 			throw new DataCollisionException("Fehler: row:" + rowIndex
 					+ " column:" + columnIndex + " " + c + " ungleich "
 					+ matrix[rowIndex][columnIndex]);

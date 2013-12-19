@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 
 import models.Colour;
 import models.Riddle;
+import models.SolveStateEnum;
 import Interfaces.IPlaygame;
 import Interfaces.IUIListener;
 
@@ -91,7 +92,7 @@ public class PlayGame implements IPlaygame {
       }
       NonoSolver3 solver = new NonoSolver3(matrixNeu, riddle);
       solutions = solver.getSolution();
-      if (solutions != null) {
+      if (solver.getSolveState() == SolveStateEnum.SOLVED) {
          listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(),
                riddle.getRows(), riddle.getColumns());
          listener.setColours(riddle.getColours());
@@ -114,14 +115,14 @@ public class PlayGame implements IPlaygame {
          }
       } else {
           switch (solver.getSolveState()) {
-          case 0:
-          listener.showAlert("Fehler beim Laden");
+          case SOLVING:
+          listener.showAlert(SolveStateEnum.SOLVING.getMessage());
           break;
-          case 2:
-          listener.showAlert("Dieses Rätsel hat mehr als eine Lösung!");
+          case MULTIPLE_SOLUTIONS:
+          listener.showAlert(SolveStateEnum.MULTIPLE_SOLUTIONS.getMessage());
           break;
-          case 3:
-          listener.showAlert("Dieses Rätsel hat keine Lösung!");
+          case NO_SOLUTION:
+          listener.showAlert(SolveStateEnum.NO_SOLUTION.getMessage());
           break;
           default:
           listener.showAlert("Fehler beim Laden");

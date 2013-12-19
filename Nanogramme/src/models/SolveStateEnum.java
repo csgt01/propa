@@ -14,9 +14,9 @@ public enum SolveStateEnum {
 	SOLVED("Gelöst"),
 	MULTIPLE_SOLUTIONS("Mehrere Lösungen gefunden"),
 	NO_SOLUTION("Keine Lösung gefunden"),
-	STATE_2("Keiunden"),
-	STATE_4("Keiunden"),
-	ERROR("Keine Lösung gefunden");
+	ERROR("Error"),
+	FOUND_SOLUTION_WITH_STACK("Found Solution with Stack"),
+	MUST_GUESS("Raten");
 	
 
 	private final String message;
