@@ -1,7 +1,6 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -20,8 +19,8 @@ public class Riddle {
 	private int width;
 	private int height;
 
-	private LinkedList<Row> rows;
-	private LinkedList<Column> columns;
+	private ArrayList<Row> rows;
+	private ArrayList<Column> columns;
 
 	private String nono;
 
@@ -30,16 +29,16 @@ public class Riddle {
 	}
 
 	public Riddle(List<Colour> colours, int width, int height,
-			LinkedList<Row> rows, LinkedList<Column> columns, String nono) {
+			ArrayList<Row> rows, ArrayList<Column> columns, String nono) {
 		super();
 		this.colours = colours;
 		this.width = width;
 		this.height = height;
-		this.rows = new LinkedList<Row>();
+		this.rows = new ArrayList<Row>();
 		for (Row row : rows) {
 			this.rows.add(new Row(row));
 		}
-		this.columns = new LinkedList<Column>();
+		this.columns = new ArrayList<Column>();
 		for (Column column : columns) {
 			this.columns.add(new Column(column));
 		}
@@ -94,14 +93,14 @@ public class Riddle {
 
 	public void addRow(Row row) {
 		if (null == rows) {
-			rows = new LinkedList<Row>();
+			rows = new ArrayList<Row>();
 		}
 		rows.add(row);
 	}
 
 	public void addColumn(Column column) {
 		if (null == columns) {
-			columns = new LinkedList<Column>();
+			columns = new ArrayList<Column>();
 		}
 		columns.add(column);
 	}
@@ -116,19 +115,19 @@ public class Riddle {
 		return returnColour;
 	}
 
-	public LinkedList<Row> getRows() {
+	public ArrayList<Row> getRows() {
 		return rows;
 	}
 
-	public void setRows(LinkedList<Row> rows) {
+	public void setRows(ArrayList<Row> rows) {
 		this.rows = rows;
 	}
 
-	public LinkedList<Column> getColumns() {
+	public ArrayList<Column> getColumns() {
 		return columns;
 	}
 
-	public void setColumns(LinkedList<Column> columns) {
+	public void setColumns(ArrayList<Column> columns) {
 		this.columns = columns;
 	}
 
