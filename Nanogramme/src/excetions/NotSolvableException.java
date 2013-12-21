@@ -1,4 +1,4 @@
-package service;
+package excetions;
 
 public class NotSolvableException extends Exception {
 

@@ -13,6 +13,7 @@ import models.Row;
 import models.SolveStateEnum;
 import models.StackHolder;
 import de.feu.propra.nonogramme.interfaces.INonogramSolver;
+import excetions.DataCollisionException;
 
 public class NonoSolver3 implements INonogramSolver {
 

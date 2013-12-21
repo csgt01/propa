@@ -1,4 +1,4 @@
-package service;
+package excetions;
 
 public class DataCollisionException extends Exception {
 
