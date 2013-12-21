@@ -1,5 +1,7 @@
 package service;
 
+import interfaces.IUIListener;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
@@ -15,7 +17,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-import Interfaces.IUIListener;
 import models.Block;
 import models.Colour;
 import models.Column;
@@ -339,8 +340,8 @@ public class RiddleService {
 			colarMap.put(color, colour);
 		}
 		riddle.setColours(col);
-		LinkedList<Row> rows = new LinkedList<Row>();
-		LinkedList<Column> columns = new LinkedList<Column>();
+		ArrayList<Row> rows = new ArrayList<Row>();
+		ArrayList<Column> columns = new ArrayList<Column>();
 		
 		// setzen der Hintergrundfarbe
 		Colour backgroundCol = listener.getBackgroundColour(col);

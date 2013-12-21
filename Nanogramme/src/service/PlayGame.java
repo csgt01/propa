@@ -1,5 +1,8 @@
 package service;
 
+import interfaces.IPlaygame;
+import interfaces.IUIListener;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -11,8 +14,6 @@ import javax.swing.JLabel;
 import models.Colour;
 import models.Riddle;
 import models.SolveStateEnum;
-import Interfaces.IPlaygame;
-import Interfaces.IUIListener;
 
 public class PlayGame implements IPlaygame {
 

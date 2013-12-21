@@ -41,7 +41,7 @@ public class Row {
 		for (Block block : row.getBlocks()) {
 			this.blocks.add(new Block(block));
 		}
-		this.possibilities = new ArrayList<LinkedList<String>>(row.getPossibilities());
+//		this.possibilities = new ArrayList<LinkedList<String>>(row.getPossibilities());
 	}
 
 	public void addBlock(Block block) {
@@ -108,9 +108,9 @@ public class Row {
 	/**
 	 * @return the possibilities
 	 */
-	public ArrayList<LinkedList<String>> getPossibilities() {
-		return possibilities;
-	}
+//	public ArrayList<LinkedList<String>> getPossibilities() {
+//		return possibilities;
+//	}
 
 	/**
 	 * @param possibilities

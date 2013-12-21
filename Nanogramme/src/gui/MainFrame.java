@@ -1,5 +1,8 @@
 package gui;
 
+import interfaces.IPlaygame;
+import interfaces.IUIListener;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -28,8 +31,6 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 
-import Interfaces.IPlaygame;
-import Interfaces.IUIListener;
 import models.Block;
 import models.Colour;
 import models.Column;
