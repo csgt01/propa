@@ -128,7 +128,7 @@ public class RiddleService {
 	 * 
 	 * @param str
 	 */
-	public void analyzeLine(String str) {
+	private void analyzeLine(String str) {
 		str = str.trim();
 		if (!str.startsWith("#")) {
 			// TODO: regex wgitespace and tab
@@ -249,7 +249,7 @@ public class RiddleService {
 	 * 
 	 * @param matrix
 	 */
-	public boolean save(char[][] matrix) {
+	protected boolean save(char[][] matrix) {
 		BufferedWriter writer = null;
 		boolean saved = false;
 		System.out.println(riddle);

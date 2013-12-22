@@ -66,6 +66,11 @@ public interface IUIListener {
 	 */
 	void showAlert(String string);
 
+	/**
+	 * Gibt die {@link #Colour} aus der Liste zurück, die als Hintergrund verwandt werden soll.
+	 * @param col
+	 * @return
+	 */
    Colour getBackgroundColour(LinkedList<Colour> col);
 
 }

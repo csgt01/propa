@@ -49,14 +49,12 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    private static final long serialVersionUID = -8026416994513756565L;
 
    private Border border = LineBorder.createGrayLineBorder();
-   public JFrame applikation;
-   public Container container;
-   public JMenuBar menueLeiste;
+   private JFrame applikation;
+   private Container container;
+   private JMenuBar menuLeiste;
    private JToolBar toolbar;
    private JLabel[][] labels;
-
    private static File lastSelectedDir = null;
-
    // Services und Listener
    private PictureService ps;
    private IPlaygame playGame;
@@ -75,9 +73,9 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
       container = applikation.getContentPane();
 
       // Menüleiste erzeugen
-      menueLeiste = new MyMenuBar(this, playGame);
+      menuLeiste = new MyMenuBar(this, playGame);
 
-      applikation.add(menueLeiste, BorderLayout.NORTH);
+      applikation.add(menuLeiste, BorderLayout.NORTH);
       // applikation.add(new JScrollPane(textarea), BorderLayout.CENTER);
 
       applikation.setSize(600, 600);
@@ -327,7 +325,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
     * @param type
     * @return
     */
-   public File getFileOrDirectryFromChooser(Component parent, int type) {
+   private File getFileOrDirectryFromChooser(Component parent, int type) {
       JFileChooser chooser = null;
       if (lastSelectedDir != null) {
          chooser = new JFileChooser(lastSelectedDir);

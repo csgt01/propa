@@ -24,36 +24,6 @@ public class PictureService {
 	 */
 	int count = 0;
 
-	// /**
-	// * Rechnet die Farben mit Hilfe eines Octrees auf die gewünschte Anzahl
-	// * Farben herunter. Ruft
-	// * {@link #mapPictureToColors(BufferedImage, LinkedList)} auf, um die
-	// Farben
-	// * des Originalbildes anzupassen. Gibt das Bild mit herruntergerechneten
-	// * Farben zurück.
-	// *
-	// * @param resizedImage
-	// * @param numberOfColors
-	// * @return Farbreduziertes Bild.
-	// */
-	// private BufferedImage getDownColoredPicture(BufferedImage resizedImage,
-	// int numberOfColors) {
-	// Node root = new Node();
-	// root.setCount(0);
-	//
-	// for (int i = 0; i < resizedImage.getHeight(); i++) {
-	// for (int j = 0; j < resizedImage.getWidth(); j++) {
-	// insertNode(new Color(resizedImage.getRGB(j, i)), root);
-	// }
-	// }
-	// // System.out.println(root);
-	// LinkedList<Color> colors = new LinkedList<Color>();
-	// colors = getColorsOfLeafs(root, colors);
-	// // System.out.println(colors);
-	//
-	// return mapPictureToColors(resizedImage, colors);
-	// }
-
 	/**
 	 * Rechnet die Farben mit Hilfe eines Octrees auf die gewünschte Anzahl
 	 * Farben herunter. Ruft

@@ -61,42 +61,6 @@ public class Node implements Comparable<Node> {
 		this.father = father;
 	}
 
-	// private void copyChildSums() {
-	// if (getChildSum() == 0) {
-	// return;
-	// }
-	// redSum = 0;
-	// greenSum = 0;
-	// blueSum = 0;
-	// references = 0;
-	// children = 0;
-	// for (int i = 0; i < nodes.length; i++) {
-	// Node child = nodes[i];
-	// if (child != null) {
-	// child.copyChildSums();
-	// red += child.red;
-	// green += child.green;
-	// blue += child.blue;
-	//
-	// referencesOfChilds += child.references;
-	// if (child.getReferencesOfChilds() != null) {
-	// referencesOfChilds += child.getReferencesOfChilds();
-	// }
-	// children++;
-	// }
-	// }
-	// }
-
-	// private int getChildSum() {
-	// int sum = 0;
-	// for (int i = 0; i < nodes.length; i++) {
-	// if (nodes[i] != null) {
-	// sum++;
-	// }
-	// }
-	// return sum;
-	// }
-
 	/**
 	 * Gibt die Kinder des Knotens zurück.
 	 * 

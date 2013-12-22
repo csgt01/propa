@@ -18,13 +18,13 @@ public class MyMenuBar extends JMenuBar {
    private static final long serialVersionUID = -5971290065582479552L;
    public JMenu datei;
    public JMenu riddle;
-   public JMenu hilfe;
+   // public JMenu hilfe;
    public JMenuItem oeffnen;
    public JMenuItem laden;
    public JMenuItem erstellen;
    public JMenuItem check;
-   public JMenuItem faq;
-   public JMenuItem about;
+   // public JMenuItem faq;
+   // public JMenuItem about;
    private IPlaygame playGame;
 
    public MyMenuBar() {
@@ -46,31 +46,31 @@ public class MyMenuBar extends JMenuBar {
    private void init() {
       // Menüelemente erzeugen
       datei = new JMenu("Datei");
-      hilfe = new JMenu("Hilfe");
+      // hilfe = new JMenu("Hilfe");
       riddle = new JMenu("Rätsel");
 
       // Untermenüelemente erzeugen
       oeffnen = new JMenuItem("Speichern");
       oeffnen.addActionListener(playGame);
-      faq = new JMenuItem("F.A.Q.");
-      about = new JMenuItem("Über");
+      // faq = new JMenuItem("F.A.Q.");
+      // about = new JMenuItem("Über");
       laden = new JMenuItem("Rätsel laden");
       erstellen = new JMenuItem("Rätsel erstellen");
       check = new JMenuItem("check");
       check.addActionListener(playGame);
-      
+
       // Menüelemente hinzufügen
       this.add(datei);
       this.add(riddle);
-      this.add(hilfe);
+      // this.add(hilfe);
 
       // Untermenüelemente hinzufügen
       datei.add(oeffnen);
-      hilfe.add(faq);
+      // hilfe.add(faq);
       riddle.add(laden);
       riddle.add(erstellen);
       riddle.add(check);
-      hilfe.add(about);
+      // hilfe.add(about);
    }
 
 }
