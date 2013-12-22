@@ -9,6 +9,8 @@ import java.util.TreeSet;
  * 
  */
 public class Block {
+   
+   public boolean doOverlapping;
 
    /**
     * Größe des Blocks.
@@ -87,6 +89,7 @@ public class Block {
       startIndex = null;
       endIndex = null;
       gone = false;
+      doOverlapping = true;
    }
 
    /**
@@ -115,6 +118,7 @@ public class Block {
       for (Integer i : block.indeces) {
          this.indeces.add(new Integer(i));
       }
+      this.doOverlapping = block.doOverlapping;
    }
 
    /**
@@ -294,6 +298,7 @@ public class Block {
          increaseEntriesSet(this.minStartIndexNew);
          increaseEntriesSet(this.maxEndIndexNew);
       }
+      doOverlapping = true;
    }
 
    /**
@@ -326,6 +331,7 @@ public class Block {
          increaseEntriesSet(minStartIndexNew);
          increaseEntriesSet(maxEndIndexNew);
       }
+      doOverlapping = true;
    }
 
    /**
