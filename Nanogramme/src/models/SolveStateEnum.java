@@ -4,6 +4,7 @@
 package models;
 
 /**
+ * Dieses Enum zeigt den Zustand beim Lösen des Rätsels an.
  * 
  * @author cschulte
  * 
@@ -18,9 +19,16 @@ public enum SolveStateEnum {
 	FOUND_SOLUTION_WITH_STACK("Found Solution with Stack"),
 	MUST_GUESS("Raten");
 	
-
+	/**
+	 * Nachricht, die bei dem jeweiligen Zusatnd angezeigt weden soll.
+	 */
 	private final String message;
 
+	/**
+	 * Konstruktor
+	 * 
+	 * @param message
+	 */
 	private SolveStateEnum(String message) {
 		this.message = message;
 	}
