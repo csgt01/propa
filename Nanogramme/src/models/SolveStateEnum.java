@@ -11,12 +11,33 @@ package models;
  */
 public enum SolveStateEnum {
 
+	/**
+	 * Suchend
+	 */
 	SOLVING("Such Lösung"), 
+	/**
+	 * Gelöst
+	 */
 	SOLVED("Gelöst"),
+	/**
+	 * Mehrere Lösungen vorhanden
+	 */
 	MULTIPLE_SOLUTIONS("Mehrere Lösungen gefunden"),
+	/**
+	 * Keine Lösung vorhanden
+	 */
 	NO_SOLUTION("Keine Lösung gefunden"),
+	/**
+	 * Fehler
+	 */
 	ERROR("Error"),
+	/**
+	 * Lösung gefunden, aber mit Stack gefüllt
+	 */
 	FOUND_SOLUTION_WITH_STACK("Found Solution with Stack"),
+	/**
+	 * Keine logischen Fortschritte also raten!
+	 */
 	MUST_GUESS("Raten");
 	
 	/**

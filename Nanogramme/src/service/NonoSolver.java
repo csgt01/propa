@@ -218,9 +218,9 @@ public class NonoSolver implements INonogramSolver {
          boolean run1 = true;
          while (run1) {
             int starCount = getStarCountInRiddle();
-            boolean run = true;
-            while (run) {
-               int starCountInRiddle = getStarCountInRiddle();
+//            boolean run = true;
+//            while (run) {
+//               int starCountInRiddle = getStarCountInRiddle();
                fillBlocksOnBeginningOfColumns();
                fillBlocksOnEndOfColumns();
                fillBlocksOnBeginningOfRows();
@@ -229,10 +229,10 @@ public class NonoSolver implements INonogramSolver {
                checkByBlock();
                fillBlocksOnEndOfColumns();
                fillBlocksOnEndOfRows();
-               if (starCountInRiddle <= getStarCountInRiddle()) {
-                  run = false;
-               }
-            }
+//               if (starCountInRiddle <= getStarCountInRiddle()) {
+//                  run = false;
+//               }
+//            }
             if (starCount <= getStarCountInRiddle()) {
                solveState = SolveStateEnum.MUST_GUESS;
                run1 = false;
@@ -481,6 +481,7 @@ public class NonoSolver implements INonogramSolver {
                } else {
                   writeCharInMatrix(row, '-', column);
                }
+               return;
             }
          }
       }
@@ -1735,7 +1736,10 @@ public class NonoSolver implements INonogramSolver {
       int size = getColumns().size();
       for (int index = 0; index < size; index++) {
          Column column = getColumns().get(index);
-         fillBlocksOnEndOfColumn(column, index, column.getBlocks().size() - 1, riddle.getHeight() - 1);
+         if (!column.isGone()) {
+			fillBlocksOnEndOfColumn(column, index,
+					column.getBlocks().size() - 1, riddle.getHeight() - 1);
+		}
       }
       // // // System.out.println("Time for " + methodName + ": " + (new
       // Date().getTime() - startTime) + " ms");
@@ -1890,7 +1894,10 @@ public class NonoSolver implements INonogramSolver {
       // long startTime = new Date().getTime();
       for (int index = 0; index < getRows().size(); index++) {
          Row row = getRows().get(index);
-         fillBlocksOnEndOfRow(row, row.getBlocks().size() - 1, riddle.getWidth() - 1);
+         if (!row.isGone()) {
+			fillBlocksOnEndOfRow(row, row.getBlocks().size() - 1,
+					riddle.getWidth() - 1);
+		}
       }
       // // // System.out.println("Time for " + methodName + ": " + (new
       // Date().getTime() - startTime) + " ms");
@@ -1958,7 +1965,9 @@ public class NonoSolver implements INonogramSolver {
       // long startTime = new Date().getTime();
       for (int index = 0; index < getRows().size(); index++) {
          Row row = getRows().get(index);
-         fillBlocksOnBeginningOfRow(row, 0, 0);
+         if (!row.isGone()) {
+			fillBlocksOnBeginningOfRow(row, 0, 0);
+		}
       }
       // // // System.out.println("Time for " + methodName + ": " + (new
       // Date().getTime() - startTime) + " ms");
@@ -1966,6 +1975,8 @@ public class NonoSolver implements INonogramSolver {
 
    /**
     * Füllt Blöcke am Anfang einer Spalte. Ruft sich rekursiv auf.
+    * Wenn eine Spalte mit einer Farbe beginnt, dann können die nächsten Felder auch gesetzt werden (je nach Größe des ersen Blocks).
+    * Leere Felder am Anfang der Spalte werden übersprungen. Wenn ein Block aufgefüllt wurde wird die Methode erneut aufgerufen, um zu prüfen ob direkt wieder ein Block beginnt, der aufgefüllt werden kann.
     * 
     * @param row
     * @param blockIndex
@@ -1976,7 +1987,6 @@ public class NonoSolver implements INonogramSolver {
       // // System.out.println(methodName);
       // long startTime = new Date().getTime();
       if (!row.isGone()) {
-         // showMatrix();
          int block = blockIndex;
          int columnInt = columnIndex;
          boolean run = true;
@@ -2024,8 +2034,6 @@ public class NonoSolver implements INonogramSolver {
             }
          }
       }
-      // // System.out.println("Time for " + methodName + ": "
-      // + (new Date().getTime() - startTime) + " ms");
    }
 
    /**
