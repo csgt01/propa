@@ -155,7 +155,7 @@ public class Node implements Comparable<Node> {
 
 	/**
 	 * Gibt die ID zurück
-	 * @return
+	 * @return ID
 	 */
 	public Integer getCount() {
 		return count;

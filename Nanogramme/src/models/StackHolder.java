@@ -15,10 +15,13 @@ public class StackHolder {
 	private int column;
 	/**
 	 * Reihenindex des Stackholders.
+	 *
 	 */
 	private int row;
+	
 	/**
-	 * Index der Farbe in {@link Riddle.colours}
+	 * Index der Farbe.
+    *
 	 */
 	private int indexOfColor;
 

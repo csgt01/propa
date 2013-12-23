@@ -1,5 +1,6 @@
 package gui;
 
+import interfaces.IPictureService;
 import interfaces.IPlaygame;
 import interfaces.IUIListener;
 
@@ -56,7 +57,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    private JLabel[][] labels;
    private static File lastSelectedDir = null;
    // Services und Listener
-   private PictureService ps;
+   private IPictureService ps;
    private IPlaygame playGame;
 
    public MainFrame() {
@@ -323,7 +324,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
     * 
     * @param parent
     * @param type
-    * @return
+    * @return gewählte Datei
     */
    private File getFileOrDirectryFromChooser(Component parent, int type) {
       JFileChooser chooser = null;
@@ -359,16 +360,14 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    }
 
    @Override
-   public boolean placeAField(int row, int column, Colour colour) {
+   public void placeAField(int row, int column, Colour colour) {
       if (null != colour) {
-         // labels[row][column].setOpaque(true);
          labels[row][column].setForeground(new Color(colour.getRed(), colour.getGreen(), colour.getBlue()));
          labels[row][column].setBackground(new Color(colour.getRed(), colour.getGreen(), colour.getBlue()));
       } else {
          labels[row][column].setForeground(Color.LIGHT_GRAY);
          labels[row][column].setBackground(Color.LIGHT_GRAY);
       }
-      return false;
    }
 
    @Override
@@ -406,7 +405,9 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    public void wasRight(boolean isRight) {
       System.out.println("wasRight:" + isRight);
       if (isRight) {
-         applikation.setBackground(Color.GREEN);
+        showAlert("Richtig gelöst!");
+      } else {
+         showAlert("Falsch gelöst!");
       }
 
    }

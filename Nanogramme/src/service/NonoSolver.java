@@ -273,18 +273,18 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Prüft ob die in {@link #solveByBrutForceByRow(LinkedList, int, int)}
-    * zusammengestellte Matrix korrekt ist.
+    * Prüft ob die Matrix korrekt ist.
     * 
-    * @param returnList
-    * @return
+    * @param checkMatrix
+    * @param rowIn
+    * @return true, wenn die Reihe korrekt ist
     */
-   private boolean checkStateOfWrittenMatrixByRow(char[][] checkMatrix, int rowIn) {
+   protected boolean checkStateOfWrittenMatrixByRow(char[][] checkMatrix, int rowIn) {
       // String methodName = "checkStateOfWrittenMatrix()";
       // // System.out.println(methodName);
       // Date startTime = new Date();
-      String out = "";
-      out = showRow(out, rowIn);
+      StringBuilder out = new StringBuilder("");
+      showRow(out, rowIn);
       // System.out.println(rowIn);
       // System.out.println(out);
       int rowInt = rowIn;
@@ -347,7 +347,7 @@ public class NonoSolver implements INonogramSolver {
     *           Farbindex aus riddle.getColours()
     * @return true, falls in Reihe und Spalte die Farbe in einem Block vorkimmt.
     */
-   private boolean isColorInThisRowAndColumn(int rowInt, int columnInt, int indexOfColor) {
+   protected boolean isColorInThisRowAndColumn(int rowInt, int columnInt, int indexOfColor) {
       Row row = getRows().get(rowInt);
       boolean isPresent = false;
       int index = 0;
@@ -874,7 +874,7 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Schreibt die bereits gesetzten Felder des Blocks in die Matrix.
     * 
-    * @param row
+    * @param column
     * @throws Exception
     */
    private void fillEntriesFromBlockIntoMatrix(Column column) throws Exception {
@@ -982,7 +982,7 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Falls die Spalte fertig ist, werden alle "*" mit "-" gefüllt.
     * 
-    * @param spalte
+    * @param column
     * @throws Exception
     */
    private void fillWithEmptyAfterGone(Column column) throws Exception {
@@ -1469,7 +1469,7 @@ public class NonoSolver implements INonogramSolver {
     * 
     * @param block
     * @param start
-    * @return
+    * @return LinkedList<String> mit der Startbesetzung der Blöcke
     */
    private LinkedList<String> initializeBlockList(Block block, int start) {
       int end = block.getMaxEndIndexNew();
@@ -1546,8 +1546,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Setzt die initialen Werte für minStartIndex und maxStartIndex. Wichtig für
-    * {@link #solveRecursive()}.
+    * Setzt die initialen Werte für minStartIndex und maxStartIndex bei den Blöcken.
     */
    private void setupBlocks() {
       // alle Reihen durchgehen.
@@ -1653,8 +1652,6 @@ public class NonoSolver implements INonogramSolver {
     * geschoben. An Stellen die immer gefüllt sind kann die Matrix gefüllt
     * werden.
     * 
-    * @param matrix
-    * @return
     * @throws Exception
     */
    private void findOverlappingAreasInRow() throws Exception {
@@ -1729,10 +1726,9 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Füllt Blöcke am Ende der Spalten.
     * 
-    * @return
     * @throws Exception
     */
-   private char[][] fillBlocksOnEndOfColumns() throws Exception {
+   private void fillBlocksOnEndOfColumns() throws Exception {
       // String methodName = "fillBlocksOnEndOfColumns()";
       // // // System.out.println(methodName);
       // long startTime = new Date().getTime();
@@ -1743,14 +1739,12 @@ public class NonoSolver implements INonogramSolver {
       }
       // // // System.out.println("Time for " + methodName + ": " + (new
       // Date().getTime() - startTime) + " ms");
-      return matrix;
    }
 
    /**
     * Wenn eine Spalte mit einer Farbe endet wird der Block gefüllt. Auch
     * angefangene Blöcke danach werden gefüllt.
     * 
-    * @return
     * @throws Exception
     */
    private void fillBlocksOnEndOfColumn(Column column, int indexOfColumn, int blockIndex, int rowIndex) throws Exception {
@@ -1805,10 +1799,9 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Füllt Blöcke am Anfang der Spalten.
     * 
-    * @return
     * @throws Exception
     */
-   private char[][] fillBlocksOnBeginningOfColumns() throws Exception {
+   private void fillBlocksOnBeginningOfColumns() throws Exception {
       // String methodName = "fillBlocksOnBeginningOfColumns()";
       // // // System.out.println(methodName);
       // long startTime = new Date().getTime();
@@ -1821,7 +1814,6 @@ public class NonoSolver implements INonogramSolver {
       }
       // // // System.out.println("Time for " + methodName + ": " + (new
       // Date().getTime() - startTime) + " ms");
-      return matrix;
    }
 
    /**
@@ -1890,10 +1882,9 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Füllt Blöcke am Ende der Spalten.
     * 
-    * @return
     * @throws Exception
     */
-   private char[][] fillBlocksOnEndOfRows() throws Exception {
+   private void fillBlocksOnEndOfRows() throws Exception {
       // String methodName = "fillBlocksOnEndOfRows()";
       // // // System.out.println(methodName);
       // long startTime = new Date().getTime();
@@ -1903,14 +1894,12 @@ public class NonoSolver implements INonogramSolver {
       }
       // // // System.out.println("Time for " + methodName + ": " + (new
       // Date().getTime() - startTime) + " ms");
-      return matrix;
    }
 
    /**
     * Wenn eine Spalte mit einer Farbe endet wird der Block gefüllt. Auch
     * angefangene Blöcke danach werden gefüllt.
     * 
-    * @return
     * @throws Exception
     */
    private void fillBlocksOnEndOfRow(Row row, int blockIndex, int columnIndex) throws Exception {
@@ -1961,10 +1950,9 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Füllt Blöcke am Anfang der Spalten.
     * 
-    * @return
     * @throws Exception
     */
-   private char[][] fillBlocksOnBeginningOfRows() throws Exception {
+   private void fillBlocksOnBeginningOfRows() throws Exception {
       // String methodName = "fillBlocksOnBeginningOfRows()";
       // // // System.out.println(methodName);
       // long startTime = new Date().getTime();
@@ -1974,7 +1962,6 @@ public class NonoSolver implements INonogramSolver {
       }
       // // // System.out.println("Time for " + methodName + ": " + (new
       // Date().getTime() - startTime) + " ms");
-      return matrix;
    }
 
    /**
@@ -2041,18 +2028,13 @@ public class NonoSolver implements INonogramSolver {
       // + (new Date().getTime() - startTime) + " ms");
    }
 
-   // Rekursiv
-
-   // Helper
-
    /**
     * Liefert die initiale Belegung für die Reihe.
     * 
-    * @param asd
     * @param blocks
     * @param lastBlock
     * @param resultIndex
-    * @return
+    * @return List<String> mit der Startbelegung der Blöcke
     */
    private LinkedList<String> getFirstConditionOfRow(ArrayList<Block> blocks, Block lastBlock, int resultIndex) {
       LinkedList<String> asd = new LinkedList<String>();
@@ -2082,11 +2064,10 @@ public class NonoSolver implements INonogramSolver {
     * Liefert die initiale Belegung für die Spalte. Dabei werden alle Blöcke
     * maximal nach oben geschoben.
     * 
-    * @param asd
     * @param blocks
     * @param lastBlock
     * @param resultIndex
-    * @return
+    * @return List<String> mit der Startbelegung der Blöcke
     */
    private LinkedList<String> getFirstConditionOfColumn(ArrayList<Block> blocks, Block lastBlock, int resultIndex) {
       // String methodName = "getFirstConditionOfColumn()";
@@ -2118,62 +2099,60 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Display the matrix.
     * 
-    * @param matrix
-    * @throws Exception
     */
    private void showMatrix() {
-      String out = "\n";
+      StringBuilder out = new StringBuilder("\n");;
       int height = riddle.getHeight();
       for (int i = 0; i < height; i++) {
-         out = showRow(out, i);
+         showRow(out, i);
       }
-      System.out.println(out);
+      System.out.println(out.toString());
    }
 
    /**
     * Returns the Row of the current mfatrix as String.
     * 
-    * @param out
+    * @param out String in den die Reihe geschriben wird.
     * @param i
-    * @return
+    * @return eine Reihe in der Matrix als StringBuilder
     */
-   private String showRow(String out, int i) {
+   private StringBuilder showRow(StringBuilder out, int i) {
       for (int j = 0; j < riddle.getWidth(); j++) {
-         out += matrix[i][j];
-         out += "  ";
+         out.append(matrix[i][j]);
+         out.append("  ");
       }
-      out += "\n";
+      out.append("\n");
       return out;
    }
 
-   private void showBlockGoneTrue() {
-      // String methodName = "showBlockGoneTrue()";
-      // System.out.println(methodName);
-      long startTime = new Date().getTime();
-      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-         Row row = getRows().get(rowInt);
-         // System.out.println("Row:" + rowInt + " -- " + row.isGone());
-         ArrayList<Block> blocks = row.getBlocks();
-         // if (null != blocks) {
-         // for (Block block : blocks) {
-         // // System.out.println(block);
-         // }
-         // }
-      }
-      for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-         Column column = getColumns().get(columnInt);
-         // System.out
-         // .println("Column:" + columnInt + " -- " + column.isGone());
-         ArrayList<Block> blocks = column.getBlocks();
-         // if (null != blocks) {
-         // for (Block block : blocks) {
-         // // System.out.println(block);
-         // }
-         // }
-      }
-      // System.out.println("Time for " + methodName + ": "
-      // + (new Date().getTime() - startTime) + " ms");
-   }
+   // private void showBlockGoneTrue() {
+   // // String methodName = "showBlockGoneTrue()";
+   // // System.out.println(methodName);
+   // long startTime = new Date().getTime();
+   // for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+   // Row row = getRows().get(rowInt);
+   // // System.out.println("Row:" + rowInt + " -- " + row.isGone());
+   // ArrayList<Block> blocks = row.getBlocks();
+   // // if (null != blocks) {
+   // // for (Block block : blocks) {
+   // // // System.out.println(block);
+   // // }
+   // // }
+   // }
+   // for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
+   // Column column = getColumns().get(columnInt);
+   // // System.out
+   // // .println("Column:" + columnInt + " -- " + column.isGone());
+   // ArrayList<Block> blocks = column.getBlocks();
+   // // if (null != blocks) {
+   // // for (Block block : blocks) {
+   // // // System.out.println(block);
+   // // }
+   // // }
+   // }
+   // // System.out.println("Time for " + methodName + ": "
+   // // + (new Date().getTime() - startTime) + " ms");
+   // }
 
    /**
     * Füllt die Spalte mit '-'.
@@ -2242,7 +2221,7 @@ public class NonoSolver implements INonogramSolver {
     * @param blocks
     * @param indexOfBlock
     * @param widthOfRiddle
-    * @return
+    * @return den neuen minStartIndex
     */
    private int getMinStartIndexOfBlock(ArrayList<Block> blocks, int indexOfBlock, int widthOfRiddle) {
       // String methodName = "getMinStartIndexOfBlock()";
@@ -2269,7 +2248,7 @@ public class NonoSolver implements INonogramSolver {
     * @param blocks
     * @param indexOfBlock
     * @param size
-    * @return
+    * @return den neuen maxEndIndex
     */
    private int getMaxEndIndexOfBlock(ArrayList<Block> blocks, int indexOfBlock, int size) {
       // String methodName = "getMaxEndIndexOfBlock()";
@@ -2293,7 +2272,7 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Gibt alle Spalten des Rätsels zurück.
     * 
-    * @return
+    * @return alle Spalten
     */
    private ArrayList<Column> getColumns() {
       return riddle.getColumns();
@@ -2302,7 +2281,7 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Gibt alle Reihen des Rätsels zurück.
     * 
-    * @return
+    * @return alle Reihen
     */
    private ArrayList<Row> getRows() {
       return riddle.getRows();
@@ -2320,15 +2299,13 @@ public class NonoSolver implements INonogramSolver {
     * Füllt den Bereich in der column zwischen rowBegin (inklusive) und rowEnd
     * (exklusive) mit dem char c.
     * 
-    * @param matrix
     * @param columnIndex
     * @param rowBegin
     * @param rowEnd
     * @param c
-    * @return
     * @throws Exception
     */
-   private char[][] fillAreaInColumnWithChar(int columnIndex, int rowBegin, int rowEnd, char c) throws Exception {
+   private void fillAreaInColumnWithChar(int columnIndex, int rowBegin, int rowEnd, char c) throws Exception {
       // String methodName = "fillAreaInColumnWithChar()";
       // // // System.out.println(methodName);
       // long startTime = new Date().getTime();
@@ -2337,19 +2314,16 @@ public class NonoSolver implements INonogramSolver {
       }
       // // // System.out.println("Time for " + methodName + ": " + (new
       // Date().getTime() - startTime) + " ms");
-      return matrix;
    }
 
    /**
     * Füllt den Bereich in der row zwischen columnBegin (inklusive) und
     * columnEnd (exklusive) mit dem char c.
     * 
-    * @param matrix
-    * @param columnIndex
-    * @param rowBegin
-    * @param rowEnd
+    * @param rowIndex
+    * @param columnBegin
+    * @param columnEnd
     * @param c
-    * @return
     * @throws Exception
     */
    private void fillAreaInRowWithChar(int rowIndex, int columnBegin, int columnEnd, char c) throws Exception {
@@ -2399,8 +2373,8 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Gibt die Anzahl der nicht belegten Felder zurück.
     * 
-    * @return
-    */
+    * @return Anzahl der noch nicht belegten Felder in der MAtrix
+    */ 
    private int getStarCountInRiddle() {
       int starCount = 0;
       for (int index = 0; index < getRows().size(); index++) {

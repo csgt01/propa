@@ -11,7 +11,7 @@ public interface IPlaygame extends ActionListener, MouseListener {
 	/**
 	 * Lädt ein Rätsel aus einer Datei heraus.
 	 * @param filename
-	 * @return
+	 * @return true falls die Datei korrekt geöffnet wurde.
 	 */
 	boolean openRiddleFromFile(String filename);
 

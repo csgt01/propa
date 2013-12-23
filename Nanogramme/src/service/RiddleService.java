@@ -102,7 +102,6 @@ public class RiddleService {
 	/**
 	 * Display the matrix.
 	 * 
-	 * @param matrix
 	 * @throws Exception
 	 */
 	private void showMatrix() {

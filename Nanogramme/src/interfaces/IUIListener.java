@@ -32,9 +32,8 @@ public interface IUIListener {
 	 *            Nummer der Spalte
 	 * @param colour
 	 *            Die Farbe
-	 * @return
 	 */
-	boolean placeAField(int row, int column, Colour colour);
+	void placeAField(int row, int column, Colour colour);
 
 	/**
 	 * Informiert den Listener, ob die Lösung richtig oder falsch war.
@@ -67,9 +66,9 @@ public interface IUIListener {
 	void showAlert(String string);
 
 	/**
-	 * Gibt die {@link #Colour} aus der Liste zurück, die als Hintergrund verwandt werden soll.
+	 * 
 	 * @param col
-	 * @return
+	 * @return Gibt die Colour aus der Liste zurück, die als Hintergrund verwandt werden soll.
 	 */
    Colour getBackgroundColour(LinkedList<Colour> col);
 

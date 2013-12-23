@@ -91,7 +91,7 @@ public class PlayGame implements IPlaygame {
             matrixNeu[i][j] = matrix[i][j];
          }
       }
-      NonoSolver3 solver = new NonoSolver3(matrixNeu, riddle);
+      NonoSolver solver = new NonoSolver(matrixNeu, riddle);
       solutions = solver.getSolution();
       if (solver.getSolveState() == SolveStateEnum.SOLVED) {
          listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(),

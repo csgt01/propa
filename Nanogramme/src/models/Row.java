@@ -1,7 +1,6 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class Row {
 	
@@ -26,11 +25,9 @@ public class Row {
 		this.maxEntries = maxEntries;
 	}
 
-	private ArrayList<LinkedList<String>> possibilities;
 
 	public Row() {
 		blocks = new ArrayList<Block>();
-		possibilities = new ArrayList<LinkedList<String>>();
 	}
 
 	public Row(Row row) {
@@ -103,21 +100,6 @@ public class Row {
 		}
 
 		return false;
-	}
-
-	/**
-	 * @return the possibilities
-	 */
-//	public ArrayList<LinkedList<String>> getPossibilities() {
-//		return possibilities;
-//	}
-
-	/**
-	 * @param possibilities
-	 *            the possibilities to set
-	 */
-	public void setPossibilities(ArrayList<LinkedList<String>> possibilities) {
-		this.possibilities = possibilities;
 	}
 
 	protected int getBlockCount() {
