@@ -398,15 +398,15 @@ public class NonoSolver implements INonogramSolver {
       if (stacks != null && stacks.size() > 0) {
          StackHolder lastStackHolder = stacks.get(stacks.size() - 1);
          int indexOfColor = lastStackHolder.getIndexOfColor();
-         // indexOfColor--;
-         indexOfColor++;
-         // while (indexOfColor > -1 &&
-         // !isColorInThisRowAndColumn(lastStackHolder.getRow(),
-         // lastStackHolder.getColumn(), indexOfColor)) {
-         // indexOfColor--;
-         // }
-         // if (indexOfColor < -1) {
-         if (indexOfColor >= riddle.getColours().size()) {
+          indexOfColor--;
+//         indexOfColor++;
+          while (indexOfColor > -1 &&
+          !isColorInThisRowAndColumn(lastStackHolder.getRow(),
+          lastStackHolder.getColumn(), indexOfColor)) {
+          indexOfColor--;
+          }
+          if (indexOfColor < -1) {
+//         if (indexOfColor >= riddle.getColours().size()) {
             Riddle stackRiddle = lastStackHolder.getRiddle();
             riddle = new Riddle(stackRiddle.getColours(), stackRiddle.getWidth(), stackRiddle.getHeight(), stackRiddle.getRows(), stackRiddle.getColumns(), stackRiddle.getNono());
             matrix = new char[riddle.getHeight()][riddle.getWidth()];
@@ -463,12 +463,12 @@ public class NonoSolver implements INonogramSolver {
       for (int row = 0; row < riddle.getHeight(); row++) {
          for (int column = 0; column < riddle.getWidth(); column++) {
             if (matrix[row][column] == '*') {
-               // int colorIndex = (riddle.getColours().size() - 1);
-               int colorIndex = (-1);
-               // while (colorIndex > -1 && !isColorInThisRowAndColumn(row,
-               // column, colorIndex)) {
-               // colorIndex--;
-               // }
+                int colorIndex = (riddle.getColours().size() - 1);
+//               int colorIndex = (-1);
+                while (colorIndex > -1 && !isColorInThisRowAndColumn(row,
+                column, colorIndex)) {
+                colorIndex--;
+                }
                StackHolder stack = new StackHolder();
                stack.setRiddle(new Riddle(riddle.getColours(), riddle.getWidth(), riddle.getHeight(), riddle.getRows(), riddle.getColumns(), riddle.getNono()));
                stack.setMatrix(matrix, riddle.getHeight(), riddle.getWidth());
