@@ -236,10 +236,10 @@ public class NonoSolver implements INonogramSolver {
 				// }
 				// }
 				if (starCount <= getStarCountInRiddle()) {
-					// solveState = SolveStateEnum.MUST_GUESS;
-					solveState = SolveStateEnum.ERROR;
-					showMatrix();
-					showBlockGoneTrue(); 
+					 solveState = SolveStateEnum.MUST_GUESS;
+//					solveState = SolveStateEnum.ERROR;
+//					showMatrix();
+//					showBlockGoneTrue(); 
 					run1 = false;
 				}
 				// mögliche Lösung gefunden
@@ -271,30 +271,87 @@ public class NonoSolver implements INonogramSolver {
 		return solveState;
 	}
 
-	private void checkBlocksIfIndexIsOk(int row, Block block) {
-		if (block.isGone()) {
-			return;
-		}
-		boolean isPresent = false;
-		for (int columnInt = block.getMinStartIndexNew(); columnInt <= block
-				.getMaxEndIndexNew(); columnInt++) {
-			Column column = getColumns().get(columnInt);
-			int index = 0;
-			int size = column.getBlocks().size();
-			while (index < size && !isPresent) {
-				Block columnBlock = column.getBlocks().get(index);
-				if (block.getColorChar() == columnBlock.getColorChar()) {
-					if (row >= block.getMinStartIndexNew()
-							&& row <= block.getMaxEndIndexNew()) {
-						isPresent = true;
-					}
-				}
-				index++;
-			}
-		}
-		System.out.println(isPresent);
-	}
+	private void checkBlocksIfIndexIsOk(Row row) throws Exception {
+      if (row.isGone()) {
+         return;
+      }
+      int rowInt = getIndexOfRow(row);
+      int size = row.getBlocks().size();
+      // jeden Block durchgehen
+      for (int blockInt = 0; blockInt < size; blockInt++) {
+         Block block = row.getBlocks().get(blockInt);
+         if (!block.isGone()) {
+            // für jede Column zwischen min und max prüfen
+            for (int columnInt = block.getMinStartIndexNew(); columnInt <= block
+                  .getMaxEndIndexNew(); columnInt++) {
+               Column column = getColumns().get(columnInt);
+               int index = 0;
+               int size2 = column.getBlocks().size();
+               boolean isPresent = false;
+               while (index < size2 && !isPresent) {
+                  Block columnBlock = column.getBlocks().get(index);
+                  if (block.getColorChar() == columnBlock.getColorChar()) {
+                     if (rowInt >= columnBlock.getMinStartIndexNew()
+                           && rowInt <= columnBlock.getMaxEndIndexNew()) {
+                        isPresent = true;
+                     }
+                  }
+                  index++;
+               }
+               if (!isPresent) {
+                  if ((columnInt - block.getMinStartIndexNew() + 1) < block.getHowMany() ) {
+                     block.setMinStartIndexNew((columnInt + 1));
+                  }
+                  if ((block.getMaxEndIndexNew() - columnInt) < block.getHowMany() ) {
+                     block.setMaxEndIndexNew((columnInt - 1));
+                  }
+               }
+            }
+         }
+      }
+   }
 
+	private void checkBlocksIfIndexIsOk(Column column) throws Exception {
+      if (column.isGone()) {
+         return;
+      }
+      int columnInt = getIndexOfColumn(column);
+      int size = column.getBlocks().size();
+      // jeden Block durchgehen
+      for (int blockInt = 0; blockInt < size; blockInt++) {
+         Block block = column.getBlocks().get(blockInt);
+         if (!block.isGone()) {
+            // für jede Row zwischen min und max prüfen
+            for (int rowInt = block.getMinStartIndexNew(); rowInt <= block
+                  .getMaxEndIndexNew(); rowInt++) {
+               Row row = getRows().get(rowInt);
+               int index = 0;
+               int size2 = row.getBlocks().size();
+               boolean isPresent = false;
+               while (index < size2 && !isPresent) {
+                  Block rowBlock = row.getBlocks().get(index);
+                  if (block.getColorChar() == rowBlock.getColorChar()) {
+                     if (columnInt >= rowBlock.getMinStartIndexNew()
+                           && columnInt <= rowBlock.getMaxEndIndexNew()) {
+                        isPresent = true;
+                     }
+                  }
+                  index++;
+               }
+               if (!isPresent) {
+                  if ((rowInt - block.getMinStartIndexNew() + 1) < block.getHowMany() ) {
+                     block.setMinStartIndexNew((rowInt + 1));
+                  }
+                  if ((block.getMaxEndIndexNew() - rowInt) < block.getHowMany() ) {
+                     block.setMaxEndIndexNew((rowInt - 1));
+                  }
+               }
+            }
+         }
+      }
+   }
+
+	
 	private boolean solutionFromTryingOk() {
 		// System.out.println("solutionFromTryingOk()");
 
@@ -919,7 +976,7 @@ public class NonoSolver implements INonogramSolver {
 			fillIfMinMaxEqualToHowMany(row);
 			fillEntriesFromBlockIntoMatrix(row);
 
-			checkBlocksIfIndexIsOk(getIndexOfRow(row), row.getBlocks().get(0));
+			checkBlocksIfIndexIsOk(row);
 
 		}
 		for (int index = 0; index < getColumns().size(); index++) {
@@ -935,6 +992,8 @@ public class NonoSolver implements INonogramSolver {
 			fillWithEmptyAfterGone(column);
 			fillIfMinMaxEqualToHowMany(column);
 			fillEntriesFromBlockIntoMatrix(column);
+			
+			checkBlocksIfIndexIsOk(column);
 		}
 	}
 
