@@ -21,7 +21,7 @@ public interface IPictureService {
     *           Breite des neuen Fotos
     * @param numberOfColors
     *           Anzahl der Farben des neuen Fotos
-    * @return
+    * @return Verkleinertes Image
     */
    BufferedImage loadAndDownColorPicture(String file, int height, int width, int numberOfColors);
 

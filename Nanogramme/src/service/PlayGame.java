@@ -19,72 +19,73 @@ import models.SolveStateEnum;
  * Managed den Spielablauf
  * 
  * @author csgt
- *
+ * 
  */
 public class PlayGame implements IPlaygame {
 
-	/**
-	 * Spielmatrix.
-	 */
-	private char[][] matrix;
+   /**
+    * Spielmatrix.
+    */
+   private char[][] matrix;
 
-	/**
-	 * Colour, die zum Setzten eingestellt ist.
-	 */
-	private Colour currentColor;
+   /**
+    * Colour, die zum Setzten eingestellt ist.
+    */
+   private Colour currentColor;
 
-	/**
-	 * Hintergrungfarbe des Rätsels.
-	 */
-	private Colour backGroundColour;
+   /**
+    * Hintergrungfarbe des Rätsels.
+    */
+   private Colour backGroundColour;
 
-	/**
-	 * Zu nutzender {@link RiddleService} 
-	 */
-	private RiddleService riddleLoader;
+   /**
+    * Zu nutzender {@link RiddleService}
+    */
+   private RiddleService riddleLoader;
 
-	/**
-	 * Das Rätsel.
-	 */
-	private Riddle riddle;
+   /**
+    * Das Rätsel.
+    */
+   private Riddle riddle;
 
-	/**
-	 * Verbundene UI.
-	 */
-	private IUIListener listener;
+   /**
+    * Verbundene UI.
+    */
+   private IUIListener listener;
 
-	/**
-	 * Die Lösung des Rätsels.
-	 */
-	private char[][] solutions;
+   /**
+    * Die Lösung des Rätsels.
+    */
+   private char[][] solutions;
 
-	/**
-	 * Konstruktor.
-	 * @param listener
-	 */
-	public PlayGame(IUIListener listener) {
-		this.listener = listener;
-		riddleLoader = new RiddleService(listener);
-	}
+   /**
+    * Konstruktor.
+    * 
+    * @param listener
+    */
+   public PlayGame(IUIListener listener) {
+      this.listener = listener;
+      riddleLoader = new RiddleService(listener);
+   }
 
-	@Override
-	public boolean openRiddleFromFile(String arg0) {
-		try {
-			String methodName = "openFile(" + arg0 + ")";
-			System.out.println(methodName);
-			riddleLoader = new RiddleService(listener);
-			riddle = riddleLoader.readFile(arg0);
-			setupIt(riddle);
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-	
-	@Override
-	public void setupIt(Riddle riddle) {
-	   backGroundColour = new Colour();
+   @Override
+   public boolean openRiddleFromFile(String arg0) {
+      try {
+         String methodName = "openFile(" + arg0 + ")";
+         System.out.println(methodName);
+         riddleLoader = new RiddleService(listener);
+         riddle = riddleLoader.readFile(arg0);
+         setupIt(riddle);
+         return true;
+      } catch (Exception e) {
+         e.printStackTrace();
+         return false;
+      }
+   }
+
+   @Override
+   public void setupIt(Riddle riddle) {
+      backGroundColour = new Colour();
       backGroundColour.setName('-');
       backGroundColour.setRed(Color.WHITE.getRed());
       backGroundColour.setGreen(Color.WHITE.getGreen());
@@ -100,8 +101,7 @@ public class PlayGame implements IPlaygame {
       NonoSolver solver = new NonoSolver(matrixNeu, riddle);
       solutions = solver.getSolution();
       if (solver.getSolveState() == SolveStateEnum.SOLVED) {
-         listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(),
-               riddle.getRows(), riddle.getColumns());
+         listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(), riddle.getRows(), riddle.getColumns());
          listener.setColours(riddle.getColours());
          matrix = riddleLoader.matrix;
          // ist nur gleich null, wenn ein Rätsel neu erstellt wird!
@@ -109,9 +109,7 @@ public class PlayGame implements IPlaygame {
             for (int i = 0; i < riddle.getHeight(); i++) {
                for (int j = 0; j < riddle.getWidth(); j++) {
                   if (matrix[i][j] != '*' && matrix[i][j] != '-') {
-                     listener.placeAField(i, j, riddle
-                           .getColourByName(String
-                                 .valueOf(matrix[i][j])));
+                     listener.placeAField(i, j, riddle.getColourByName(String.valueOf(matrix[i][j])));
                   } else if (matrix[i][j] == '-') {
                      listener.placeAField(i, j, backGroundColour);
                   }
@@ -121,149 +119,146 @@ public class PlayGame implements IPlaygame {
             setupMatrix();
          }
       } else {
-          switch (solver.getSolveState()) {
-          case SOLVING:
-          listener.showAlert(SolveStateEnum.SOLVING.getMessage());
-          break;
-          case MULTIPLE_SOLUTIONS:
-          listener.showAlert(SolveStateEnum.MULTIPLE_SOLUTIONS.getMessage());
-          break;
-          case NO_SOLUTION:
-          listener.showAlert(SolveStateEnum.NO_SOLUTION.getMessage());
-          break;
-          default:
-          listener.showAlert("Fehler beim Laden");
-          break;
-          }
+         switch (solver.getSolveState()) {
+         case SOLVING:
+            listener.showAlert(SolveStateEnum.SOLVING.getMessage());
+            break;
+         case MULTIPLE_SOLUTIONS:
+            listener.showAlert(SolveStateEnum.MULTIPLE_SOLUTIONS.getMessage());
+            break;
+         case NO_SOLUTION:
+            listener.showAlert(SolveStateEnum.NO_SOLUTION.getMessage());
+            break;
+         default:
+            listener.showAlert("Fehler beim Laden");
+            break;
+         }
       }
-	   
-	}
 
-	@Override
-	public Riddle createRiddle(BufferedImage image) {
-	   this.riddle = riddleLoader.createRiddle(image);
-		setupIt(this.riddle);
-		return this.riddle;
-	}
+   }
 
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		String actionCommand = arg0.getActionCommand();
-		System.out.println(actionCommand);
-		if (actionCommand.equals("check")) {
-			boolean isRight = checkSolution();
-			listener.wasRight(isRight);
-		} else if (actionCommand.equals("Reset")) {
-			currentColor = null;
-		} else if (actionCommand.equals("Speichern")) {
-			boolean saved = riddleLoader.save(matrix);
-			if (!saved) {
-				listener.showAlert("Speichern fehlgeschlagen!");
-			}
-		} else if (actionCommand.equals("-")) {
-			currentColor = backGroundColour;
-		} else {
-			currentColor = riddle.getColourByName(actionCommand);
-			System.out.println(currentColor);
-		}
-	}
+   @Override
+   public Riddle createRiddle(BufferedImage image) {
+      this.riddle = riddleLoader.createRiddle(image);
+      setupIt(this.riddle);
+      return this.riddle;
+   }
 
-	/**
-	 * Prüft, ob das vom User gelöste Rätsel mit der Lösung übereinstimmt. 
-	 * TODO:
-	 * Zwischenprüfung! und vielleicht Fehler anzeigen
-	 * 
-	 * @return
-	 */
-	private boolean checkSolution() {
-		boolean isRight = true;
-		for (int row = 0; row < riddle.getHeight(); row++) {
-			for (int column = 0; column < riddle.getWidth(); column++) {
-				if (matrix[row][column] != solutions[row][column]) {
-					isRight = false;
-				}
-			}
-		}
-		showMatrix();
-		return isRight;
-	}
+   @Override
+   public void actionPerformed(ActionEvent arg0) {
+      String actionCommand = arg0.getActionCommand();
+      System.out.println(actionCommand);
+      if (actionCommand.equals("check")) {
+         boolean isRight = checkSolution();
+         listener.wasRight(isRight);
+      } else if (actionCommand.equals("Reset")) {
+         currentColor = null;
+      } else if (actionCommand.equals("Speichern")) {
+         boolean saved = riddleLoader.save(matrix);
+         if (!saved) {
+            listener.showAlert("Speichern fehlgeschlagen!");
+         }
+      } else if (actionCommand.equals("-")) {
+         currentColor = backGroundColour;
+      } else {
+         currentColor = riddle.getColourByName(actionCommand);
+         System.out.println(currentColor);
+      }
+   }
 
-	/**
-	 * Erstellt eine neue Matrix mit der Breite und Höhe des Rätsels und füllt
-	 * diese mit '*'.
-	 */
-	private void setupMatrix() {
-		String methodName = "setupBlocks()";
-		// // System.out.println(methodName);
-		long startTime = new Date().getTime();
-		matrix = new char[riddle.getHeight()][riddle.getWidth()];
-		for (int i = 0; i < riddle.getHeight(); i++) {
-			for (int j = 0; j < riddle.getWidth(); j++) {
-				matrix[i][j] = '*';
-			}
-		}
-		System.out.println("Time for " + methodName + ": "
-				+ (new Date().getTime() - startTime) + " ms");
-	}
+   /**
+    * Prüft, ob das vom User gelöste Rätsel mit der Lösung übereinstimmt. TODO:
+    * Zwischenprüfung! und vielleicht Fehler anzeigen
+    * 
+    * @return true wenn Lösung richtig ist.
+    */
+   private boolean checkSolution() {
+      boolean isRight = true;
+      for (int row = 0; row < riddle.getHeight(); row++) {
+         for (int column = 0; column < riddle.getWidth(); column++) {
+            if (matrix[row][column] != solutions[row][column]) {
+               isRight = false;
+            }
+         }
+      }
+      showMatrix();
+      return isRight;
+   }
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		String actionCommand = ((JLabel) e.getSource()).getText();
-		System.out.println(actionCommand);
-		String[] splits = actionCommand.split("--");
-		int row = Integer.valueOf(splits[0]);
-		System.out.println(row);
-		int column = Integer.valueOf(splits[1]);
-		System.out.println(column);
-		if (null != currentColor) {
-			System.out.println(matrix[row][column]);
-			matrix[row][column] = currentColor.getName();
-			showMatrix();
-			listener.placeAField(row, column, currentColor);
-		} else {
-			matrix[row][column] = '*';
-			showMatrix();
-			listener.placeAField(row, column, null);
-		}
-	}
+   /**
+    * Erstellt eine neue Matrix mit der Breite und Höhe des Rätsels und füllt
+    * diese mit '*'.
+    */
+   private void setupMatrix() {
+      String methodName = "setupBlocks()";
+      // // System.out.println(methodName);
+      long startTime = new Date().getTime();
+      matrix = new char[riddle.getHeight()][riddle.getWidth()];
+      for (int i = 0; i < riddle.getHeight(); i++) {
+         for (int j = 0; j < riddle.getWidth(); j++) {
+            matrix[i][j] = '*';
+         }
+      }
+      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+   }
 
-	@Override
-	public void mousePressed(MouseEvent e) {
+   @Override
+   public void mouseClicked(MouseEvent e) {
+      String actionCommand = ((JLabel) e.getSource()).getText();
+      System.out.println(actionCommand);
+      String[] splits = actionCommand.split("--");
+      int row = Integer.valueOf(splits[0]);
+      System.out.println(row);
+      int column = Integer.valueOf(splits[1]);
+      System.out.println(column);
+      if (null != currentColor) {
+         System.out.println(matrix[row][column]);
+         matrix[row][column] = currentColor.getName();
+         showMatrix();
+         listener.placeAField(row, column, currentColor);
+      } else {
+         matrix[row][column] = '*';
+         showMatrix();
+         listener.placeAField(row, column, null);
+      }
+   }
 
-	}
+   @Override
+   public void mousePressed(MouseEvent e) {
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
+   }
 
-	}
+   @Override
+   public void mouseReleased(MouseEvent e) {
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
+   }
 
-	}
+   @Override
+   public void mouseEntered(MouseEvent e) {
 
-	@Override
-	public void mouseExited(MouseEvent e) {
+   }
 
-	}
+   @Override
+   public void mouseExited(MouseEvent e) {
 
-	/**
-	 * Zeigt die Matrix zum Debuggen an.
-	 */
-	private void showMatrix() {
-		String methodName = "showMatrix()";
-		System.out.println(methodName);
-		long startTime = new Date().getTime();
-		for (int i = 0; i < riddle.getHeight(); i++) {
-			String out = "";
-			for (int j = 0; j < riddle.getWidth(); j++) {
-				out += matrix[i][j];
-				out += "  ";
-			}
-			System.out.println(out);
-		}
-		System.out.println();
-		System.out.println("Time for " + methodName + ": "
-				+ (new Date().getTime() - startTime) + " ms");
-	}
+   }
+
+   /**
+    * Zeigt die Matrix zum Debuggen an.
+    */
+   private void showMatrix() {
+      String methodName = "showMatrix()";
+      System.out.println(methodName);
+      long startTime = new Date().getTime();
+      for (int i = 0; i < riddle.getHeight(); i++) {
+         String out = "";
+         for (int j = 0; j < riddle.getWidth(); j++) {
+            out += matrix[i][j];
+            out += "  ";
+         }
+         System.out.println(out);
+      }
+      System.out.println();
+      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
+   }
 }

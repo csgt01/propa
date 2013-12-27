@@ -11,51 +11,56 @@ package models;
  */
 public enum SolveStateEnum {
 
-	/**
-	 * Suchend
-	 */
-	SOLVING("Such Lösung"), 
-	/**
-	 * Gelöst
-	 */
-	SOLVED("Gelöst"),
-	/**
-	 * Mehrere Lösungen vorhanden
-	 */
-	MULTIPLE_SOLUTIONS("Mehrere Lösungen gefunden"),
-	/**
-	 * Keine Lösung vorhanden
-	 */
-	NO_SOLUTION("Keine Lösung gefunden"),
-	/**
-	 * Fehler
-	 */
-	ERROR("Error"),
-	/**
-	 * Lösung gefunden, aber mit Stack gefüllt
-	 */
-	FOUND_SOLUTION_WITH_STACK("Found Solution with Stack"),
-	/**
-	 * Keine logischen Fortschritte also raten!
-	 */
-	MUST_GUESS("Raten");
-	
-	/**
-	 * Nachricht, die bei dem jeweiligen Zusatnd angezeigt weden soll.
-	 */
-	private final String message;
+   /**
+    * Suchend
+    */
+   SOLVING("Such Lösung"),
+   /**
+    * Gelöst
+    */
+   SOLVED("Gelöst"),
+   /**
+    * Mehrere Lösungen vorhanden
+    */
+   MULTIPLE_SOLUTIONS("Mehrere Lösungen gefunden"),
+   /**
+    * Keine Lösung vorhanden
+    */
+   NO_SOLUTION("Keine Lösung gefunden"),
+   /**
+    * Fehler
+    */
+   ERROR("Error"),
+   /**
+    * Lösung gefunden, aber mit Stack gefüllt
+    */
+   FOUND_SOLUTION_WITH_STACK("Found Solution with Stack"),
+   /**
+    * Keine logischen Fortschritte also raten!
+    */
+   MUST_GUESS("Raten");
 
-	/**
-	 * Konstruktor
-	 * 
-	 * @param message
-	 */
-	private SolveStateEnum(String message) {
-		this.message = message;
-	}
+   /**
+    * Nachricht, die bei dem jeweiligen Zusatnd angezeigt weden soll.
+    */
+   private final String message;
 
-	public String getMessage() {
-		return message;
-	}
+   /**
+    * Konstruktor
+    * 
+    * @param message
+    */
+   private SolveStateEnum(String message) {
+      this.message = message;
+   }
+
+   /**
+    * Gibt die Nachricht für das Enum zurück.
+    * 
+    * @return Nachricht
+    */
+   public String getMessage() {
+      return message;
+   }
 
 }

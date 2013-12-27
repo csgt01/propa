@@ -126,6 +126,9 @@ public class RiddleService {
 		System.out.println("Time for " + methodName + ": "
 				+ (new Date().getTime() - startTime) + " ms");
 	}
+	
+	int rowInt = 0;
+	int columnInt = 0;
 
 	/**
 	 * Analysiert eine Reihe in {@link #readFile(String)}.
@@ -168,9 +171,9 @@ public class RiddleService {
 				} else {
 					str = str.trim();
 					Row row = new Row();
+					row.setIndex(rowInt);
 					String[] blocks = str.split(",");
 					for (int i = 0; i < blocks.length; i++) {
-
 						Block cb = new Block();
 						String block = blocks[i];
 						block = block.trim();
@@ -182,6 +185,7 @@ public class RiddleService {
 							row.addBlock(cb);
 						}
 					}
+					rowInt++;
 					riddle.addRow(row);
 				}
 				break;
@@ -210,6 +214,9 @@ public class RiddleService {
 							column.addBlock(cb);
 						}
 					}
+					column.setIndex(columnInt);
+					System.out.println(columnInt);
+					columnInt++;
 					riddle.addColumn(column);
 				}
 				break;
@@ -455,7 +462,7 @@ public class RiddleService {
 	 * Erstellt eine nono-Datei aus dem Rätsel.
 	 * 
 	 * @param riddle2
-	 * @return
+	 * @return neue nono.
 	 */
 	private String createNono(Riddle riddle2) {
 		System.out.println("CREATENONO:" + riddle2);

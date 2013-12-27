@@ -9,7 +9,10 @@ import java.util.TreeSet;
  * 
  */
 public class Block {
-   
+
+   /**
+    * 
+    */
    public boolean doOverlapping;
 
    /**
@@ -206,6 +209,8 @@ public class Block {
     * 
     * @param gone
     *           the gone to set
+    * @param startIndex
+    *           an welcher Stelle beginnt der Block
     */
    public void setGone(boolean gone, int startIndex) {
       this.gone = gone;
@@ -351,6 +356,8 @@ public class Block {
    /**
     * Erhöht {@link #entriesSet} und fügt den index {@link #indeces} hinzu.
     * Falls alle Felder gesetzt sind, wird {@link #gone} auf true gesetzt.
+    * 
+    * @param index Stelle 
     * 
     * @return true if the Block is gone after set.
     */
