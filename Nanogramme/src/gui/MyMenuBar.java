@@ -8,6 +8,12 @@ import javax.swing.JMenuItem;
 
 import interfaces.IPlaygame;
 
+/**
+ * Menu für den Nonosolver
+ * 
+ * @author csgt
+ * 
+ */
 public class MyMenuBar extends JMenuBar {
 
    ActionListener mainFrame;
@@ -16,22 +22,49 @@ public class MyMenuBar extends JMenuBar {
     * 
     */
    private static final long serialVersionUID = -5971290065582479552L;
+   /**
+    * Menueintrag
+    */
    public JMenu datei;
+   /**
+    * Menueintrag
+    */
    public JMenu riddle;
-   // public JMenu hilfe;
+   /**
+    * Menueintrag
+    */
    public JMenuItem oeffnen;
+   /**
+    * Menueintrag
+    */
    public JMenuItem laden;
+   /**
+    * Menueintrag
+    */
    public JMenuItem erstellen;
+   /**
+    * Menueintrag
+    */
    public JMenuItem check;
-   // public JMenuItem faq;
-   // public JMenuItem about;
+   /**
+    * Menueintrag
+    */
    private IPlaygame playGame;
 
+   /**
+    * Konstruktor
+    */
    public MyMenuBar() {
 
       init();
    }
 
+   /**
+    * Kontruktor
+    * 
+    * @param mainFrame
+    * @param playGame
+    */
    public MyMenuBar(ActionListener mainFrame, IPlaygame playGame) {
       this.mainFrame = mainFrame;
       this.playGame = playGame;
@@ -41,7 +74,7 @@ public class MyMenuBar extends JMenuBar {
    }
 
    /**
-    * 
+    * Initialisieren des Menus
     */
    private void init() {
       // Menüelemente erzeugen

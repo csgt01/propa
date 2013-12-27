@@ -15,6 +15,12 @@ import models.Colour;
 import models.Riddle;
 import models.SolveStateEnum;
 
+/**
+ * Managed den Spielablauf
+ * 
+ * @author csgt
+ *
+ */
 public class PlayGame implements IPlaygame {
 
 	/**

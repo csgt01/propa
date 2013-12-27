@@ -23,6 +23,11 @@ import models.Column;
 import models.Riddle;
 import models.Row;
 
+/**
+ * 
+ * @author csgt
+ *
+ */
 public class RiddleService {
 
 	/**
@@ -242,7 +247,6 @@ public class RiddleService {
 		}
 	}
 
-	// TODO: better and save twice!!!!
 	/**
 	 * Speichert das Rätsel als nono-Datei.
 	 * 
@@ -251,10 +255,11 @@ public class RiddleService {
 	protected boolean save(char[][] matrix) {
 		BufferedWriter writer = null;
 		boolean saved = false;
+		 File file = listener.getSaveFile();
 		System.out.println(riddle);
 		try {
 			writer = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream("save.nono"), "UTF-8"));
+					new FileOutputStream(file + ".nono"), "UTF-8"));
 			String nono = riddle.getNono();
 			if (nono == null) {
 				nono = createNono(riddle);
@@ -284,7 +289,10 @@ public class RiddleService {
 
 			}
 		}
-		return saved;
+		if (saved) {
+        
+      }
+      return saved;
 	}
 
 	/**
@@ -292,6 +300,7 @@ public class RiddleService {
 	 * 
 	 * @param image
 	 *            Basisbild
+	 * @return das Rätsel
 	 */
 	public Riddle createRiddle(BufferedImage image) {
 		Riddle riddle = new Riddle();

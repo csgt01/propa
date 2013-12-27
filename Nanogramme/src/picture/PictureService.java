@@ -44,7 +44,7 @@ public class PictureService implements IPictureService {
     * @return herruntergerechnetes Bild
     */
    @Override
-   public BufferedImage loadAndDowColorPicture(String file, int height, int width, int numberOfColors) {
+   public BufferedImage loadAndDownColorPicture(String file, int height, int width, int numberOfColors) {
       BufferedImage resizedImage = null;
       try {
          BufferedImage oi = ImageIO.read(new File(file));

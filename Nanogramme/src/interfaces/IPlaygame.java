@@ -6,23 +6,36 @@ import java.awt.image.BufferedImage;
 
 import models.Riddle;
 
+/**
+ * Interface für die Kommunikation zwischen MainFrame und PlayGame.
+ * 
+ * @author csgt
+ * 
+ */
 public interface IPlaygame extends ActionListener, MouseListener {
 
-	/**
-	 * Lädt ein Rätsel aus einer Datei heraus.
-	 * @param filename
-	 * @return true falls die Datei korrekt geöffnet wurde.
-	 */
-	boolean openRiddleFromFile(String filename);
+   /**
+    * Lädt ein Rätsel aus einer Datei heraus.
+    * 
+    * @param filename
+    * @return true falls die Datei korrekt geöffnet wurde.
+    */
+   boolean openRiddleFromFile(String filename);
 
-	/**
-	 * Holt die Lösung des Rätseln vom Nonosolver, informiert den Listener über
-	 * das Rätsel bzw. lässt beim Listener eine Fehlermeldung ausgeben
-	 * 
-	 * @param riddle
-	 */
+   /**
+    * Holt die Lösung des Rätseln vom Nonosolver, informiert den Listener über
+    * das Rätsel bzw. lässt beim Listener eine Fehlermeldung ausgeben
+    * 
+    * @param riddle
+    */
    void setupIt(Riddle riddle);
-   
+
+   /**
+    * Erstellt ein Rätsel aus einem Foto.
+    * 
+    * @param image
+    * @return das Rätsel
+    */
    Riddle createRiddle(BufferedImage image);
 
 }

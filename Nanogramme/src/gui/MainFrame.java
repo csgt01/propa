@@ -55,13 +55,17 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    private JMenuBar menuLeiste;
    private JToolBar toolbar;
    private JLabel[][] labels;
-   private static File lastSelectedDir = null;
+   private static File lastSelectedDirForPicture = null;
+   private static File lastSelectedDirForLoad = null;
    // Services und Listener
    private IPictureService ps;
    private IPlaygame playGame;
 
+   /**
+    * Konstruktor
+    */
    public MainFrame() {
-      
+
    }
 
    /**
@@ -127,7 +131,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    }
 
    /**
-    * Erstellt und füllt die Matrix des UI.
+    * Erstellt und füllt die Matrix (Spielfeld) des UI.
     * 
     * @param rowInt
     *           Anzahl der Reihen
@@ -232,6 +236,19 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
       }
    }
 
+   /**
+    * Setzt eine Beschriftung wie viele Blöcke es in der Reihe gibt in die UI
+    * ein.
+    * 
+    * @param rows
+    *           Liste der Reihen
+    * @param i
+    *           Index der Reihe.
+    * @param c2
+    *           constraints
+    * @param columnPanel
+    *           das Panel
+    */
    private void insertRowInUIMatrix(List<Row> rows, int i, GridBagConstraints c2, JPanel columnPanel) {
       for (Block block : rows.get(i).getBlocks()) {
 
@@ -275,7 +292,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
       if (e.getActionCommand().equalsIgnoreCase("Rätsel laden")) {
 
          // Datei auswählen.
-         File file = getFileOrDirectryFromChooser(applikation, JFileChooser.OPEN_DIALOG);
+         File file = getFileOrDirectryFromChooser(applikation, JFileChooser.OPEN_DIALOG, true);
          if (file != null && file.getAbsoluteFile() != null) {
             if (!file.getName().endsWith("nono")) {
                showAlert("Nur .nono Dateien laden.");
@@ -302,7 +319,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    }
 
    private void createRiddle() {
-      File file = getFileOrDirectryFromChooser(applikation, JFileChooser.OPEN_DIALOG);
+      File file = getFileOrDirectryFromChooser(applikation, JFileChooser.OPEN_DIALOG, false);
       if (file != null && file.getAbsoluteFile() != null) {
          System.out.println(file.getAbsoluteFile());
 
@@ -312,7 +329,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
          String numberOfColors = JOptionPane.showInputDialog(null, "Anzahl der Farben (inklusive Hintergrundfarbe)", "Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
 
          // Laden, Verkleinern und Farben herrunterrechnen
-         BufferedImage image = ps.loadAndDowColorPicture(file.getAbsoluteFile().toString(), Integer.valueOf(height), Integer.valueOf(width), Integer.valueOf(numberOfColors));
+         BufferedImage image = ps.loadAndDownColorPicture(file.getAbsoluteFile().toString(), Integer.valueOf(height), Integer.valueOf(width), Integer.valueOf(numberOfColors));
 
          // Das Rätsel aufbauen
          playGame.createRiddle(image);
@@ -324,14 +341,24 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
     * 
     * @param parent
     * @param type
+    * @param forPicture
+    *           Bild oder nono laden.
     * @return gewählte Datei
     */
-   private File getFileOrDirectryFromChooser(Component parent, int type) {
+   private File getFileOrDirectryFromChooser(Component parent, int type, boolean forPicture) {
       JFileChooser chooser = null;
-      if (lastSelectedDir != null) {
-         chooser = new JFileChooser(lastSelectedDir);
+      if (forPicture) {
+         if (lastSelectedDirForPicture != null) {
+            chooser = new JFileChooser(lastSelectedDirForPicture);
+         } else {
+            chooser = new JFileChooser();
+         }
       } else {
-         chooser = new JFileChooser();
+         if (lastSelectedDirForLoad != null) {
+            chooser = new JFileChooser(lastSelectedDirForLoad);
+         } else {
+            chooser = new JFileChooser();
+         }
       }
       chooser.setFileSelectionMode(type);
       chooser.addChoosableFileFilter(new FileFilter() {
@@ -344,16 +371,26 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
          @Override
          public boolean accept(File file) {
             String filename = file.getName();
-            return (filename.endsWith(".jgp") || filename.endsWith(".JPG") || filename.endsWith(".gif") || filename.endsWith(".GIF") || file.isDirectory());
+            return (filename.endsWith(".jgp") || filename.endsWith(".JPG") || filename.endsWith(".gif") || filename.endsWith(".GIF") || filename.endsWith(".png") || filename.endsWith(".PNG") || file
+                  .isDirectory());
          }
       });
       int ret = chooser.showOpenDialog(parent);
       if (ret == JFileChooser.APPROVE_OPTION) {
          File selected = chooser.getSelectedFile();
-         if (selected.isDirectory())
-            lastSelectedDir = selected;
-         else
-            lastSelectedDir = selected.getParentFile();
+         if (selected.isDirectory()) {
+            if (forPicture) {
+               lastSelectedDirForPicture = selected;
+            } else {
+               lastSelectedDirForLoad = selected;
+            }
+         } else {
+            if (forPicture) {
+               lastSelectedDirForPicture = selected.getParentFile();
+            } else {
+               lastSelectedDirForLoad = selected.getParentFile();
+            }
+         }
          return selected;
       }
       return null;
@@ -405,7 +442,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    public void wasRight(boolean isRight) {
       System.out.println("wasRight:" + isRight);
       if (isRight) {
-        showAlert("Richtig gelöst!");
+         showAlert("Richtig gelöst!");
       } else {
          showAlert("Falsch gelöst!");
       }
@@ -416,5 +453,15 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    public void showAlert(String string) {
       System.out.println("showAlert");
       JOptionPane.showMessageDialog(applikation, string, string, JOptionPane.WARNING_MESSAGE);
+   }
+   
+   @Override
+   public File getSaveFile() {
+      JFileChooser chooser = new JFileChooser();
+      int retrival = chooser.showSaveDialog(this);
+      if (retrival == JFileChooser.APPROVE_OPTION) {
+         return chooser.getSelectedFile();
+      }
+      return null;
    }
 }
