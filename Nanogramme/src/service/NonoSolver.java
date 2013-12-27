@@ -678,7 +678,7 @@ public class NonoSolver implements INonogramSolver {
     * @param row
     * @throws Exception
     */
-   private void checkColorBelongingToBlockForRow(Row row) throws Exception {
+   private void checkColorBelongingToBlock(Row row) throws Exception {
       ArrayList<Block> blocks = row.getBlocks();
       if (blocks == null || blocks.size() == 0) {
          return;
@@ -723,7 +723,7 @@ public class NonoSolver implements INonogramSolver {
     * @param column
     * @throws Exception
     */
-   private void checkColorBelongingToBlockForColumn(Column column) throws Exception {
+   private void checkColorBelongingToBlock(Column column) throws Exception {
       ArrayList<Block> blocks = column.getBlocks();
       if (blocks == null || blocks.size() == 0) {
          return;
@@ -930,7 +930,7 @@ public class NonoSolver implements INonogramSolver {
          checkStarBelongingToBlockForRow(row);
          checkEmptyBelongingToBlockForRow(row);
          overlapBlocksInRow(row);
-         checkColorBelongingToBlockForRow(row);
+         checkColorBelongingToBlock(row);
          checkIfEntriesNotSetInBlock(row);
          checkEmptyInBetweenBlock(row);
          fillWithEmptyAfterGone(row);
@@ -947,7 +947,7 @@ public class NonoSolver implements INonogramSolver {
          checkStarBelongingToBlockForColumn(column);
          checkEmptyBelongingToBlockForColumn(column);
          overlapBlocksInColumn(column);
-         checkColorBelongingToBlockForColumn(column);
+         checkColorBelongingToBlock(column);
          checkIfEntriesNotSetInBlock(column);
          checkEmptyInBetweenBlock(column);
          fillWithEmptyAfterGone(column);
