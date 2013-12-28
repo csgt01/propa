@@ -100,8 +100,8 @@ public class NonoSolver implements INonogramSolver {
 
    @Override
    public void openFile(String arg0) throws IOException {
-        String methodName = "openFile(" + arg0 + ")";
-         System.out.println(methodName);
+      String methodName = "openFile(" + arg0 + ")";
+      System.out.println(methodName);
       riddleLoader = new RiddleService(null);
       riddle = riddleLoader.readFile(arg0);
       matrix = riddleLoader.matrix;
@@ -131,27 +131,32 @@ public class NonoSolver implements INonogramSolver {
     */
    private void handle() {
       while (solveState != SolveStateEnum.SOLVED) {
+         // ein Fehler wurde in solve erkannt dann entweder Farbe von letzten
+         // StackHolder ändern oder keine Lösung
          if (solveState == SolveStateEnum.ERROR) {
             if (stacks != null && stacks.size() > 0) {
+               // wenn alle Möglichkeiten im Stack getestet wurden:
                if (!changeLastStacksMember()) {
                   switch (solutionsFromGuising.size()) {
+                  // keine Lösung gefunden
                   case 0:
                      solveState = SolveStateEnum.NO_SOLUTION;
-                     // return matrix;
                      return;
+                     // 1 Lösung gefunden
                   case 1:
                      matrix = solutionsFromGuising.get(0);
                      solveState = SolveStateEnum.SOLVED;
                      showMatrix();
                      matrix = solutionsFromGuising.get(0);
-                     // return solutionsFromGuising.get(0);
                      return;
+                     // mehrere Lösungen gefunden
                   default:
                      solveState = SolveStateEnum.MULTIPLE_SOLUTIONS;
                      showMatrix();
                      return;
                   }
                }
+               // Fehler gefunden und stack ist leer oder null
             } else {
                if (solutionsFromGuising == null || solutionsFromGuising.size() != 1) {
                   showMatrix();
@@ -167,13 +172,17 @@ public class NonoSolver implements INonogramSolver {
                   return;
                }
             }
+            // es wurden noch nicht alle * besetzt und logischer Ansatz findet
+            // nichts mehr --> Raten
          } else if (solveState == SolveStateEnum.MUST_GUESS) {
             try {
                setFirstStarToSomething();
                solveState = SolveStateEnum.SOLVING;
             } catch (Exception e) {
-//               e.printStackTrace();
+               // e.printStackTrace();
             }
+            // Mögliche Lösung gefunden, aber mit gefüllten stack --> andere
+            // Möglichkeiten prüfen um mehrere Lösungen auzuschließen
          } else if (solveState == SolveStateEnum.FOUND_SOLUTION_WITH_STACK) {
             if (!changeLastStacksMember()) {
                switch (solutionsFromGuising.size()) {
@@ -251,7 +260,7 @@ public class NonoSolver implements INonogramSolver {
             }
          }
       } catch (Exception e) {
-//         e.printStackTrace();
+         // e.printStackTrace();
          solveState = SolveStateEnum.ERROR;
       } finally {
          // showMatrix();
@@ -546,7 +555,7 @@ public class NonoSolver implements INonogramSolver {
                   writeCharInMatrix(lastStackHolder.getRow(), '-', lastStackHolder.getColumn());
                }
             } catch (Exception e) {
-//               e.printStackTrace();
+               // e.printStackTrace();
             }
          }
          return true;
@@ -838,9 +847,9 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Prüft, ob nach bzw. vor dem leeren Feld noch genug Platz
-    * für den Block ist. falls nicht, wird minStartIndexNey bzw maxEndIndexNew
-    * angepasst. Wird in {@link #checkEmptyBelongingToBlock(Row)} und
+    * Prüft, ob nach bzw. vor dem leeren Feld noch genug Platz für den Block
+    * ist. falls nicht, wird minStartIndexNey bzw maxEndIndexNew angepasst. Wird
+    * in {@link #checkEmptyBelongingToBlock(Row)} und
     * {@link #checkEmptyBelongingToBlock(Column)} aufgerufen.
     * 
     * @param block
@@ -1693,7 +1702,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt Blöcke am Ende der Spalten.
+    * Füllt Blöcke am Ende der Reihen und Spalten.
     * 
     * @throws Exception
     */
@@ -1714,8 +1723,12 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Wenn eine Spalte mit einer Farbe endet wird der Block gefüllt. Auch
-    * angefangene Blöcke danach werden gefüllt.
+    * Wenn eine Spalte mit einer Farbe endet wird der Block gefüllt.  Wenn eine
+    * Spalte mit einer Farbe endet, dann können die vorherigen Felder auch
+    * gesetzt werden (je nach Größe des letzten Blocks). Leere Felder am Ende
+    * der Spalte werden übersprungen. Wenn ein Block aufgefüllt wurde wird die
+    * Methode erneut aufgerufen, um zu prüfen ob direkt wieder ein Block
+    * beginnt, der aufgefüllt werden kann.
     * 
     * @throws Exception
     */
@@ -1764,7 +1777,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt Blöcke am Anfang der Spalten.
+    * Füllt Blöcke am Anfang der Reihen und Spalten.
     * 
     * @throws Exception
     */
@@ -1785,7 +1798,12 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt Blöcke am Anfang einer Spalte. Ruft sich rekursiv auf.
+    * Füllt Blöcke am Anfang einer Spalte. Ruft sich rekursiv auf.  Wenn eine
+    * Spalte mit einer Farbe beginnt, dann können die nächsten Felder auch
+    * gesetzt werden (je nach Größe des ersen Blocks). Leere Felder am Anfang
+    * der Spalte werden übersprungen. Wenn ein Block aufgefüllt wurde wird die
+    * Methode erneut aufgerufen, um zu prüfen ob direkt wieder ein Block
+    * beginnt, der aufgefüllt werden kann.
     * 
     * @param column
     * @param blockIndex
@@ -1846,8 +1864,12 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Wenn eine Spalte mit einer Farbe endet wird der Block gefüllt. Auch
-    * angefangene Blöcke danach werden gefüllt.
+    * Wenn eine Reihe mit einer Farbe endet wird der Block gefüllt. Wenn eine
+    * Reihe mit einer Farbe endet, dann können die vorherigen Felder auch
+    * gesetzt werden (je nach Größe des letzten Blocks). Leere Felder am Ende
+    * der Reihe werden übersprungen. Wenn ein Block aufgefüllt wurde wird die
+    * Methode erneut aufgerufen, um zu prüfen ob direkt wieder ein Block
+    * beginnt, der aufgefüllt werden kann.
     * 
     * @throws Exception
     */
@@ -1893,9 +1915,9 @@ public class NonoSolver implements INonogramSolver {
 
    /**
     * Füllt Blöcke am Anfang einer Spalte. Ruft sich rekursiv auf. Wenn eine
-    * Spalte mit einer Farbe beginnt, dann können die nächsten Felder auch
+    * Reihe mit einer Farbe beginnt, dann können die nächsten Felder auch
     * gesetzt werden (je nach Größe des ersen Blocks). Leere Felder am Anfang
-    * der Spalte werden übersprungen. Wenn ein Block aufgefüllt wurde wird die
+    * der Reihe werden übersprungen. Wenn ein Block aufgefüllt wurde wird die
     * Methode erneut aufgerufen, um zu prüfen ob direkt wieder ein Block
     * beginnt, der aufgefüllt werden kann.
     * 
