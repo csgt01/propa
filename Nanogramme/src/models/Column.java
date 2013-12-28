@@ -3,13 +3,14 @@ package models;
 import java.util.ArrayList;
 
 /**
- * Stellt eine Spalte in einem Rätsel dar.
+ * Stellt eine Spalte in einem Rätsel dar. Die Klasse enthält auch eine Liste
+ * von {@link Block}, die in der Spalte vorkommen.
  * 
  * @author csgt
  * 
  */
 public class Column {
-   
+
    /**
     * Der Index der Spalte.
     */
@@ -49,7 +50,7 @@ public class Column {
     * @param column
     */
    public Column(Column column) {
-      this.blocks = new ArrayList<Block>();
+      this.blocks = new ArrayList<Block>(column.getBlocks().size());
       for (Block block : column.getBlocks()) {
          this.blocks.add(new Block(block));
       }
@@ -133,7 +134,8 @@ public class Column {
     * Inkrementiert die Anzahl der gesetzten Felder. Ausserdem wird auch beim
     * zugehörigen Block die entriesSet erhöht, falls der Block eindeutig ist.
     * 
-    * @param row index
+    * @param row
+    *           index
     * 
     * @return true wenn alle Felder gesetzt sind.
     * @throws Exception
@@ -163,19 +165,6 @@ public class Column {
    }
 
    /**
-    * Gibt die Summe von howMany (Größe) der Blöcke zurück.
-    * 
-    * @return Summe der Blockgrößen
-    */
-   protected int getBlockCount() {
-      int blockCount = 0;
-      for (Block block : blocks) {
-         blockCount += block.getHowMany();
-      }
-      return blockCount;
-   }
-
-   /**
     * @param blocks
     */
    public void setBlocks(ArrayList<Block> blocks) {
@@ -190,7 +179,8 @@ public class Column {
    }
 
    /**
-    * @param index the index to set
+    * @param index
+    *           the index to set
     */
    public void setIndex(int index) {
       this.index = index;

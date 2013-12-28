@@ -46,11 +46,11 @@ public class Riddle {
       this.colours = colours;
       this.width = width;
       this.height = height;
-      this.rows = new ArrayList<Row>();
+      this.rows = new ArrayList<Row>(rows.size());
       for (Row row : rows) {
          this.rows.add(new Row(row));
       }
-      this.columns = new ArrayList<Column>();
+      this.columns = new ArrayList<Column>(columns.size());
       for (Column column : columns) {
          this.columns.add(new Column(column));
       }

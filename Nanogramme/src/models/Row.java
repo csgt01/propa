@@ -3,19 +3,38 @@ package models;
 import java.util.ArrayList;
 
 /**
- * Stellt eine Reihe in einem Rätsel da
+ * Stellt eine Reihe in einem Rätsel da. Die Klasse enthält auch eine Liste
+ * von {@link Block}, die in der Reihe vorkommen.
  * 
  * @author csgt
  * 
  */
 public class Row {
+   
+   /**
+    * Der Index der Spalte.
+    */
+   private int index;
 
+   /**
+    * Liste der Blöcke.
+    */
    private ArrayList<Block> blocks;
 
+   /**
+    * Fertig gesetzt?
+    */
    private boolean isGone = false;
+
+   /**
+    * Anzahl der gesetzten Felder.
+    */
    private int entriesSet = 0;
+
+   /**
+    * Maximale Anzahl der gesetzten Felder (Summe von howMany der Blöcke).
+    */
    private int maxEntries = 0;
-   private int index;
 
    /**
     * @return the maxEntries
@@ -140,14 +159,6 @@ public class Row {
       }
 
       return false;
-   }
-
-   protected int getBlockCount() {
-      int blockCount = 0;
-      for (Block block : blocks) {
-         blockCount += block.getHowMany();
-      }
-      return blockCount;
    }
 
    /**

@@ -11,7 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -97,7 +96,7 @@ public class RiddleService {
 			}
 			nono += (str + "\n");
 		}
-		System.out.println("Nono:\n" + nono);
+//		System.out.println("Nono:\n" + nono);
 		riddle.setNono(nono);
 		// System.out.println("Riddle:" + riddle);
 		showMatrix();
@@ -110,21 +109,21 @@ public class RiddleService {
 	 * @throws Exception
 	 */
 	private void showMatrix() {
-		String methodName = "showMatrix()";
-		System.out.println(methodName);
-		long startTime = new Date().getTime();
-		for (int i = 0; i < riddle.getHeight(); i++) {
-			String out = "";
-			for (int j = 0; j < riddle.getWidth(); j++) {
-				out += matrix[i][j];
-				out += "  ";
-			}
-			System.out.println(out);
-		}
-		System.out.println();
-		// showBlockGoneTrue(matrix);
-		System.out.println("Time for " + methodName + ": "
-				+ (new Date().getTime() - startTime) + " ms");
+//		String methodName = "showMatrix()";
+//		System.out.println(methodName);
+//		long startTime = new Date().getTime();
+//		for (int i = 0; i < riddle.getHeight(); i++) {
+//			String out = "";
+//			for (int j = 0; j < riddle.getWidth(); j++) {
+//				out += matrix[i][j];
+//				out += "  ";
+//			}
+//			System.out.println(out);
+//		}
+//		System.out.println();
+//		// showBlockGoneTrue(matrix);
+//		System.out.println("Time for " + methodName + ": "
+//				+ (new Date().getTime() - startTime) + " ms");
 	}
 	
 	int rowInt = 0;
@@ -204,9 +203,9 @@ public class RiddleService {
 						String block = blocks[i];
 						block = block.trim();
 						if (!block.equals("0") && !block.equals("")) {
-							System.out.println(block);
-							System.out.println(riddle.getColourByName(block
-									.substring(block.length() - 1)));
+//							System.out.println(block);
+//							System.out.println(riddle.getColourByName(block
+//									.substring(block.length() - 1)));
 							cb.setColour(riddle.getColourByName(block
 									.substring(block.length() - 1)));
 							cb.setHowMany(Integer.valueOf(block.substring(0,
@@ -215,15 +214,15 @@ public class RiddleService {
 						}
 					}
 					column.setIndex(columnInt);
-					System.out.println(columnInt);
+//					System.out.println(columnInt);
 					columnInt++;
 					riddle.addColumn(column);
 				}
 				break;
 			case 4:
-				System.out.println(contentRow);
-				System.out.println(contentColumn);
-				System.out.println(str + "\n");
+//				System.out.println(contentRow);
+//				System.out.println(contentColumn);
+//				System.out.println(str + "\n");
 				for (int i = 0; i < str.length(); i++) {
 					if (str.charAt(i) != ' ') {
 						matrix[contentRow][contentColumn] = str.charAt(i);
@@ -263,7 +262,7 @@ public class RiddleService {
 		BufferedWriter writer = null;
 		boolean saved = false;
 		 File file = listener.getSaveFile();
-		System.out.println(riddle);
+//		System.out.println(riddle);
 		try {
 			writer = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(file + ".nono"), "UTF-8"));
@@ -282,12 +281,12 @@ public class RiddleService {
 				for (int column = 0; column < riddle.getWidth(); column++) {
 					rowString += matrix[row][column];
 				}
-				System.out.println(rowString + "\n");
+//				System.out.println(rowString + "\n");
 				writer.write(rowString + System.getProperty("line.separator"));
 			}
 			saved = true;
 		} catch (IOException e) {
-			System.out.println(e);
+//			System.out.println(e);
 		} finally {
 			try {
 				if (writer != null)
@@ -316,12 +315,12 @@ public class RiddleService {
 		LinkedHashSet<Color> colors = new LinkedHashSet<Color>();
 		for (int i = 0; i < image.getHeight(); i++) {
 			for (int j = 0; j < image.getWidth(); j++) {
-				System.out.println(j + "/" + i + ":"
-						+ new Color(image.getRGB(j, i)));
+//				System.out.println(j + "/" + i + ":"
+//						+ new Color(image.getRGB(j, i)));
 				colors.add(new Color(image.getRGB(j, i)));
 			}
 		}
-		System.out.println(colors.size());
+//		System.out.println(colors.size());
 
 		HashMap<Integer, String> mapping = new HashMap<Integer, String>();
 		mapping.put(0, "A");
@@ -339,7 +338,7 @@ public class RiddleService {
 		mapping.put(12, "M");
 		mapping.put(13, "N");
 		mapping.put(14, "O");
-		System.out.println(colors.size());
+//		System.out.println(colors.size());
 		LinkedList<Colour> col = new LinkedList<Colour>();
 		int co = 0;
 		// awt.Color zu models.Colour mappen
@@ -453,7 +452,7 @@ public class RiddleService {
 		}
 		riddle.setColumns(columns);
 		riddle.getColours().remove(backgroundCol);
-		System.out.println("riddle in create in rs:" + riddle);
+//		System.out.println("riddle in create in rs:" + riddle);
 		this.riddle = riddle;
 		return riddle;
 	}
@@ -465,7 +464,7 @@ public class RiddleService {
 	 * @return neue nono.
 	 */
 	private String createNono(Riddle riddle2) {
-		System.out.println("CREATENONO:" + riddle2);
+//		System.out.println("CREATENONO:" + riddle2);
 		String nono = "";
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format("width %1d", riddle.getWidth()));
@@ -518,7 +517,7 @@ public class RiddleService {
 			}
 		}
 		nono = sb.toString();
-		System.out.println("nono:" + nono);
+//		System.out.println("nono:" + nono);
 		riddle.setNono(nono);
 		return nono;
 	}
