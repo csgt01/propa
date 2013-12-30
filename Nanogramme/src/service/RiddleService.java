@@ -222,13 +222,24 @@ public class RiddleService {
 				}
 				break;
 			case 4:
-//				System.out.println(contentRow);
-//				System.out.println(contentColumn);
-//				System.out.println(str + "\n");
+				System.out.println(contentRow);
+				System.out.println(contentColumn);
+				System.out.println(str + "\n");
 				for (int i = 0; i < str.length(); i++) {
 					if (str.charAt(i) != ' ') {
+					   System.out.println(str.charAt(i));
 						matrix[contentRow][contentColumn] = str.charAt(i);
 						contentColumn++;
+						if (str.charAt(i) != '*') {
+						   Column column = riddle.getColumns().get(contentColumn);
+						   Row row = riddle.getRows().get(contentRow);
+                     try {
+                        column.setEntriesSet(column.getEntriesSet());
+                        row.setEntriesSet(row.getEntriesSet());
+                     } catch (Exception e) {
+                        e.printStackTrace();
+                     }
+						}
 					}
 				}
 				if (str.length() > 0 && !str.contains("content")) {
