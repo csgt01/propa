@@ -138,9 +138,8 @@ public class Column {
     *           index
     * 
     * @return true wenn alle Felder gesetzt sind.
-    * @throws Exception
     */
-   public boolean setEntriesSet(int row) throws Exception {
+   public boolean setEntriesSet(int row) {
       entriesSet++;
       if (blocks != null) {
          if (blocks.size() == 1) {
@@ -148,7 +147,7 @@ public class Column {
          } else if (blocks.size() > 1) {
             ArrayList<Integer> indeces = new ArrayList<Integer>();
             for (Block block : blocks) {
-               if (row >= block.getMinStartIndexNew() && row <= block.getMaxEndIndexNew()) {
+               if (row >= block.getMinIndex() && row <= block.getMaxIndex()) {
                   indeces.add(blocks.indexOf(block));
                }
             }

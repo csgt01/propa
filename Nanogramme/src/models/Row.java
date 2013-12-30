@@ -138,9 +138,8 @@ public class Row {
     *           Index wo gesetzt wurde.
     * 
     * @return true wenn alle Felder gesetzt sind.
-    * @throws Exception
     */
-   public boolean setEntriesSet(int column) throws Exception {
+   public boolean setEntriesSet(int column) {
       entriesSet++;
       if (entriesSet == maxEntries) {
          setGone(true);
@@ -149,7 +148,7 @@ public class Row {
       ArrayList<Integer> indeces = new ArrayList<Integer>();
       if (blocks != null && blocks.size() > 0) {
          for (Block block : blocks) {
-            if (column >= block.getMinStartIndexNew() && column <= block.getMaxEndIndexNew()) {
+            if (column >= block.getMinIndex() && column <= block.getMaxIndex()) {
                indeces.add(blocks.indexOf(block));
             }
          }
@@ -157,7 +156,6 @@ public class Row {
             blocks.get(indeces.get(0)).increaseEntriesSet(column);
          }
       }
-
       return false;
    }
 

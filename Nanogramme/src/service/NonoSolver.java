@@ -246,11 +246,9 @@ public class NonoSolver implements INonogramSolver {
                if (stacks == null || stacks.size() == 0) {
                   solveState = SolveStateEnum.SOLVED;
                   run1 = false;
-                  if (solutionFromTryingOk()) {
-                     // TODO: testen ob Möglichkeit ok!
-                     solutionsFromGuising.add(matrix);
-                     // andere Möglichkeiten beim Raten testen!
-                  }
+                  // TODO: testen ob Möglichkeit ok!
+                  solutionsFromGuising.add(matrix);
+                  // andere Möglichkeiten beim Raten testen!
                } else {
                   run1 = false;
                   // TODO: testen ob Möglichkeit ok!
@@ -267,234 +265,6 @@ public class NonoSolver implements INonogramSolver {
          // showBlockGoneTrue();
       }
       return solveState;
-   }
-
-   /**
-    * Prüft für jeden Block in dieser Reihe, ob es einen Block in der jeweiligen
-    * Spalte gibt, der sich mit diesem überschneidet. Dabei wird jeder Block in
-    * jeder Splate zwischen minStartIndexNew und maxEndIndexNew betrachtet. Wenn
-    * es keinen Block gibt, kann unter Vorraussetzungen minStartIndexNew oder
-    * maxEndIndexNEw geändert werden.
-    * 
-    * @param row
-    *           Reihe.
-    * @throws Exception
-    *            in Block
-    */
-   private void checkBlocksIfIndexIsOk(Row row) throws Exception {
-      if (row.isGone()) {
-         return;
-      }
-      int rowInt = row.getIndex();
-      int size = row.getBlocks().size();
-      // jeden Block durchgehen
-      for (int blockInt = 0; blockInt < size; blockInt++) {
-         Block block = row.getBlocks().get(blockInt);
-         if (!block.isGone()) {
-            // für jede Column zwischen min und max prüfen
-            for (int columnInt = block.getMinStartIndexNew(); columnInt <= block.getMaxEndIndexNew(); columnInt++) {
-               Column column = getColumns().get(columnInt);
-               int index = 0;
-               int size2 = column.getBlocks().size();
-               boolean isPresent = false;
-               // Wenn es einen Block in der Column gibt, der sich mit dieser
-               // Stelle überschneidet abbrechen.
-               while (index < size2 && !isPresent) {
-                  Block columnBlock = column.getBlocks().get(index);
-                  if (block.getColorChar() == columnBlock.getColorChar()) {
-                     if (rowInt >= columnBlock.getMinStartIndexNew() && rowInt <= columnBlock.getMaxEndIndexNew()) {
-                        isPresent = true;
-                     }
-                  }
-                  index++;
-               }
-               // wenn es keine Überschneidungen gibt prüfen, ob sich Bereiche
-               // am Anfang oder am Ende ergeben, die kleiner sind als howMany
-               if (!isPresent) {
-                  if ((columnInt - block.getMinStartIndexNew() + 1) < block.getHowMany()) {
-                     block.setMinStartIndexNew((columnInt + 1));
-                  }
-                  if ((block.getMaxEndIndexNew() - columnInt) < block.getHowMany()) {
-                     block.setMaxEndIndexNew((columnInt - 1));
-                  }
-               }
-            }
-         }
-      }
-   }
-
-   /**
-    * Prüft für jeden Block in dieser Spalte, ob es einen Block in der
-    * jeweiligen Reihe gibt, der sich mit diesem überschneidet. Dabei wird jeder
-    * Block in jeder Splate zwischen minStartIndexNew und maxEndIndexNew
-    * betrachtet. Wenn es keinen Block gibt, kann unter Vorraussetzungen
-    * minStartIndexNew oder maxEndIndexNEw geändert werden.
-    * 
-    * @param column
-    *           Spalte
-    * @throws Exception
-    *            in Block
-    */
-   private void checkBlocksIfIndexIsOk(Column column) throws Exception {
-      if (column.isGone()) {
-         return;
-      }
-      int columnInt = column.getIndex();
-      int size = column.getBlocks().size();
-      // jeden Block durchgehen
-      for (int blockInt = 0; blockInt < size; blockInt++) {
-         Block block = column.getBlocks().get(blockInt);
-         if (!block.isGone()) {
-            // für jede Row zwischen min und max prüfen
-            for (int rowInt = block.getMinStartIndexNew(); rowInt <= block.getMaxEndIndexNew(); rowInt++) {
-               Row row = getRows().get(rowInt);
-               int index = 0;
-               int size2 = row.getBlocks().size();
-               boolean isPresent = false;
-               // gibt es einen passenden Block
-               while (index < size2 && !isPresent) {
-                  Block rowBlock = row.getBlocks().get(index);
-                  if (block.getColorChar() == rowBlock.getColorChar()) {
-                     if (columnInt >= rowBlock.getMinStartIndexNew() && columnInt <= rowBlock.getMaxEndIndexNew()) {
-                        isPresent = true;
-                     }
-                  }
-                  index++;
-               }
-               // wenn es keine Überschneidungen gibt prüfen, ob sich Bereiche
-               // am Anfang oder am Ende ergeben, die kleiner sind als howMany
-               if (!isPresent) {
-                  if ((rowInt - block.getMinStartIndexNew() + 1) < block.getHowMany()) {
-                     block.setMinStartIndexNew((rowInt + 1));
-                  }
-                  if ((block.getMaxEndIndexNew() - rowInt) < block.getHowMany()) {
-                     block.setMaxEndIndexNew((rowInt - 1));
-                  }
-               }
-            }
-         }
-      }
-   }
-
-   /**
-    * TODO
-    * 
-    * @return
-    */
-   private boolean solutionFromTryingOk() {
-      return true;
-   }
-
-   // /**
-   // * Prüft ob die Matrix korrekt ist.
-   // *
-   // * @param checkMatrix
-   // * @param rowIn
-   // * @return true, wenn die Reihe korrekt ist
-   // */
-   // private boolean checkStateOfWrittenMatrixByRow(char[][] checkMatrix, int
-   // rowIn) {
-   // // String methodName = "checkStateOfWrittenMatrix()";
-   // // // System.out.println(methodName);
-   // // Date startTime = new Date();
-   // StringBuilder out = new StringBuilder("");
-   // showRow(out, rowIn);
-   // // System.out.println(rowIn);
-   // // System.out.println(out);
-   // int rowInt = rowIn;
-   // char empty = '-';
-   // Row row = getRows().get(rowInt);
-   // ArrayList<Block> blocks = row.getBlocks();
-   // if (blocks != null && blocks.size() > 0) {
-   // int columnInt = 0;
-   // int blockInt = 0;
-   // while (columnInt < riddle.getWidth()) {
-   // if (checkMatrix[rowInt][columnInt] == empty) {
-   // columnInt++;
-   // } else {
-   // // Ist eine Farbe, aber keine Blöcke mehr!
-   // if (blockInt >= blocks.size()) {
-   // System.out.println("false");
-   // return false;
-   // } else {
-   // // Block prüfen
-   // Block block = blocks.get(blockInt);
-   // for (int i = 0; i < block.getHowMany(); i++) {
-   // if (!(checkMatrix[rowInt][columnInt] == block.getColorChar())) {
-   // System.out.println("false");
-   // return false;
-   // }
-   // }
-   // columnInt += block.getHowMany();
-   // // Nächster Block ist gleiche Farbe, also muss -
-   // // sein!
-   // if ((blockInt + 1) < blocks.size() &&
-   // block.getColourString().equals(blocks.get(blockInt + 1).getColourString())
-   // && !(checkMatrix[rowInt][columnInt] == empty)) {
-   // System.out.println("false");
-   // return false;
-   // }
-   // blockInt++;
-   // }
-   // }
-   // }
-   // } else {
-   // // nur - !!!
-   // for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-   // if (!(checkMatrix[rowInt][columnInt] == empty)) {
-   // // // System.out.println("false4: row: " + rowInt
-   // // + " column: " + columnInt);
-   // System.out.println("false");
-   // return false;
-   // }
-   // }
-   // }
-   // return true;
-   // }
-
-   /**
-    * Überprüft, ob es in der Reihe und der Spalte einen Block mit der Farbe
-    * gibt.
-    * 
-    * @param rowInt
-    *           Reihenindex
-    * @param columnInt
-    *           Spaltenindex
-    * @param indexOfColor
-    *           Farbindex aus riddle.getColours()
-    * @return true, falls in Reihe und Spalte die Farbe in einem Block vorkommt.
-    */
-   private boolean isColorInThisRowAndColumn(int rowInt, int columnInt, int indexOfColor) {
-      Row row = getRows().get(rowInt);
-      boolean isPresent = false;
-      int index = 0;
-      int size = row.getBlocks().size();
-      while (index < size && !isPresent) {
-         Block block = row.getBlocks().get(index);
-         if (block.getColorChar() == riddle.getColours().get(indexOfColor).getName()) {
-            if (columnInt >= block.getMinStartIndexNew() && columnInt <= block.getMaxEndIndexNew()) {
-               isPresent = true;
-            }
-         }
-         index++;
-      }
-      if (!isPresent) {
-         return false;
-      }
-      Column column = getColumns().get(columnInt);
-      index = 0;
-      size = column.getBlocks().size();
-      isPresent = false;
-      while (index < size && !isPresent) {
-         Block block = column.getBlocks().get(index);
-         if (block.getColorChar() == riddle.getColours().get(indexOfColor).getName()) {
-            if (rowInt >= block.getMinStartIndexNew() && rowInt <= block.getMaxEndIndexNew()) {
-               isPresent = true;
-            }
-         }
-         index++;
-      }
-      return isPresent;
    }
 
    /**
@@ -571,10 +341,10 @@ public class NonoSolver implements INonogramSolver {
     * Überprüft nun auch, ob es die Farbe, die geraten werden soll, in der Reihe
     * und Spalte gibt.
     * 
-    * @throws Exception
-    *            kann nicht passieren.
+    * @throws DataCollisionException
+    * 
     */
-   private void setFirstStarToSomething() throws Exception {
+   private void setFirstStarToSomething() throws DataCollisionException {
       // showMatrix();
       for (int row = 0; row < riddle.getHeight(); row++) {
          for (int column = 0; column < riddle.getWidth(); column++) {
@@ -604,305 +374,13 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Überprüft, ob ein "*" nur zu einem Block gehört. Falls dies der Fall ist,
-    * wird überprüft, ob row.getMaxEntries() - row.getEntriesSet() - starCount)
-    * == 0 ist. Dies bedeutet, dass nur noch ein Farbfeld zu setzen ist und es
-    * mit der Farbe des Blocks gesetzt werden kann.
-    * 
-    * @param row
-    * @throws Exception
-    */
-   private void checkStarBelongingToBlock(Row row) throws Exception {
-      ArrayList<Block> blocks = row.getBlocks();
-      if (blocks == null || blocks.size() == 0) {
-         return;
-      }
-      int rowInt = row.getIndex();
-      for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-         if (matrix[rowInt][columnInt] == '*') {
-            LinkedList<Integer> blockInts = new LinkedList<Integer>();
-            for (int index = 0; index < blocks.size(); index++) {
-               Block block = blocks.get(index);
-               if (columnInt >= block.getMinStartIndexNew() && columnInt <= block.getMaxEndIndexNew()) {
-                  blockInts.add(blocks.indexOf(block));
-               }
-            }
-            if (blockInts.size() == 1) {
-               int starCount = 0;
-               for (int i = 0; i < riddle.getWidth(); i++) {
-                  if (matrix[rowInt][i] == '*') {
-                     starCount++;
-                  }
-               }
-               if ((row.getMaxEntries() - row.getEntriesSet() - starCount) == 0) {
-                  fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1, blocks.get(blockInts.get(0)).getColorChar());
-               }
-            } else if (blockInts.size() == 0) {
-               // // System.out.println("EMPTYEMPTYEMPTY");
-               fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1, '-');
-            } else if (blockInts.size() > 1) {
-               // Wenn es keinen Block in der Spalte gibt mit derselben
-               // Farbe und
-               // rowInt >= block2.getMinStartIndexNew() && rowInt <=
-               // block2.getMaxEndIndexNew() dann mit leer füllen
-               boolean bo = true;
-               for (Integer i : blockInts) {
-                  Block block = blocks.get(i);
-                  ArrayList<Block> blocks2 = getColumns().get(columnInt).getBlocks();
-                  int size = blocks2.size();
-                  for (int index = 0; index < size; index++) {
-                     Block block2 = blocks2.get(index);
-                     if (((block.getColorChar() == block2.getColorChar()) && rowInt >= block2.getMinStartIndexNew() && rowInt <= block2.getMaxEndIndexNew())) {
-                        bo = false;
-                     }
-                  }
-               }
-               if (bo) {
-                  fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1, '-');
-               }
-            }
-         }
-      }
-   }
-
-   /**
-    * Prüft, ob eine gesetzte Farbe zu einem Block gehört. Wenn ja wird der
-    * Index in indeces von Block geschrieben und die maximale und minimale
-    * Ausdehnung geändert.
-    * 
-    * @param row
-    * @throws Exception
-    */
-   private void checkColorBelongingToBlock(Row row) throws Exception {
-      ArrayList<Block> blocks = row.getBlocks();
-      if (blocks == null || blocks.size() == 0) {
-         return;
-      }
-      int rowInt = row.getIndex();
-      int width = riddle.getWidth();
-      for (int columnInt = 0; columnInt < width; columnInt++) {
-         char c = matrix[rowInt][columnInt];
-         // color
-         if (c != '*' && c != '-') {
-            LinkedList<Integer> blockInts = new LinkedList<Integer>();
-            for (int index = 0; index < blocks.size(); index++) {
-               Block block = blocks.get(index);
-               if (columnInt >= block.getMinStartIndexNew() && columnInt <= block.getMaxEndIndexNew() && c == block.getColorChar()) {
-                  blockInts.add(blocks.indexOf(block));
-               }
-            }
-            // "*" gehört nur zu einem Block
-            if (blockInts.size() == 1) {
-               Block block = blocks.get(blockInts.get(0));
-               int min = columnInt - block.getHowMany() + 1;
-               if (min < 0) {
-                  min = 0;
-               }
-               int max = columnInt + block.getHowMany() - 1;
-               if (max >= width) {
-                  max = width - 1;
-               }
-               block.setMaxEndIndexNew(max);
-               block.setMinStartIndexNew(min);
-            } else if (blockInts.size() == 0) {
-               throw new NotSolvableException("Farbe gehört zu keinem Block:" + row.getIndex() + "/" + columnInt + ":" + c);
-            }
-         }
-      }
-   }
-
-   /**
-    * Prüft, ob eine gesetzte Farbe zu einem Block gehört. Wenn ja wird der
-    * Index in indeces von Block geschrieben und die maximale und minimale
-    * Ausdehnung geändert.
-    * 
-    * @param column
-    * @throws Exception
-    */
-   private void checkColorBelongingToBlock(Column column) throws Exception {
-      ArrayList<Block> blocks = column.getBlocks();
-      if (blocks == null || blocks.size() == 0) {
-         return;
-      }
-      int columnInt = column.getIndex();
-      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-         char c = matrix[rowInt][columnInt];
-         // color
-         if (c != '*' && c != '-') {
-            LinkedList<Integer> blockInts = new LinkedList<Integer>();
-            for (int index = 0; index < blocks.size(); index++) {
-               Block block = blocks.get(index);
-               if (rowInt >= block.getMinStartIndexNew() && rowInt <= block.getMaxEndIndexNew() && c == block.getColorChar()) {
-                  blockInts.add(blocks.indexOf(block));
-               }
-            }
-            if (blockInts.size() == 1) {
-               Block block = blocks.get(blockInts.get(0));
-               int min = rowInt - block.getHowMany() + 1;
-               if (min < 0) {
-                  min = 0;
-               }
-               int max = rowInt + block.getHowMany() - 1;
-               if (max >= riddle.getHeight()) {
-                  max = riddle.getHeight() - 1;
-               }
-               block.setMaxEndIndexNew(max);
-               block.setMinStartIndexNew(min);
-            } else if (blockInts.size() == 0) {
-               throw new NotSolvableException("Farbe gehört zu keinem Block:" + rowInt + "/" + column.getIndex() + ":" + c);
-            }
-         }
-      }
-   }
-
-   /**
-    * Überprüft, ob ein "*" nur zu einem Block gehört. Falls dies der Fall ist,
-    * wird überprüft, ob row.getMaxEntries() - row.getEntriesSet() - starCount)
-    * == 0 ist. Dies bedeutet, dass nur noch ein Farbfeld zu setzen ist und es
-    * mit der Farbe des Blocks gesetzt werden kann.
-    * 
-    * @param column
-    * @throws Exception
-    */
-   private void checkStarBelongingToBlock(Column column) throws Exception {
-      ArrayList<Block> blocks = column.getBlocks();
-      if (blocks == null || blocks.size() == 0) {
-         return;
-      }
-      int columnInt = column.getIndex();
-      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-         if (matrix[rowInt][columnInt] == '*') {
-            LinkedList<Integer> blockInts = new LinkedList<Integer>();
-            for (int index = 0; index < blocks.size(); index++) {
-               Block block = blocks.get(index);
-               if (rowInt >= block.getMinStartIndexNew() && rowInt <= block.getMaxEndIndexNew()) {
-                  blockInts.add(blocks.indexOf(block));
-               }
-            }
-            if (blockInts.size() == 1) {
-               int starCount = 0;
-               for (int i = 0; i < riddle.getHeight(); i++) {
-                  if (matrix[i][columnInt] == '*') {
-                     starCount++;
-                  }
-               }
-               if ((column.getMaxEntries() - column.getEntriesSet() - starCount) == 0) {
-                  fillAreaInColumnWithChar(columnInt, rowInt, rowInt + 1, blocks.get(blockInts.get(0)).getColourString().charAt(0));
-               }
-            } else if (blockInts.size() == 0) {
-               fillAreaInColumnWithChar(columnInt, rowInt, rowInt + 1, '-');
-            } else if (blockInts.size() > 1) {
-               // Wenn es keinen Block in der Reihe gibt mit derselben
-               // Farbe und
-               // columnInt >= block2.getMinStartIndexNew() && columnInt <=
-               // block2.getMaxEndIndexNew() dann mit leer füllen
-               boolean bo = true;
-               for (Integer i : blockInts) {
-                  Block block = blocks.get(i);
-                  ArrayList<Block> blocks2 = getRows().get(rowInt).getBlocks();
-                  for (int index = 0; index < blocks2.size(); index++) {
-                     Block block2 = blocks2.get(index);
-                     if (((block.getColorChar() == block2.getColorChar()) && columnInt >= block2.getMinStartIndexNew() && columnInt <= block2.getMaxEndIndexNew())) {
-                        bo = false;
-                     }
-                  }
-               }
-               if (bo) {
-                  fillAreaInColumnWithChar(columnInt, rowInt, rowInt + 1, '-');
-               }
-            }
-         }
-      }
-   }
-
-   /**
-    * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
-    * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. Wird in
-    * {@link #checkByBlock()} aufgerufen.
-    * 
-    * @param row
-    * @throws Exception
-    */
-   private void checkEmptyBelongingToBlock(Row row) throws Exception {
-      ArrayList<Block> blocks = row.getBlocks();
-      if (blocks == null || blocks.size() == 0) {
-         return;
-      }
-      int rowInt = row.getIndex();
-      for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-         if (matrix[rowInt][columnInt] == '-') {
-            for (int index = 0; index < blocks.size(); index++) {
-               Block block = blocks.get(index);
-               if (!block.isGone() && columnInt == block.getMinStartIndexNew()) {
-                  block.setMinStartIndexNew(block.getMinStartIndexNew() + 1);
-               } else if (!block.isGone() && columnInt == block.getMaxEndIndexNew()) {
-                  block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
-                  // Leeres Feld innerhalb des möglichen Blocks.
-               } else if (block.getMinStartIndexNew() < columnInt && block.getMaxEndIndexNew() > columnInt) {
-                  checkSizesBeforeAndAfterEmptyInBlockRange(block, columnInt);
-               }
-            }
-         }
-      }
-   }
-
-   /**
-    * Prüft, ob nach bzw. vor dem leeren Feld noch genug Platz für den Block
-    * ist. falls nicht, wird minStartIndexNey bzw maxEndIndexNew angepasst. Wird
-    * in {@link #checkEmptyBelongingToBlock(Row)} und
-    * {@link #checkEmptyBelongingToBlock(Column)} aufgerufen.
-    * 
-    * @param block
-    *           .
-    * @param columnInt
-    *           .
-    * @throws Exception
-    */
-   private void checkSizesBeforeAndAfterEmptyInBlockRange(Block block, int columnInt) throws Exception {
-      if ((columnInt - block.getMinStartIndexNew()) < block.getHowMany()) {
-         block.setMinStartIndexNew(columnInt + 1);
-      } else if (block.getMaxEndIndexNew() - columnInt < block.getHowMany()) {
-         block.setMaxEndIndexNew(columnInt - 1);
-      }
-   }
-
-   /**
-    * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
-    * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. Wird in
-    * {@link #checkByBlock()} aufgerufen.
-    * 
-    * @param column
-    * @throws Exception
-    */
-   private void checkEmptyBelongingToBlock(Column column) throws Exception {
-      ArrayList<Block> blocks = column.getBlocks();
-      if (blocks == null || blocks.size() == 0) {
-         return;
-      }
-      int columnInt = column.getIndex();
-      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-         if (matrix[rowInt][columnInt] == '-') {
-            for (int index = 0; index < blocks.size(); index++) {
-               Block block = blocks.get(index);
-               if (!block.isGone() && rowInt == block.getMinStartIndexNew()) {
-                  block.setMinStartIndexNew(block.getMinStartIndexNew() + 1);
-               } else if (!block.isGone() && rowInt == block.getMaxEndIndexNew()) {
-                  block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
-               } else if (block.getMinStartIndexNew() < rowInt && block.getMaxEndIndexNew() > rowInt) {
-                  checkSizesBeforeAndAfterEmptyInBlockRange(block, rowInt);
-               }
-            }
-         }
-      }
-   }
-
-   /**
     * Ruft mehrere Methoden auf, die versuchen das Rätsel auf Blockebene zu
     * lösen.
     * 
-    * @throws Exception
+    * @throws NotSolvableException
+    * @throws DataCollisionException
     */
-   private void checkByBlock() throws Exception {
+   private void checkByBlock() throws NotSolvableException, DataCollisionException {
       for (int index = 0; index < getRows().size(); index++) {
          Row row = getRows().get(index);
          updateMinAndMaxIndexOfBlocks(row);
@@ -916,9 +394,7 @@ public class NonoSolver implements INonogramSolver {
          fillWithEmptyAfterGone(row);
          fillIfMinMaxEqualToHowMany(row);
          fillEntriesFromBlockIntoMatrix(row);
-
          checkBlocksIfIndexIsOk(row);
-
       }
       for (int index = 0; index < getColumns().size(); index++) {
          Column column = getColumns().get(index);
@@ -938,24 +414,468 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Schreibt die bereits gesetzten Felder des Blocks in die Matrix.
+    * Prüft für jeden Block in dieser Reihe, ob es einen Block in der jeweiligen
+    * Spalte gibt, der sich mit diesem überschneidet. Dabei wird jeder Block in
+    * jeder Splate zwischen minIndex und maxIndex betrachtet. Wenn es keinen
+    * Block gibt, kann unter Vorraussetzungen minIndex oder maxEndIndexNEw
+    * geändert werden.
     * 
     * @param row
-    * @throws Exception
+    *           Reihe.
     */
-   private void fillEntriesFromBlockIntoMatrix(Row row) throws Exception {
+   private void checkBlocksIfIndexIsOk(Row row) {
+      if (row.isGone()) {
+         return;
+      }
+      int rowInt = row.getIndex();
+      int size = row.getBlocks().size();
+      // jeden Block durchgehen
+      for (int blockInt = 0; blockInt < size; blockInt++) {
+         Block block = row.getBlocks().get(blockInt);
+         if (!block.isGone()) {
+            // für jede Column zwischen min und max prüfen
+            for (int columnInt = block.getMinIndex(); columnInt <= block.getMaxIndex(); columnInt++) {
+               Column column = getColumns().get(columnInt);
+               int index = 0;
+               int size2 = column.getBlocks().size();
+               boolean isPresent = false;
+               // Wenn es einen Block in der Column gibt, der sich mit dieser
+               // Stelle überschneidet abbrechen.
+               while (index < size2 && !isPresent) {
+                  Block columnBlock = column.getBlocks().get(index);
+                  if (block.getColorChar() == columnBlock.getColorChar()) {
+                     if (rowInt >= columnBlock.getMinIndex() && rowInt <= columnBlock.getMaxIndex()) {
+                        isPresent = true;
+                     }
+                  }
+                  index++;
+               }
+               // wenn es keine Überschneidungen gibt prüfen, ob sich Bereiche
+               // am Anfang oder am Ende ergeben, die kleiner sind als howMany
+               if (!isPresent) {
+                  if ((columnInt - block.getMinIndex() + 1) < block.getHowMany()) {
+                     block.setMinIndex((columnInt + 1));
+                  }
+                  if ((block.getMaxIndex() - columnInt) < block.getHowMany()) {
+                     block.setMaxIndex((columnInt - 1));
+                  }
+               }
+            }
+         }
+      }
+   }
 
+   /**
+    * Prüft für jeden Block in dieser Spalte, ob es einen Block in der
+    * jeweiligen Reihe gibt, der sich mit diesem überschneidet. Dabei wird jeder
+    * Block in jeder Splate zwischen minIndex und maxIndex betrachtet. Wenn es
+    * keinen Block gibt, kann unter Vorraussetzungen minIndex oder
+    * maxEndIndexNEw geändert werden.
+    * 
+    * @param column
+    *           Spalte
+    * @throws DataCollisionException
+    *            in Block
+    */
+   private void checkBlocksIfIndexIsOk(Column column) {
+      if (column.isGone()) {
+         return;
+      }
+      int columnInt = column.getIndex();
+      int size = column.getBlocks().size();
+      // jeden Block durchgehen
+      for (int blockInt = 0; blockInt < size; blockInt++) {
+         Block block = column.getBlocks().get(blockInt);
+         if (!block.isGone()) {
+            // für jede Row zwischen min und max prüfen
+            for (int rowInt = block.getMinIndex(); rowInt <= block.getMaxIndex(); rowInt++) {
+               Row row = getRows().get(rowInt);
+               int index = 0;
+               int size2 = row.getBlocks().size();
+               boolean isPresent = false;
+               // gibt es einen passenden Block
+               while (index < size2 && !isPresent) {
+                  Block rowBlock = row.getBlocks().get(index);
+                  if (block.getColorChar() == rowBlock.getColorChar()) {
+                     if (columnInt >= rowBlock.getMinIndex() && columnInt <= rowBlock.getMaxIndex()) {
+                        isPresent = true;
+                     }
+                  }
+                  index++;
+               }
+               // wenn es keine Überschneidungen gibt prüfen, ob sich Bereiche
+               // am Anfang oder am Ende ergeben, die kleiner sind als howMany
+               if (!isPresent) {
+                  if ((rowInt - block.getMinIndex() + 1) < block.getHowMany()) {
+                     block.setMinIndex((rowInt + 1));
+                  }
+                  if ((block.getMaxIndex() - rowInt) < block.getHowMany()) {
+                     block.setMaxIndex((rowInt - 1));
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Überprüft, ob es in der Reihe und der Spalte einen Block mit der Farbe
+    * gibt.
+    * 
+    * @param rowInt
+    *           Reihenindex
+    * @param columnInt
+    *           Spaltenindex
+    * @param indexOfColor
+    *           Farbindex aus riddle.getColours()
+    * @return true, falls in Reihe und Spalte die Farbe in einem Block vorkommt.
+    */
+   private boolean isColorInThisRowAndColumn(int rowInt, int columnInt, int indexOfColor) {
+      Row row = getRows().get(rowInt);
+      boolean isPresent = false;
+      int index = 0;
+      int size = row.getBlocks().size();
+      while (index < size && !isPresent) {
+         Block block = row.getBlocks().get(index);
+         if (block.getColorChar() == riddle.getColours().get(indexOfColor).getName()) {
+            if (columnInt >= block.getMinIndex() && columnInt <= block.getMaxIndex()) {
+               isPresent = true;
+            }
+         }
+         index++;
+      }
+      if (!isPresent) {
+         return false;
+      }
+      Column column = getColumns().get(columnInt);
+      index = 0;
+      size = column.getBlocks().size();
+      isPresent = false;
+      while (index < size && !isPresent) {
+         Block block = column.getBlocks().get(index);
+         if (block.getColorChar() == riddle.getColours().get(indexOfColor).getName()) {
+            if (rowInt >= block.getMinIndex() && rowInt <= block.getMaxIndex()) {
+               isPresent = true;
+            }
+         }
+         index++;
+      }
+      return isPresent;
+   }
+
+   /**
+    * Überprüft, ob ein "*" nur zu einem Block gehört. Falls dies der Fall ist,
+    * wird überprüft, ob row.getMaxEntries() - row.getEntriesSet() - starCount)
+    * == 0 ist. Dies bedeutet, dass nur noch ein Farbfeld zu setzen ist und es
+    * mit der Farbe des Blocks gesetzt werden kann.
+    * 
+    * @param row
+    * @throws DataCollisionException
+    */
+   private void checkStarBelongingToBlock(Row row) throws DataCollisionException {
       ArrayList<Block> blocks = row.getBlocks();
       if (blocks == null || blocks.size() == 0) {
          return;
       }
-      for (int index = 0; index < blocks.size(); index++) {
+      int rowInt = row.getIndex();
+      for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
+         if (matrix[rowInt][columnInt] == '*') {
+            LinkedList<Integer> blockInts = new LinkedList<Integer>();
+            for (int index = 0; index < blocks.size(); index++) {
+               Block block = blocks.get(index);
+               if (columnInt >= block.getMinIndex() && columnInt <= block.getMaxIndex()) {
+                  blockInts.add(blocks.indexOf(block));
+               }
+            }
+            int blockIntsSize = blockInts.size();
+            if (blockIntsSize == 1) {
+               int starCount = 0;
+               for (int i = 0; i < riddle.getWidth(); i++) {
+                  if (matrix[rowInt][i] == '*') {
+                     starCount++;
+                  }
+               }
+               if ((row.getMaxEntries() - row.getEntriesSet() - starCount) == 0) {
+                  fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1, blocks.get(blockInts.get(0)).getColorChar());
+               }
+            } else if (blockIntsSize == 0) {
+               // // System.out.println("EMPTYEMPTYEMPTY");
+               fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1, '-');
+            } else if (blockIntsSize > 1) {
+               // Wenn es keinen Block in der Spalte gibt mit derselben
+               // Farbe und
+               // rowInt >= block2.getMinStartIndexNew() && rowInt <=
+               // block2.getMaxEndIndexNew() dann mit leer füllen
+               boolean bo = true;
+               for (Integer i : blockInts) {
+                  Block block = blocks.get(i);
+                  ArrayList<Block> blocks2 = getColumns().get(columnInt).getBlocks();
+                  int size = blocks2.size();
+                  for (int index = 0; index < size; index++) {
+                     Block block2 = blocks2.get(index);
+                     if (((block.getColorChar() == block2.getColorChar()) && rowInt >= block2.getMinIndex() && rowInt <= block2.getMaxIndex())) {
+                        bo = false;
+                     }
+                  }
+               }
+               if (bo) {
+                  fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1, '-');
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Prüft, ob eine gesetzte Farbe zu einem Block gehört. Wenn ja wird der
+    * Index in indeces von Block geschrieben und die maximale und minimale
+    * Ausdehnung geändert.
+    * 
+    * @param row
+    * @throws NotSolvableException
+    */
+   private void checkColorBelongingToBlock(Row row) throws NotSolvableException {
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int rowInt = row.getIndex();
+      int width = riddle.getWidth();
+      for (int columnInt = 0; columnInt < width; columnInt++) {
+         char c = matrix[rowInt][columnInt];
+         // color
+         if (c != '*' && c != '-') {
+            LinkedList<Integer> blockInts = new LinkedList<Integer>();
+            for (int index = 0; index < blocks.size(); index++) {
+               Block block = blocks.get(index);
+               if (columnInt >= block.getMinIndex() && columnInt <= block.getMaxIndex() && c == block.getColorChar()) {
+                  blockInts.add(blocks.indexOf(block));
+               }
+            }
+            // "*" gehört nur zu einem Block
+            int blockIntsSize = blockInts.size();
+            if (blockIntsSize == 1) {
+               Block block = blocks.get(blockInts.get(0));
+               int min = columnInt - block.getHowMany() + 1;
+               if (min < 0) {
+                  min = 0;
+               }
+               int max = columnInt + block.getHowMany() - 1;
+               if (max >= width) {
+                  max = width - 1;
+               }
+               block.setMaxIndex(max);
+               block.setMinIndex(min);
+            } else if (blockIntsSize == 0) {
+               throw new NotSolvableException("Farbe gehört zu keinem Block:" + row.getIndex() + "/" + columnInt + ":" + c);
+            }
+         }
+      }
+   }
+
+   /**
+    * Prüft, ob eine gesetzte Farbe zu einem Block gehört. Wenn ja wird der
+    * Index in indeces von Block geschrieben und die maximale und minimale
+    * Ausdehnung geändert.
+    * 
+    * @param column
+    * @throws NotSolvableException
+    */
+   private void checkColorBelongingToBlock(Column column) throws NotSolvableException {
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int columnInt = column.getIndex();
+      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+         char c = matrix[rowInt][columnInt];
+         // color
+         if (c != '*' && c != '-') {
+            LinkedList<Integer> blockInts = new LinkedList<Integer>();
+            for (int index = 0; index < blocks.size(); index++) {
+               Block block = blocks.get(index);
+               if (rowInt >= block.getMinIndex() && rowInt <= block.getMaxIndex() && c == block.getColorChar()) {
+                  blockInts.add(blocks.indexOf(block));
+               }
+            }
+            int blockIntsSize = blockInts.size();
+            if (blockIntsSize == 1) {
+               Block block = blocks.get(blockInts.get(0));
+               int min = rowInt - block.getHowMany() + 1;
+               if (min < 0) {
+                  min = 0;
+               }
+               int max = rowInt + block.getHowMany() - 1;
+               if (max >= riddle.getHeight()) {
+                  max = riddle.getHeight() - 1;
+               }
+               block.setMaxIndex(max);
+               block.setMinIndex(min);
+            } else if (blockIntsSize == 0) {
+               throw new NotSolvableException("Farbe gehört zu keinem Block:" + rowInt + "/" + column.getIndex() + ":" + c);
+            }
+         }
+      }
+   }
+
+   /**
+    * Überprüft, ob ein "*" nur zu einem Block gehört. Falls dies der Fall ist,
+    * wird überprüft, ob row.getMaxEntries() - row.getEntriesSet() - starCount)
+    * == 0 ist. Dies bedeutet, dass nur noch ein Farbfeld zu setzen ist und es
+    * mit der Farbe des Blocks gesetzt werden kann.
+    * 
+    * @param column
+    * @throws DataCollisionException
+    */
+   private void checkStarBelongingToBlock(Column column) throws DataCollisionException {
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int columnInt = column.getIndex();
+      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+         if (matrix[rowInt][columnInt] == '*') {
+            LinkedList<Integer> blockInts = new LinkedList<Integer>();
+            for (int index = 0; index < blocks.size(); index++) {
+               Block block = blocks.get(index);
+               if (rowInt >= block.getMinIndex() && rowInt <= block.getMaxIndex()) {
+                  blockInts.add(blocks.indexOf(block));
+               }
+            }
+            int blockIntsSize = blockInts.size();
+            if (blockIntsSize == 1) {
+               int starCount = 0;
+               for (int i = 0; i < riddle.getHeight(); i++) {
+                  if (matrix[i][columnInt] == '*') {
+                     starCount++;
+                  }
+               }
+               if ((column.getMaxEntries() - column.getEntriesSet() - starCount) == 0) {
+                  fillAreaInColumnWithChar(columnInt, rowInt, rowInt + 1, blocks.get(blockInts.get(0)).getColorChar());
+               }
+            } else if (blockIntsSize == 0) {
+               fillAreaInColumnWithChar(columnInt, rowInt, rowInt + 1, '-');
+            } else if (blockIntsSize > 1) {
+               // Wenn es keinen Block in der Reihe gibt mit derselben
+               // Farbe und
+               // columnInt >= block2.getMinStartIndexNew() && columnInt <=
+               // block2.getMaxEndIndexNew() dann mit leer füllen
+               boolean bo = true;
+               for (Integer i : blockInts) {
+                  Block block = blocks.get(i);
+                  ArrayList<Block> blocks2 = getRows().get(rowInt).getBlocks();
+                  for (int index = 0; index < blocks2.size(); index++) {
+                     Block block2 = blocks2.get(index);
+                     if (((block.getColorChar() == block2.getColorChar()) && columnInt >= block2.getMinIndex() && columnInt <= block2.getMaxIndex())) {
+                        bo = false;
+                     }
+                  }
+               }
+               if (bo) {
+                  fillAreaInColumnWithChar(columnInt, rowInt, rowInt + 1, '-');
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
+    * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. Wird in
+    * {@link #checkByBlock()} aufgerufen.
+    * 
+    * @param row
+    */
+   private void checkEmptyBelongingToBlock(Row row) {
+      ArrayList<Block> blocks = row.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int rowInt = row.getIndex();
+      for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
+         if (matrix[rowInt][columnInt] == '-') {
+            for (int index = 0; index < blocks.size(); index++) {
+               Block block = blocks.get(index);
+               if (!block.isGone() && columnInt == block.getMinIndex()) {
+                  block.setMinIndex(block.getMinIndex() + 1);
+               } else if (!block.isGone() && columnInt == block.getMaxIndex()) {
+                  block.setMaxIndex(block.getMaxIndex() - 1);
+                  // Leeres Feld innerhalb des möglichen Blocks.
+               } else if (block.getMinIndex() < columnInt && block.getMaxIndex() > columnInt) {
+                  checkSizesBeforeAndAfterEmptyInBlockRange(block, columnInt);
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Prüft, ob nach bzw. vor dem leeren Feld noch genug Platz für den Block
+    * ist. falls nicht, wird minStartIndexNey bzw maxIndex angepasst. Wird in
+    * {@link #checkEmptyBelongingToBlock(Row)} und
+    * {@link #checkEmptyBelongingToBlock(Column)} aufgerufen.
+    * 
+    * @param block
+    *           .
+    * @param columnInt
+    *           .
+    */
+   private void checkSizesBeforeAndAfterEmptyInBlockRange(Block block, int columnInt) {
+      if ((columnInt - block.getMinIndex()) < block.getHowMany()) {
+         block.setMinIndex(columnInt + 1);
+      } else if (block.getMaxIndex() - columnInt < block.getHowMany()) {
+         block.setMaxIndex(columnInt - 1);
+      }
+   }
+
+   /**
+    * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
+    * dem MinStart oder MaxEnd ist, werden diese in/dekrementiert. Wird in
+    * {@link #checkByBlock()} aufgerufen.
+    * 
+    * @param column
+    */
+   private void checkEmptyBelongingToBlock(Column column) {
+      ArrayList<Block> blocks = column.getBlocks();
+      if (blocks == null || blocks.size() == 0) {
+         return;
+      }
+      int columnInt = column.getIndex();
+      for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
+         if (matrix[rowInt][columnInt] == '-') {
+            for (int index = 0; index < blocks.size(); index++) {
+               Block block = blocks.get(index);
+               if (!block.isGone() && rowInt == block.getMinIndex()) {
+                  block.setMinIndex(block.getMinIndex() + 1);
+               } else if (!block.isGone() && rowInt == block.getMaxIndex()) {
+                  block.setMaxIndex(block.getMaxIndex() - 1);
+               } else if (block.getMinIndex() < rowInt && block.getMaxIndex() > rowInt) {
+                  checkSizesBeforeAndAfterEmptyInBlockRange(block, rowInt);
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Schreibt die bereits gesetzten Felder des Blocks in die Matrix.
+    * 
+    * @param row
+    * @throws DataCollisionException
+    */
+   private void fillEntriesFromBlockIntoMatrix(Row row) throws DataCollisionException {
+      ArrayList<Block> blocks = row.getBlocks();
+      int size = blocks.size();
+      if (blocks == null || size == 0) {
+         return;
+      }
+      for (int index = 0; index < size; index++) {
          Block block = blocks.get(index);
          if (!block.isGone()) {
             TreeSet<Integer> indeces = block.getIndeces();
             if (indeces.size() > 1) {
                for (int column : indeces) {
-                  writeCharInMatrix(row.getIndex(), block.getColourString().charAt(0), column);
+                  writeCharInMatrix(row.getIndex(), block.getColorChar(), column);
                }
             }
          }
@@ -967,21 +887,22 @@ public class NonoSolver implements INonogramSolver {
     * Schreibt die bereits gesetzten Felder des Blocks in die Matrix.
     * 
     * @param column
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void fillEntriesFromBlockIntoMatrix(Column column) throws Exception {
+   private void fillEntriesFromBlockIntoMatrix(Column column) throws DataCollisionException {
 
       ArrayList<Block> blocks = column.getBlocks();
-      if (blocks == null || blocks.size() == 0) {
+      int size = blocks.size();
+      if (blocks == null || size == 0) {
          return;
       }
-      for (int index = 0; index < blocks.size(); index++) {
+      for (int index = 0; index < size; index++) {
          Block block = blocks.get(index);
          if (!block.isGone()) {
             TreeSet<Integer> indeces = block.getIndeces();
             if (indeces.size() > 1) {
                for (int row : indeces) {
-                  writeCharInMatrix(row, block.getColourString().charAt(0), column.getIndex());
+                  writeCharInMatrix(row, block.getColorChar(), column.getIndex());
                }
             }
          }
@@ -994,19 +915,23 @@ public class NonoSolver implements INonogramSolver {
     * Blockes, falls die Differenz gleich der Größe des Blocks ist
     * 
     * @param row
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void fillIfMinMaxEqualToHowMany(Row row) throws Exception {
+   private void fillIfMinMaxEqualToHowMany(Row row) throws DataCollisionException {
       ArrayList<Block> blocks = row.getBlocks();
-      if (blocks == null || blocks.size() < 2) {
+      int size = blocks.size();
+      if (blocks == null || size < 2) {
          return;
       }
-      for (int index = 0; index < blocks.size(); index++) {
+      for (int index = 0; index < size; index++) {
          Block block = blocks.get(index);
+         // nur wenn minIndexNew und
+         // maxIndexNew sich geändert haben. Dies wird mit doOverlapping
+         // geprüft
          if (block.doOverlapping) {
-            if (block.getMaxEndIndexNew() + 1 - block.getMinStartIndexNew() == block.getHowMany()) {
-               fillAreaInRowWithChar(row.getIndex(), block.getMinStartIndexNew(), block.getMaxEndIndexNew() + 1, block.getColorChar());
-               block.setGone(true, block.getMinStartIndexNew());
+            if (block.getMaxIndex() + 1 - block.getMinIndex() == block.getHowMany()) {
+               fillAreaInRowWithChar(row.getIndex(), block.getMinIndex(), block.getMaxIndex() + 1, block.getColorChar());
+               block.setGone(true, block.getMinIndex());
             }
          }
       }
@@ -1017,20 +942,26 @@ public class NonoSolver implements INonogramSolver {
     * Blockes, falls die Differenz gleich der Größe des Blocks ist
     * 
     * @param column
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void fillIfMinMaxEqualToHowMany(Column column) throws Exception {
+   private void fillIfMinMaxEqualToHowMany(Column column) throws DataCollisionException {
       ArrayList<Block> blocks = column.getBlocks();
-      if (blocks == null || blocks.size() < 2) {
+      int size = blocks.size();
+      if (blocks == null || size < 2) {
          return;
       }
-      for (int index = 0; index < blocks.size(); index++) {
+      for (int index = 0; index < size; index++) {
          Block block = blocks.get(index);
+         // nur wenn block noch nicht fertig und wenn minIndexNew und
+         // maxIndexNew sich geändert haben. Dies wird mit doOverlapping
+         // geprüft
          if (block.doOverlapping) {
-            if (block.getMaxEndIndexNew() + 1 - block.getMinStartIndexNew() == block.getHowMany()) {
-               fillAreaInColumnWithChar(column.getIndex(), block.getMinStartIndexNew(), block.getMaxEndIndexNew() + 1, block.getColorChar());
-               block.setGone(true, block.getMinStartIndexNew());
+            if (block.getMaxIndex() + 1 - block.getMinIndex() == block.getHowMany()) {
+               fillAreaInColumnWithChar(column.getIndex(), block.getMinIndex(), block.getMaxIndex() + 1, block.getColorChar());
+               block.setGone(true, block.getMinIndex());
             }
+            // letzte Methode, die in diesem Durchgang von solve() doOverlapping
+            // abfragt, also wieder auf false setzen
             block.doOverlapping = false;
          }
       }
@@ -1040,30 +971,31 @@ public class NonoSolver implements INonogramSolver {
     * Falls die Reihe fertig ist, werden alle "*" mit "-" gefüllt.
     * 
     * @param row
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void fillWithEmptyAfterGone(Row row) throws Exception {
+   private void fillWithEmptyAfterGone(Row row) throws DataCollisionException {
       ArrayList<Block> blocks = row.getBlocks();
-      if (blocks == null || blocks.size() < 2) {
+      int size = blocks.size();
+      if (blocks == null || size < 2) {
          return;
       }
       int indexOfRow = row.getIndex();
-      for (int blockInt = 0; blockInt < blocks.size(); blockInt++) {
+      for (int blockInt = 0; blockInt < size; blockInt++) {
          Block block = blocks.get(blockInt);
          if (block.isGone()) {
             if (blockInt == 0) {
-               if (block.getColourString().equals(blocks.get(blockInt + 1).getColourString()) && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getWidth()) {
+               if (block.getColorChar() == blocks.get(blockInt + 1).getColorChar() && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getWidth()) {
                   writeCharInMatrix(indexOfRow, '-', block.getEndIndex() + 1);
                }
-            } else if (blockInt == blocks.size() - 1) {
-               if (block.getColourString().equals(blocks.get(blockInt - 1).getColourString()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
+            } else if (blockInt == size - 1) {
+               if (block.getColorChar() == (blocks.get(blockInt - 1).getColorChar()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
                   writeCharInMatrix(indexOfRow, '-', block.getStartIndex() - 1);
                }
             } else {
-               if (block.getColourString().equals(blocks.get(blockInt + 1).getColourString()) && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getWidth()) {
+               if (block.getColorChar() == (blocks.get(blockInt + 1).getColorChar()) && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getWidth()) {
                   writeCharInMatrix(indexOfRow, '-', block.getEndIndex() + 1);
                }
-               if (block.getColourString().equals(blocks.get(blockInt - 1).getColourString()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
+               if (block.getColorChar() == (blocks.get(blockInt - 1).getColorChar()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
                   writeCharInMatrix(indexOfRow, '-', block.getStartIndex() - 1);
                }
             }
@@ -1075,30 +1007,31 @@ public class NonoSolver implements INonogramSolver {
     * Falls die Spalte fertig ist, werden alle "*" mit "-" gefüllt.
     * 
     * @param column
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void fillWithEmptyAfterGone(Column column) throws Exception {
+   private void fillWithEmptyAfterGone(Column column) throws DataCollisionException {
       ArrayList<Block> blocks = column.getBlocks();
-      if (blocks == null || blocks.size() < 2) {
+      int size = blocks.size();
+      if (blocks == null || size < 2) {
          return;
       }
       int indexOfColumn = column.getIndex();
-      for (int blockInt = 0; blockInt < blocks.size(); blockInt++) {
+      for (int blockInt = 0; blockInt < size; blockInt++) {
          Block block = blocks.get(blockInt);
          if (block.isGone()) {
             if (blockInt == 0) {
-               if (block.getColourString().equals(blocks.get(blockInt + 1).getColourString()) && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getHeight()) {
+               if (block.getColorChar() == blocks.get(blockInt + 1).getColorChar() && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getHeight()) {
                   writeCharInMatrix(block.getEndIndex() + 1, '-', indexOfColumn);
                }
-            } else if (blockInt == blocks.size() - 1) {
-               if (block.getColourString().equals(blocks.get(blockInt - 1).getColourString()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
+            } else if (blockInt == size - 1) {
+               if (block.getColorChar() == (blocks.get(blockInt - 1).getColorChar()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
                   writeCharInMatrix(block.getStartIndex() - 1, '-', indexOfColumn);
                }
             } else {
-               if (block.getColourString().equals(blocks.get(blockInt + 1).getColourString()) && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getHeight()) {
+               if (block.getColorChar() == (blocks.get(blockInt + 1).getColorChar()) && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getHeight()) {
                   writeCharInMatrix(block.getEndIndex() + 1, '-', indexOfColumn);
                }
-               if (block.getColourString().equals(blocks.get(blockInt - 1).getColourString()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
+               if (block.getColorChar() == (blocks.get(blockInt - 1).getColorChar()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
                   writeCharInMatrix(block.getStartIndex() - 1, '-', indexOfColumn);
                }
             }
@@ -1107,12 +1040,13 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
+    * Wenn es ein - innerhalb von minIndex und maxIndex gibt, wird überprüft, ob
+    * davor oder danach noch genug Platz für den Block ist, wenn nicht können
+    * die Werte neu gesetzt werden
     * 
     * @param row
-    * @throws Exception
     */
-   private void checkEmptyInBetweenBlock(Row row) throws Exception {
-
+   private void checkEmptyInBetweenBlock(Row row) {
       ArrayList<Block> blocks = row.getBlocks();
       if (blocks == null || blocks.size() == 0) {
          return;
@@ -1120,24 +1054,31 @@ public class NonoSolver implements INonogramSolver {
       int indexOfRow = row.getIndex();
       for (int index = 0; index < blocks.size(); index++) {
          Block block = blocks.get(index);
-         for (int i = block.getMinStartIndexNew(); i <= block.getMaxEndIndexNew(); i++) {
+         for (int i = block.getMinIndex(); i <= block.getMaxIndex(); i++) {
             if (matrix[indexOfRow][i] == '-') {
-               if ((i - block.getMinStartIndexNew()) < block.getHowMany()) {
-                  block.setMinStartIndexNew(i + 1);
+               if ((i - block.getMinIndex()) < block.getHowMany()) {
+                  block.setMinIndex(i + 1);
                }
             }
          }
-         for (int i = block.getMaxEndIndexNew(); i >= block.getMinStartIndexNew(); i--) {
+         for (int i = block.getMaxIndex(); i >= block.getMinIndex(); i--) {
             if (matrix[indexOfRow][i] == '-') {
-               if ((block.getMaxEndIndexNew() - i) < block.getHowMany()) {
-                  block.setMaxEndIndexNew(i - 1);
+               if ((block.getMaxIndex() - i) < block.getHowMany()) {
+                  block.setMaxIndex(i - 1);
                }
             }
          }
       }
    }
 
-   private void checkEmptyInBetweenBlock(Column column) throws Exception {
+   /**
+    * Wenn es ein - innerhalb von minIndex und maxIndex gibt, wird überprüft, ob
+    * davor oder danach noch genug Platz für den Block ist, wenn nicht können
+    * die Werte neu gesetzt werden
+    * 
+    * @param column
+    */
+   private void checkEmptyInBetweenBlock(Column column) {
 
       ArrayList<Block> blocks = column.getBlocks();
       if (blocks == null || blocks.size() == 0) {
@@ -1146,17 +1087,17 @@ public class NonoSolver implements INonogramSolver {
       int indexOfColumn = column.getIndex();
       for (int index = 0; index < blocks.size(); index++) {
          Block block = blocks.get(index);
-         for (int i = block.getMinStartIndexNew(); i <= block.getMaxEndIndexNew(); i++) {
+         for (int i = block.getMinIndex(); i <= block.getMaxIndex(); i++) {
             if (matrix[i][indexOfColumn] == '-') {
-               if ((i - block.getMinStartIndexNew()) < block.getHowMany()) {
-                  block.setMinStartIndexNew(i + 1);
+               if ((i - block.getMinIndex()) < block.getHowMany()) {
+                  block.setMinIndex(i + 1);
                }
             }
          }
-         for (int i = block.getMaxEndIndexNew(); i >= block.getMinStartIndexNew(); i--) {
+         for (int i = block.getMaxIndex(); i >= block.getMinIndex(); i--) {
             if (matrix[i][indexOfColumn] == '-') {
-               if ((block.getMaxEndIndexNew() - i) < block.getHowMany()) {
-                  block.setMaxEndIndexNew(i - 1);
+               if ((block.getMaxIndex() - i) < block.getHowMany()) {
+                  block.setMaxIndex(i - 1);
                }
             }
          }
@@ -1165,19 +1106,19 @@ public class NonoSolver implements INonogramSolver {
 
    /**
     * Testet, ob Felder innerhalb von Blöcken gesetzt werden können. Z.B. wenn
-    * in indeces 2 und 5 eingetragen sind, ,müssen 3 und vier auch gesetzt
-    * werden.
+    * in indeces 2 und 5 eingetragen sind, müssen 3 und 4 auch gesetzt werden.
     * 
     * @param row
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void checkIfEntriesNotSetInBlock(Row row) throws Exception {
+   private void checkIfEntriesNotSetInBlock(Row row) throws DataCollisionException {
 
       ArrayList<Block> blocks = row.getBlocks();
-      if (blocks == null || blocks.size() == 0) {
+      int size = blocks.size();
+      if (blocks == null || size == 0) {
          return;
       }
-      for (int index = 0; index < blocks.size(); index++) {
+      for (int index = 0; index < size; index++) {
          Block block = blocks.get(index);
          if (!block.isGone()) {
             TreeSet<Integer> indeces = block.getIndeces();
@@ -1185,7 +1126,7 @@ public class NonoSolver implements INonogramSolver {
                for (int column = indeces.first() + 1; column < indeces.last(); column++) {
                   if (!indeces.contains(column)) {
                      block.increaseEntriesSet(column);
-                     writeCharInMatrix(row.getIndex(), block.getColourString().charAt(0), column);
+                     writeCharInMatrix(row.getIndex(), block.getColorChar(), column);
                   }
                }
             }
@@ -1195,19 +1136,18 @@ public class NonoSolver implements INonogramSolver {
 
    /**
     * Testet, ob Felder innerhalb von Blöcken gesetzt werden können. Z.B. wenn
-    * in indeces 2 und 5 eingetragen sind, ,müssen 3 und vier auch gesetzt
-    * werden.
+    * in indeces 2 und 5 eingetragen sind, müssen 3 und 4 auch gesetzt werden.
     * 
     * @param column
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void checkIfEntriesNotSetInBlock(Column column) throws Exception {
-
+   private void checkIfEntriesNotSetInBlock(Column column) throws DataCollisionException {
       ArrayList<Block> blocks = column.getBlocks();
-      if (blocks == null || blocks.size() == 0) {
+      int size = blocks.size();
+      if (blocks == null || size == 0) {
          return;
       }
-      for (int index = 0; index < blocks.size(); index++) {
+      for (int index = 0; index < size; index++) {
          Block block = blocks.get(index);
          if (!block.isGone()) {
             TreeSet<Integer> indeces = block.getIndeces();
@@ -1215,7 +1155,7 @@ public class NonoSolver implements INonogramSolver {
                for (int row = indeces.first() + 1; row < indeces.last(); row++) {
                   if (!indeces.contains(row)) {
                      block.increaseEntriesSet(row);
-                     writeCharInMatrix(row, block.getColourString().charAt(0), column.getIndex());
+                     writeCharInMatrix(row, block.getColorChar(), column.getIndex());
                   }
                }
             }
@@ -1227,28 +1167,26 @@ public class NonoSolver implements INonogramSolver {
     * Setzt Min/MaxIndex von Blöcken neu, falls der vorherige oder nachfolgende
     * gone ist. Somit schränkt sich der Bereich, in dem der Block gesetzt werden
     * kann ein. Überprüft auch, ob bei nicht fertigen Blöcken das
-    * nächste/vorherige von maxEndIndexNew/minStartIndexNew gleich der
-    * Blockfarbe ist und passt dann die Werte an.
+    * nächste/vorherige von maxIndex/minIndex gleich der Blockfarbe ist und
+    * passt dann die Werte an.
     * 
     * @param row
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void updateMinAndMaxIndexOfBlocks(Row row) throws Exception {
-      // // System.out.println("updateMinAndMaxIndexOfBlocks:" +
-      // row.getIndex());
-      // showBlockGoneTrue();
+   private void updateMinAndMaxIndexOfBlocks(Row row) throws DataCollisionException {
       ArrayList<Block> blocks = row.getBlocks();
-      if (blocks != null && blocks.size() > 1) {
-         for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
+      int size = blocks.size();
+      if (blocks != null && size > 1) {
+         for (int blockIndex = 0; blockIndex < size; blockIndex++) {
             Block block = blocks.get(blockIndex);
             if (block.isGone()) {
-               int minIndex = block.getMinStartIndexNew();
-               int maxIndex = block.getMaxEndIndexNew();
+               int minIndex = block.getMinIndex();
+               int maxIndex = block.getMaxIndex();
                // erster Block, also nur nachfolgende updaten!
                if (blockIndex == 0) {
                   updateBlocksAfterThisBlock(blocks, blockIndex, block, maxIndex);
                   // letzer Block, also nur davor updaten
-               } else if ((blockIndex + 1) == blocks.size()) {
+               } else if ((blockIndex + 1) == size) {
                   updateBlocksBeforeThisBlock(blocks, blockIndex, block, minIndex);
                } else {
                   updateBlocksAfterThisBlock(blocks, blockIndex, block, maxIndex);
@@ -1257,68 +1195,64 @@ public class NonoSolver implements INonogramSolver {
             } else {
                // wenn der vorherige/nachfolgende char von Min/Max gleich
                // block.char dann erhöhen/erniedrigen, da ein Feld leer
-               // sein
-               // muss.
-               int minIndex = block.getMinStartIndexNew();
-               int maxIndex = block.getMaxEndIndexNew();
+               // sein muss.
+               int minIndex = block.getMinIndex();
+               int maxIndex = block.getMaxIndex();
                while ((minIndex - 1 > -1) && matrix[row.getIndex()][minIndex - 1] == block.getColorChar()) {
                   minIndex++;
-                  block.setMinStartIndexNew(minIndex);
+                  block.setMinIndex(minIndex);
                }
                while ((maxIndex + 1 < riddle.getWidth()) && matrix[row.getIndex()][maxIndex + 1] == block.getColorChar()) {
                   maxIndex--;
-                  block.setMaxEndIndexNew(maxIndex);
+                  block.setMaxIndex(maxIndex);
                }
             }
          }
       }
-      // // System.out.println("bliblarow2:" + row.getIndex());
-      // showBlockGoneTrue();
    }
 
    /**
     * Geht durch die Blöcke der Reihe. Wenn es mehr als einen Block gibt, werden
-    * immer zwei aufeinander folgende Blöcke überprüft, ob der maxEndIndexNew -
-    * der Größe des 2. Blocks kleiner ist, als der maxEndIndexNew des ersten
-    * Blocks. Dann muss der Index des 1. Blocks angepasst werden. Gleiches
-    * geschieht für den minStartIndexNew, nur dass hier der 2. Block angepasst
-    * wird.
+    * immer zwei aufeinander folgende Blöcke überprüft, ob der maxIndex - der
+    * Größe des 2. Blocks kleiner ist, als der maxIndex des ersten Blocks. Dann
+    * muss der Index des 1. Blocks angepasst werden. Gleiches geschieht für den
+    * minIndex, nur dass hier der 2. Block angepasst wird.
     * 
     * @param row
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void updateMinAndMaxIndexOfBlocks2(Row row) throws Exception {
-      // // System.out.println("updateMinAndMaxIndexOfBlocks2:");
+   private void updateMinAndMaxIndexOfBlocks2(Row row) throws DataCollisionException {
       ArrayList<Block> blocks = row.getBlocks();
-      if (blocks != null && blocks.size() > 1) {
-         for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
+      int size = blocks.size();
+      if (blocks != null && size > 1) {
+         for (int blockIndex = 0; blockIndex < size; blockIndex++) {
             Block block = blocks.get(blockIndex);
             // prüfen, ob min/maxIndex gleich einer anderen Farbe ist
-            if (matrix[row.getIndex()][block.getMaxEndIndexNew()] != '*' && matrix[row.getIndex()][block.getMaxEndIndexNew()] != block.getColorChar()) {
-               block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
+            if (matrix[row.getIndex()][block.getMaxIndex()] != '*' && matrix[row.getIndex()][block.getMaxIndex()] != block.getColorChar()) {
+               block.setMaxIndex(block.getMaxIndex() - 1);
             }
-            if (matrix[row.getIndex()][block.getMinStartIndexNew()] != '*' && matrix[row.getIndex()][block.getMinStartIndexNew()] != block.getColorChar()) {
-               block.setMinStartIndexNew(block.getMinStartIndexNew() + 1);
+            if (matrix[row.getIndex()][block.getMinIndex()] != '*' && matrix[row.getIndex()][block.getMinIndex()] != block.getColorChar()) {
+               block.setMinIndex(block.getMinIndex() + 1);
             }
             // es gibt noch einen nächsteb Block
-            if (blockIndex + 1 < blocks.size()) {
+            if (blockIndex + 1 < size) {
                Block nextBlock = blocks.get(blockIndex + 1);
                if (block.getColorChar() != nextBlock.getColorChar()) {
-                  if (nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() < block.getMaxEndIndexNew()) {
-                     block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany());
+                  if (nextBlock.getMaxIndex() - nextBlock.getHowMany() < block.getMaxIndex()) {
+                     block.setMaxIndex(nextBlock.getMaxIndex() - nextBlock.getHowMany());
                   }
                } else {
-                  if (nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() - 1 < block.getMaxEndIndexNew()) {
-                     block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() - 1);
+                  if (nextBlock.getMaxIndex() - nextBlock.getHowMany() - 1 < block.getMaxIndex()) {
+                     block.setMaxIndex(nextBlock.getMaxIndex() - nextBlock.getHowMany() - 1);
                   }
                }
                if (block.getColorChar() != nextBlock.getColorChar()) {
-                  if (block.getMinStartIndexNew() + block.getHowMany() > nextBlock.getMinStartIndexNew()) {
-                     nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany());
+                  if (block.getMinIndex() + block.getHowMany() > nextBlock.getMinIndex()) {
+                     nextBlock.setMinIndex(block.getMinIndex() + block.getHowMany());
                   }
                } else {
-                  if (block.getMinStartIndexNew() + block.getHowMany() + 1 > nextBlock.getMinStartIndexNew()) {
-                     nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany() + 1);
+                  if (block.getMinIndex() + block.getHowMany() + 1 > nextBlock.getMinIndex()) {
+                     nextBlock.setMinIndex(block.getMinIndex() + block.getHowMany() + 1);
                   }
                }
                // kein nächster, also nur vorherigen anpassen!
@@ -1326,12 +1260,12 @@ public class NonoSolver implements INonogramSolver {
                if (blockIndex - 1 > -1) {
                   Block previousBlock = blocks.get(blockIndex - 1);
                   if (block.getColorChar() != previousBlock.getColorChar()) {
-                     if (previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() > block.getMinStartIndexNew()) {
-                        block.setMinStartIndexNew(previousBlock.getMinStartIndexNew() + previousBlock.getHowMany());
+                     if (previousBlock.getMinIndex() + previousBlock.getHowMany() > block.getMinIndex()) {
+                        block.setMinIndex(previousBlock.getMinIndex() + previousBlock.getHowMany());
                      }
                   } else {
-                     if (previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() + 1 > block.getMinStartIndexNew()) {
-                        block.setMinStartIndexNew(previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() + 1);
+                     if (previousBlock.getMinIndex() + previousBlock.getHowMany() + 1 > block.getMinIndex()) {
+                        block.setMinIndex(previousBlock.getMinIndex() + previousBlock.getHowMany() + 1);
                      }
                   }
                }
@@ -1342,49 +1276,46 @@ public class NonoSolver implements INonogramSolver {
 
    /**
     * Geht durch die Blöcke der Spalte. Wenn es mehr als einen Block gibt,
-    * werden immer zwei aufeinander folgende Blöcke überprüft, ob der
-    * maxEndIndexNew - der Größe des 2. Blocks kleiner ist, als der
-    * maxEndIndexNew des ersten Blocks. Dann muss der Index des 1. Blocks
-    * angepasst werden. Gleiches geschieht für den minStartIndexNew, nur dass
-    * hier der 2. Block angepasst wird.
+    * werden immer zwei aufeinander folgende Blöcke überprüft, ob der maxIndex -
+    * der Größe des 2. Blocks kleiner ist, als der maxIndex des ersten Blocks.
+    * Dann muss der Index des 1. Blocks angepasst werden. Gleiches geschieht für
+    * den minIndex, nur dass hier der 2. Block angepasst wird.
     * 
     * @param column
-    * @throws Exception
     */
-   private void updateMinAndMaxIndexOfBlocks2(Column column) throws Exception {
-      // // System.out.println("updateMinAndMaxIndexOfBlocks2:");
+   private void updateMinAndMaxIndexOfBlocks2(Column column) {
       ArrayList<Block> blocks = column.getBlocks();
-      if (blocks != null && blocks.size() > 1) {
-         for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
+      int size = blocks.size();
+      if (blocks != null && size > 1) {
+         for (int blockIndex = 0; blockIndex < size; blockIndex++) {
             Block block = blocks.get(blockIndex);
             // maxIndex hat bereits eine andere Farbe!
-            if (matrix[block.getMaxEndIndexNew()][column.getIndex()] != '*' && matrix[block.getMaxEndIndexNew()][column.getIndex()] != block.getColorChar()) {
-               block.setMaxEndIndexNew(block.getMaxEndIndexNew() - 1);
+            if (matrix[block.getMaxIndex()][column.getIndex()] != '*' && matrix[block.getMaxIndex()][column.getIndex()] != block.getColorChar()) {
+               block.setMaxIndex(block.getMaxIndex() - 1);
             }
-            if (matrix[block.getMinStartIndexNew()][column.getIndex()] != '*' && matrix[block.getMinStartIndexNew()][column.getIndex()] != block.getColorChar()) {
-               block.setMinStartIndexNew(block.getMinStartIndexNew() + 1);
+            if (matrix[block.getMinIndex()][column.getIndex()] != '*' && matrix[block.getMinIndex()][column.getIndex()] != block.getColorChar()) {
+               block.setMinIndex(block.getMinIndex() + 1);
             }
-            // TODO einrechnen, wenn gleiche Farben
-            // es gibt noch einen nächsteb Block
-            if (blockIndex + 1 < blocks.size()) {
+            // es gibt noch einen nächsten Block
+            if (blockIndex + 1 < size) {
                Block nextBlock = blocks.get(blockIndex + 1);
                if (block.getColorChar() != nextBlock.getColorChar()) {
-                  if (nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() < block.getMaxEndIndexNew()) {
-                     block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany());
+                  if (nextBlock.getMaxIndex() - nextBlock.getHowMany() < block.getMaxIndex()) {
+                     block.setMaxIndex(nextBlock.getMaxIndex() - nextBlock.getHowMany());
                   }
                } else {
-                  if (nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() - 1 < block.getMaxEndIndexNew()) {
-                     block.setMaxEndIndexNew(nextBlock.getMaxEndIndexNew() - nextBlock.getHowMany() - 1);
+                  if (nextBlock.getMaxIndex() - nextBlock.getHowMany() - 1 < block.getMaxIndex()) {
+                     block.setMaxIndex(nextBlock.getMaxIndex() - nextBlock.getHowMany() - 1);
                   }
                }
 
                if (block.getColorChar() != nextBlock.getColorChar()) {
-                  if (block.getMinStartIndexNew() + block.getHowMany() > nextBlock.getMinStartIndexNew()) {
-                     nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany());
+                  if (block.getMinIndex() + block.getHowMany() > nextBlock.getMinIndex()) {
+                     nextBlock.setMinIndex(block.getMinIndex() + block.getHowMany());
                   }
                } else {
-                  if (block.getMinStartIndexNew() + block.getHowMany() + 1 > nextBlock.getMinStartIndexNew()) {
-                     nextBlock.setMinStartIndexNew(block.getMinStartIndexNew() + block.getHowMany() + 1);
+                  if (block.getMinIndex() + block.getHowMany() + 1 > nextBlock.getMinIndex()) {
+                     nextBlock.setMinIndex(block.getMinIndex() + block.getHowMany() + 1);
                   }
                }
                // kein nächster, also nur vorherigen anpassen!
@@ -1392,12 +1323,12 @@ public class NonoSolver implements INonogramSolver {
                if (blockIndex - 1 > -1) {
                   Block previousBlock = blocks.get(blockIndex - 1);
                   if (block.getColorChar() != previousBlock.getColorChar()) {
-                     if (previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() > block.getMinStartIndexNew()) {
-                        block.setMinStartIndexNew(previousBlock.getMinStartIndexNew() + previousBlock.getHowMany());
+                     if (previousBlock.getMinIndex() + previousBlock.getHowMany() > block.getMinIndex()) {
+                        block.setMinIndex(previousBlock.getMinIndex() + previousBlock.getHowMany());
                      }
                   } else {
-                     if (previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() + 1 > block.getMinStartIndexNew()) {
-                        block.setMinStartIndexNew(previousBlock.getMinStartIndexNew() + previousBlock.getHowMany() + 1);
+                     if (previousBlock.getMinIndex() + previousBlock.getHowMany() + 1 > block.getMinIndex()) {
+                        block.setMinIndex(previousBlock.getMinIndex() + previousBlock.getHowMany() + 1);
                      }
                   }
                }
@@ -1407,24 +1338,23 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Setzt MaxEndIndex der vorherigen Blöcke.
+    * Setzt MaxIndex der vorherigen Blöcke.
     * 
     * 
     * @param blocks
     * @param blockIndex
     * @param block
     * @param minIndex
-    * @throws Exception
     */
-   private void updateBlocksBeforeThisBlock(ArrayList<Block> blocks, int blockIndex, Block block, int minIndex) throws Exception {
+   private void updateBlocksBeforeThisBlock(ArrayList<Block> blocks, int blockIndex, Block block, int minIndex) {
       for (int newIndex = (blockIndex - 1); newIndex > -1; newIndex--) {
          Block checkBlock = blocks.get(newIndex);
          if (!checkBlock.isGone()) {
-            if (checkBlock.getMaxEndIndexNew() >= minIndex) {
-               if (block.getColourString().equals(checkBlock.getColourString())) {
-                  checkBlock.setMaxEndIndexNew(minIndex - 2);
+            if (checkBlock.getMaxIndex() >= minIndex) {
+               if (block.getColorChar() == checkBlock.getColorChar()) {
+                  checkBlock.setMaxIndex(minIndex - 2);
                } else {
-                  checkBlock.setMaxEndIndexNew(minIndex - 1);
+                  checkBlock.setMaxIndex(minIndex - 1);
                }
             }
          }
@@ -1432,23 +1362,22 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Setzt MinStartIndexNew der folgenden Blöcke.
+    * Setzt MinIndex der folgenden Blöcke.
     * 
     * @param blocks
     * @param blockIndex
     * @param block
     * @param maxIndex
-    * @throws Exception
     */
-   private void updateBlocksAfterThisBlock(ArrayList<Block> blocks, int blockIndex, Block block, int maxIndex) throws Exception {
+   private void updateBlocksAfterThisBlock(ArrayList<Block> blocks, int blockIndex, Block block, int maxIndex) {
       for (int newIndex = (blockIndex + 1); newIndex < blocks.size(); newIndex++) {
          Block checkBlock = blocks.get(newIndex);
          if (!checkBlock.isGone()) {
-            if (checkBlock.getMinStartIndexNew() <= maxIndex) {
-               if (block.getColourString().equals(checkBlock.getColourString())) {
-                  checkBlock.setMinStartIndexNew(maxIndex + 2);
+            if (checkBlock.getMinIndex() <= maxIndex) {
+               if (block.getColorChar() == checkBlock.getColorChar()) {
+                  checkBlock.setMinIndex(maxIndex + 2);
                } else {
-                  checkBlock.setMinStartIndexNew(maxIndex + 1);
+                  checkBlock.setMinIndex(maxIndex + 1);
                }
             }
          }
@@ -1459,20 +1388,19 @@ public class NonoSolver implements INonogramSolver {
     * Setzt Min/MaxIndex von Blöcken neu, falls der vorherige oder nachfolgende
     * gone ist. Somit schränkt sich der Bereich, in dem der Block gesetzt werden
     * kann ein. Überprüft auch, ob bei nicht fertigen Blöcken das
-    * nächste/vorherige von maxEndIndexNew/minStartIndexNew gleich der
-    * Blockfarbe ist und passt dann die Werte an.
+    * nächste/vorherige von maxIndex/minIndex gleich der Blockfarbe ist und
+    * passt dann die Werte an.
     * 
     * @param column
-    * @throws Exception
     */
-   private void updateMinAndMaxIndexOfBlocks(Column column) throws Exception {
+   private void updateMinAndMaxIndexOfBlocks(Column column) {
       ArrayList<Block> blocks = column.getBlocks();
       if (blocks != null && blocks.size() > 1) {
          for (int blockIndex = 0; blockIndex < blocks.size(); blockIndex++) {
             Block block = blocks.get(blockIndex);
             if (block.isGone()) {
-               int minIndex = block.getMinStartIndexNew();
-               int maxIndex = block.getMaxEndIndexNew();
+               int minIndex = block.getMinIndex();
+               int maxIndex = block.getMaxIndex();
                // erster Block, also nur nachfolgende updaten!
                if (blockIndex == 0) {
                   updateBlocksAfterThisBlock(blocks, blockIndex, block, maxIndex);
@@ -1485,17 +1413,16 @@ public class NonoSolver implements INonogramSolver {
             } else {
                // wenn der vorherige/nachfolgende char von Min/Max gleich
                // block.char dann erhöhen/erniedrigen, da ein Feld leer
-               // sein
-               // muss.
-               int minIndex = block.getMinStartIndexNew();
-               int maxIndex = block.getMaxEndIndexNew();
+               // sein muss.
+               int minIndex = block.getMinIndex();
+               int maxIndex = block.getMaxIndex();
                while ((minIndex - 1 > -1) && matrix[minIndex - 1][column.getIndex()] == block.getColorChar()) {
                   minIndex++;
-                  block.setMinStartIndexNew(minIndex);
+                  block.setMinIndex(minIndex);
                }
                while ((maxIndex + 1 < riddle.getHeight()) && matrix[maxIndex + 1][column.getIndex()] == block.getColorChar()) {
                   maxIndex--;
-                  block.setMaxEndIndexNew(maxIndex);
+                  block.setMaxIndex(maxIndex);
                }
             }
          }
@@ -1503,23 +1430,23 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Erstellt alle Möglichkeiten, den Block innerhalb von minStartIndexNew und
-    * maxEndIndexNew zu platzieren und setzt die Felder in der Matrix, die bei
-    * allen Möglichkeiten gesetzt send.
+    * Erstellt alle Möglichkeiten, den Block innerhalb von minIndex und maxIndex
+    * zu platzieren und setzt die Felder in der Matrix, die bei allen
+    * Möglichkeiten gesetzt send.
     * 
     * @param row
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void overlapBlocks(Row row) throws Exception {
-      // // System.out.println("Row:" + row.getIndex());
-      // showMatrix();
-      // showBlockGoneTrue();
+   private void overlapBlocks(Row row) throws DataCollisionException {
       ArrayList<Block> blocks = row.getBlocks();
       if (blocks != null && blocks.size() > 0) {
          for (int index = 0; index < blocks.size(); index++) {
             Block block = blocks.get(index);
+            // nur wenn block noch nicht fertig und wenn minIndexNew und
+            // maxIndexNew sich geändert haben. Dies wird mit doOverlapping
+            // geprüft
             if (!block.isGone() && block.doOverlapping) {
-               int start = block.getMinStartIndexNew();
+               int start = block.getMinIndex();
                LinkedList<String> first = initializeBlockList(block, start);
                LinkedList<String> workingList = new LinkedList<String>();
                workingList.addAll(first);
@@ -1532,8 +1459,7 @@ public class NonoSolver implements INonogramSolver {
                // // System.out.println(result);
                String removed;
                // so lange nach rechts verschieben, bis Ende erreicht und
-               // zu
-               // asd hinzufügen.
+               // zu workingList hinzufügen.
                while (workingList.getLast().equals("-")) {
                   removed = workingList.removeLast();
                   workingList.addFirst(removed);
@@ -1545,7 +1471,6 @@ public class NonoSolver implements INonogramSolver {
                      }
                   }
                }
-               // // System.out.println(result);
                for (Integer column : result) {
                   char charAt = first.get(column).charAt(0);
                   writeCharInMatrix(row.getIndex(), charAt, (column + start));
@@ -1564,7 +1489,7 @@ public class NonoSolver implements INonogramSolver {
     * @return LinkedList<String> mit der Startbesetzung der Blöcke
     */
    private LinkedList<String> initializeBlockList(Block block, int start) {
-      int end = block.getMaxEndIndexNew();
+      int end = block.getMaxIndex();
       int colorsSet = 0;
       LinkedList<String> first = new LinkedList<String>();
       for (int i = 0; i < block.getHowMany(); i++) {
@@ -1580,20 +1505,23 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Erstellt alle Möglichkeiten, den Block innerhalb von minStartIndexNew und
-    * maxEndIndexNew zu platzieren und setzt die Felder in der Matrix, die bei
-    * allen Möglichkeiten gesetzt send.
+    * Erstellt alle Möglichkeiten, den Block innerhalb von minIndex und maxIndex
+    * zu platzieren und setzt die Felder in der Matrix, die bei allen
+    * Möglichkeiten gesetzt send.
     * 
     * @param column
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void overlapBlocks(Column column) throws Exception {
+   private void overlapBlocks(Column column) throws DataCollisionException {
       ArrayList<Block> blocks = column.getBlocks();
       if (blocks != null && blocks.size() > 0) {
          for (int index = 0; index < blocks.size(); index++) {
             Block block = blocks.get(index);
+            // nur wenn block noch nicht fertig und wenn minIndexNew und
+            // maxIndexNew sich geändert haben. Dies wird mit doOverlapping
+            // geprüft
             if (!block.isGone() && block.doOverlapping) {
-               int start = block.getMinStartIndexNew();
+               int start = block.getMinIndex();
                LinkedList<String> first = initializeBlockList(block, start);
                LinkedList<String> workingList = new LinkedList<String>();
                workingList.addAll(first);
@@ -1633,12 +1561,12 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Setzt die initialen Werte für minStartIndex und maxStartIndex bei den
-    * Blöcken.
+    * Setzt die initialen Werte für minIndex und maxIndex bei den Blöcken.
     */
    private void setupBlocks() {
       // alle Reihen durchgehen.
-      for (int index = 0; index < getRows().size(); index++) {
+      int size = getRows().size();
+      for (int index = 0; index < size; index++) {
          Row row = getRows().get(index);
          ArrayList<Block> blocks = row.getBlocks();
          if (blocks != null && blocks.size() > 0) {
@@ -1646,8 +1574,8 @@ public class NonoSolver implements INonogramSolver {
             setupBlocksInRowAndColumn(blocks, riddle.getWidth());
          }
       }
-
-      for (int index = 0; index < getColumns().size(); index++) {
+      size = getColumns().size();
+      for (int index = 0; index < size; index++) {
          Column column = getColumns().get(index);
          ArrayList<Block> blocks = column.getBlocks();
          // Blöcke durchgehen.
@@ -1682,7 +1610,8 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Spalte und Reihe wird mit '-' aufgefüllt, falls gone == true ist.
+    * Spalte und Reihe wird mit '-' aufgefüllt, falls gone == true ist. Es
+    * werden alle Spalten und REihen des Rätsels durchgangen.
     */
    private void checkRowsAndColumnsForGone() {
       int size = getRows().size();
@@ -1704,9 +1633,10 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Füllt Blöcke am Ende der Reihen und Spalten.
     * 
-    * @throws Exception
+    * @throws DataCollisionException
+    * 
     */
-   private void fillBlocksOnEnd() throws Exception {
+   private void fillBlocksOnEnd() throws DataCollisionException {
       int size = getColumns().size();
       for (int index = 0; index < size; index++) {
          Column column = getColumns().get(index);
@@ -1723,16 +1653,17 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Wenn eine Spalte mit einer Farbe endet wird der Block gefüllt.  Wenn eine
+    * Wenn eine Spalte mit einer Farbe endet wird der Block gefüllt. Wenn eine
     * Spalte mit einer Farbe endet, dann können die vorherigen Felder auch
     * gesetzt werden (je nach Größe des letzten Blocks). Leere Felder am Ende
     * der Spalte werden übersprungen. Wenn ein Block aufgefüllt wurde wird die
     * Methode erneut aufgerufen, um zu prüfen ob direkt wieder ein Block
     * beginnt, der aufgefüllt werden kann.
     * 
-    * @throws Exception
+    * @throws DataCollisionException
+    * 
     */
-   private void fillBlocksOnEnd(Column column, int indexOfColumn, int blockIndex, int rowIndex) throws Exception {
+   private void fillBlocksOnEnd(Column column, int indexOfColumn, int blockIndex, int rowIndex) throws DataCollisionException {
       int block = blockIndex;
       int rowInt = rowIndex;
       boolean run = true;
@@ -1779,9 +1710,10 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Füllt Blöcke am Anfang der Reihen und Spalten.
     * 
-    * @throws Exception
+    * @throws DataCollisionException
+    * 
     */
-   private void fillBlocksOnBeginning() throws Exception {
+   private void fillBlocksOnBeginning() throws DataCollisionException {
       int size = getColumns().size();
       for (int index = 0; index < size; index++) {
          Column column = getColumns().get(index);
@@ -1798,7 +1730,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt Blöcke am Anfang einer Spalte. Ruft sich rekursiv auf.  Wenn eine
+    * Füllt Blöcke am Anfang einer Spalte. Ruft sich rekursiv auf. Wenn eine
     * Spalte mit einer Farbe beginnt, dann können die nächsten Felder auch
     * gesetzt werden (je nach Größe des ersen Blocks). Leere Felder am Anfang
     * der Spalte werden übersprungen. Wenn ein Block aufgefüllt wurde wird die
@@ -1807,12 +1739,9 @@ public class NonoSolver implements INonogramSolver {
     * 
     * @param column
     * @param blockIndex
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void fillBlocksOnBeginning(Column column, int indexOfColumn, int blockIndex, int rowIndex) throws Exception {
-      // String methodName = "fillBlocksOnBeginningOfColumn()";
-      // // System.out.println(methodName);
-      // long startTime = new Date().getTime();
+   private void fillBlocksOnBeginning(Column column, int indexOfColumn, int blockIndex, int rowIndex) throws DataCollisionException {
       if (!column.isGone()) {
          int block = blockIndex;
          int rowInt = rowIndex;
@@ -1871,9 +1800,10 @@ public class NonoSolver implements INonogramSolver {
     * Methode erneut aufgerufen, um zu prüfen ob direkt wieder ein Block
     * beginnt, der aufgefüllt werden kann.
     * 
-    * @throws Exception
+    * @throws DataCollisionException
+    * 
     */
-   private void fillBlocksOnEnd(Row row, int blockIndex, int columnIndex) throws Exception {
+   private void fillBlocksOnEnd(Row row, int blockIndex, int columnIndex) throws DataCollisionException {
       int block = blockIndex;
       int columnInt = columnIndex;
       boolean run = true;
@@ -1923,9 +1853,9 @@ public class NonoSolver implements INonogramSolver {
     * 
     * @param row
     * @param blockIndex
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void fillBlocksOnBeginning(Row row, int blockIndex, int columnIndex) throws Exception {
+   private void fillBlocksOnBeginning(Row row, int blockIndex, int columnIndex) throws DataCollisionException {
       if (!row.isGone()) {
          int block = blockIndex;
          int columnInt = columnIndex;
@@ -1977,17 +1907,55 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Display the matrix.
+    * Berechnet den minimalen Startindex eines Blockes, indem die Größen der
+    * vorherigen Blöcke unter Berücksichtigung etwaiger Zwischenräume addiert
+    * werden.
     * 
+    * @param blocks
+    *           alle Blöcke der Reihe / Spalte
+    * @param indexOfBlock
+    *           Index des zu betrachteten Blocks
+    * @param size
+    *           Breite / Höhe des Rätsels
+    * @return den neuen minStartIndex
     */
-   private void showMatrix() {
-      StringBuilder out = new StringBuilder("\n");
-      ;
-      int height = riddle.getHeight();
-      for (int i = 0; i < height; i++) {
-         showRow(out, i);
+   private int getMinStartIndexOfBlock(ArrayList<Block> blocks, int indexOfBlock, int size) {
+      int index = 0;
+      Block lastBlock = blocks.get(indexOfBlock);
+      for (int i = indexOfBlock - 1; i >= 0; i--) {
+         Block block = blocks.get(i);
+         index += block.getHowMany();
+         if (null != lastBlock && lastBlock.getColorChar() == block.getColour().getName()) {
+            index++;
+         }
+         lastBlock = block;
       }
-      System.out.println(out.toString());
+      return index;
+   }
+
+   /**
+    * Berechnet den maximalen Index für einen Block.
+    * 
+    * @param blocks
+    *           alle Blöcke dieser Reihe/Spalte
+    * @param indexOfBlock
+    *           Index des zu betrachteten Blocks.
+    * @param size
+    *           Breite / Höhe des Rätsels
+    * @return den neuen maxEndIndex
+    */
+   private int getMaxEndIndexOfBlock(ArrayList<Block> blocks, int indexOfBlock, int size) {
+      int index = 0;
+      Block lastBlock = blocks.get(indexOfBlock);
+      for (int i = indexOfBlock + 1; i < blocks.size(); i++) {
+         Block block = blocks.get(i);
+         index += block.getHowMany();
+         if (lastBlock.getColorChar() == block.getColorChar()) {
+            index++;
+         }
+         lastBlock = block;
+      }
+      return (size - 1 - index);
    }
 
    /**
@@ -2064,8 +2032,8 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Setzt die initialen Werte für minStartIndex und maxStartIndex für eine
-    * Reihe oder Spalte.
+    * Setzt die initialen Werte für minIndex und maxIndex für alle Blöcke in
+    * blocks.
     * 
     * @param blocks
     *           Blöcke der Reihe oder Spalte.
@@ -2082,91 +2050,21 @@ public class NonoSolver implements INonogramSolver {
          // wenn es nur ein Block ist, kann er sich über die gesamte Breite/Höhe
          // ziehen
          if (size2 == 1) {
-            block.setMinStartIndex(0);
-            block.setMaxEndIndex(size - 1);
+            block.setMinIndex(0);
+            block.setMaxIndex(size - 1);
          } else {
             if (i == 0) {
-               block.setMinStartIndex(0);
-               block.setMaxEndIndex(getMaxEndIndexOfBlock(blocks, i, size));
+               block.setMinIndex(0);
+               block.setMaxIndex(getMaxEndIndexOfBlock(blocks, i, size));
             } else if (i == size2 - 1) {
-               block.setMinStartIndex(getMinStartIndexOfBlock(blocks, i, size));
-               block.setMaxEndIndex(size - 1);
+               block.setMinIndex(getMinStartIndexOfBlock(blocks, i, size));
+               block.setMaxIndex(size - 1);
             } else {
-               block.setMinStartIndex(getMinStartIndexOfBlock(blocks, i, size));
-               block.setMaxEndIndex(getMaxEndIndexOfBlock(blocks, i, size));
+               block.setMinIndex(getMinStartIndexOfBlock(blocks, i, size));
+               block.setMaxIndex(getMaxEndIndexOfBlock(blocks, i, size));
             }
          }
       }
-   }
-
-   /**
-    * Berechnet den minimalen Startindex eines Blockes, indem die Größen der
-    * vorherigen Blöcke unter Berücksichtigung etwaiger Zwischenräume addiert
-    * werden.
-    * 
-    * @param blocks
-    *           alle Blöcke der Reihe / Spalte
-    * @param indexOfBlock
-    *           Index des zu betrachteten Blocks
-    * @param size
-    *           Breite / Höhe des Rätsels
-    * @return den neuen minStartIndex
-    */
-   private int getMinStartIndexOfBlock(ArrayList<Block> blocks, int indexOfBlock, int size) {
-      int index = 0;
-      Block lastBlock = blocks.get(indexOfBlock);
-      for (int i = indexOfBlock - 1; i >= 0; i--) {
-         Block block = blocks.get(i);
-         index += block.getHowMany();
-         if (null != lastBlock && lastBlock.getColorChar() == block.getColour().getName()) {
-            index++;
-         }
-         lastBlock = block;
-      }
-      return index;
-   }
-
-   /**
-    * Berechnet den maximalen Index für einen Block.
-    * 
-    * @param blocks
-    *           alle Blöcke dieser Reihe/Spalte
-    * @param indexOfBlock
-    *           Index des zu betrachteten Blocks.
-    * @param size
-    *           Breite / Höhe des Rätsels
-    * @return den neuen maxEndIndex
-    */
-   private int getMaxEndIndexOfBlock(ArrayList<Block> blocks, int indexOfBlock, int size) {
-      int index = 0;
-      Block lastBlock = blocks.get(indexOfBlock);
-      for (int i = indexOfBlock + 1; i < blocks.size(); i++) {
-         Block block = blocks.get(i);
-         index += block.getHowMany();
-         if (lastBlock.getColorChar() == block.getColorChar()) {
-            index++;
-         }
-         lastBlock = block;
-      }
-      return (size - 1 - index);
-   }
-
-   /**
-    * Gibt alle Spalten des Rätsels zurück.
-    * 
-    * @return alle Spalten
-    */
-   private ArrayList<Column> getColumns() {
-      return riddle.getColumns();
-   }
-
-   /**
-    * Gibt alle Reihen des Rätsels zurück.
-    * 
-    * @return alle Reihen
-    */
-   private ArrayList<Row> getRows() {
-      return riddle.getRows();
    }
 
    /**
@@ -2177,9 +2075,9 @@ public class NonoSolver implements INonogramSolver {
     * @param rowBegin
     * @param rowEnd
     * @param c
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void fillAreaInColumnWithChar(int columnIndex, int rowBegin, int rowEnd, char c) throws Exception {
+   private void fillAreaInColumnWithChar(int columnIndex, int rowBegin, int rowEnd, char c) throws DataCollisionException {
       for (int row = rowBegin; row < rowEnd; row++) {
          writeCharInMatrix(row, c, columnIndex);
       }
@@ -2193,9 +2091,9 @@ public class NonoSolver implements INonogramSolver {
     * @param columnBegin
     * @param columnEnd
     * @param c
-    * @throws Exception
+    * @throws DataCollisionException
     */
-   private void fillAreaInRowWithChar(int rowIndex, int columnBegin, int columnEnd, char c) throws Exception {
+   private void fillAreaInRowWithChar(int rowIndex, int columnBegin, int columnEnd, char c) throws DataCollisionException {
       for (int column = columnBegin; column < columnEnd; column++) {
          writeCharInMatrix(rowIndex, c, column);
       }
@@ -2210,11 +2108,11 @@ public class NonoSolver implements INonogramSolver {
     *           Farbe
     * @param columnIndex
     *           rowIndex Nummer der Reihe in der Matrix.
-    * @throws Exception
+    * @throws DataCollisionException
     *            falls an der Stelle bereits ein anderer char als c oder '*'
     *            steht.
     */
-   private void writeCharInMatrix(int rowIndex, char c, int columnIndex) throws Exception {
+   private void writeCharInMatrix(int rowIndex, char c, int columnIndex) throws DataCollisionException {
       if (matrix[rowIndex][columnIndex] != '*' && matrix[rowIndex][columnIndex] != c) {
          solveState = SolveStateEnum.MUST_GUESS;
          throw new DataCollisionException("Fehler: row:" + rowIndex + " column:" + columnIndex + " " + c + " ungleich " + matrix[rowIndex][columnIndex]);
@@ -2254,18 +2152,42 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
+    * Gibt alle Spalten des Rätsels zurück.
+    * 
+    * @return alle Spalten
+    */
+   private ArrayList<Column> getColumns() {
+      return riddle.getColumns();
+   }
+
+   /**
+    * Gibt alle Reihen des Rätsels zurück.
+    * 
+    * @return alle Reihen
+    */
+   private ArrayList<Row> getRows() {
+      return riddle.getRows();
+   }
+
+   /**
+    * Display the matrix. TODO delete
+    * 
+    */
+   private void showMatrix() {
+      StringBuilder out = new StringBuilder("\n");
+      ;
+      int height = riddle.getHeight();
+      for (int i = 0; i < height; i++) {
+         showRow(out, i);
+      }
+      System.out.println(out.toString());
+   }
+
+   /**
     * @return the solveState
     */
    public SolveStateEnum getSolveState() {
       return solveState;
-   }
-
-   /**
-    * @param solveState
-    *           the solveState to set
-    */
-   public void setSolveState(SolveStateEnum solveState) {
-      this.solveState = solveState;
    }
 
 }

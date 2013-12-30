@@ -3,7 +3,9 @@ package models;
 import java.util.TreeSet;
 
 /**
- * Farbblock in einer Reihe oder Spalte.
+ * Farbblock in einer Reihe oder Spalte. Die Klasse Block spielt eine große
+ * Rolle im Lösungsprozess. Im Laufe des Prozesses werden minIndex und maxIndex
+ * immer wieder verändert, bis der Block eindeutig gesetzt werden kann.
  * 
  * @author cschulte
  * 
@@ -11,7 +13,8 @@ import java.util.TreeSet;
 public class Block {
 
    /**
-    * 
+    * Flag für Methoden beim Lösen.Wird auf true gesetzt, wenn minIndex oder
+    * maxIndex geändert werden.
     */
    public boolean doOverlapping;
 
@@ -38,21 +41,13 @@ public class Block {
     */
    private boolean gone;
    /**
-    * Wird nur noch am Anfang des Lösungsprozesses gebraucht.
+    * Index wird im Laufe des Lösens angepasst.
     */
-   private Integer minStartIndex;
+   private Integer minIndex;
    /**
-    * Wird nur noch am Anfang des Lösungsprozesses gebraucht.
+    * Index wird im Laufe des Lösens angepasst.
     */
-   private Integer maxEndIndex;
-   /**
-    * Index wird im LAufe des Lösens angepasst.
-    */
-   private Integer minStartIndexNew;
-   /**
-    * Index wird im LAufe des Lösens angepasst.
-    */
-   private Integer maxEndIndexNew;
+   private Integer maxIndex;
    /**
     * String der Farbe.
     */
@@ -110,10 +105,8 @@ public class Block {
          this.endIndex = new Integer(block.endIndex);
       }
       this.gone = block.gone;
-      this.minStartIndex = new Integer(block.minStartIndex);
-      this.maxEndIndex = new Integer(block.maxEndIndex);
-      this.minStartIndexNew = new Integer(block.minStartIndexNew);
-      this.maxEndIndexNew = new Integer(block.maxEndIndexNew);
+      this.minIndex = new Integer(block.minIndex);
+      this.maxIndex = new Integer(block.maxIndex);
       this.colourString = block.colourString;
       this.colourChar = block.colourChar;
       this.entriesSet = new Integer(block.entriesSet);
@@ -178,7 +171,7 @@ public class Block {
     */
    public void setStartIndex(Integer startIndex) {
       this.startIndex = startIndex;
-      this.minStartIndexNew = startIndex;
+      this.minIndex = startIndex;
    }
 
    /**
@@ -194,7 +187,7 @@ public class Block {
     */
    public void setEndIndex(Integer endIndex) {
       this.endIndex = endIndex;
-      this.maxEndIndexNew = endIndex;
+      this.maxIndex = endIndex;
    }
 
    /**
@@ -230,111 +223,71 @@ public class Block {
    }
 
    /**
-    * @return the minStartIndex
+    * @return the minIndex
     */
-   public Integer getMinStartIndex() {
-      return minStartIndex;
+   public Integer getMinIndex() {
+      return minIndex;
    }
 
    /**
-    * @param minStartIndex
-    *           the minStartIndex to set
-    */
-   public void setMinStartIndex(Integer minStartIndex) {
-      if (null != this.minStartIndex) {
-         if (this.minStartIndex < minStartIndex) {
-            this.minStartIndex = minStartIndex;
-         }
-      } else {
-         this.minStartIndex = minStartIndex;
-      }
-      this.minStartIndexNew = this.minStartIndex;
-   }
-
-   /**
-    * @return the maxEndIndex
-    */
-   public Integer getMaxEndIndex() {
-      return maxEndIndex;
-   }
-
-   /**
-    * @param maxEndIndex
-    *           the maxEndIndex to set
-    */
-   public void setMaxEndIndex(Integer maxEndIndex) {
-      if (null != this.maxEndIndex) {
-         if (this.maxEndIndex > maxEndIndex) {
-            this.maxEndIndex = maxEndIndex;
-         }
-      } else {
-         this.maxEndIndex = maxEndIndex;
-      }
-      this.maxEndIndexNew = this.maxEndIndex;
-   }
-
-   /**
-    * @return the minStartIndexNew
-    */
-   public Integer getMinStartIndexNew() {
-      return minStartIndexNew;
-   }
-
-   /**
-    * Falls minStartIndexNew > this.minStartIndexNew wird this. maEndIndex
-    * gesetzt. Eswird auch geprüft, ob (minStartIndexNew + howMany) ==
-    * (maxEndIndexNew + 1) und gone == false ist. Dann ist der Block bereits
-    * richtig platziert. Deshalb werden minStartIndexNew und maxEndIndexNew zu
-    * indeces hinzugefügt. Eine Methode im Nonosolver sorgt dafür, dass die
-    * Felder dazwischen gesetzt werden.
+    * Falls minIndex > this.minIndex wird this. maEndIndex gesetzt. Eswird auch
+    * geprüft, ob (minIndex + howMany) == (maxIndex + 1) und gone == false ist.
+    * Dann ist der Block bereits richtig platziert. Deshalb werden minIndex und
+    * maxIndex zu indeces hinzugefügt. Eine Methode im Nonosolver sorgt dafür,
+    * dass die Felder dazwischen gesetzt werden.
     * 
-    * @param minStartIndexNew
-    *           the minStartIndexNew to set
-    * @throws Exception
+    * @param minIndex
+    *           the minIndex to set
     */
-   public void setMinStartIndexNew(Integer minStartIndexNew) throws Exception {
-      if (minStartIndexNew > this.maxEndIndexNew) {
-         throw new Exception();
+   public void setMinIndex(Integer minIndex) {
+      if (this.minIndex == null) {
+         this.minIndex = minIndex;
+         return;
       }
-      if (minStartIndexNew > this.minStartIndexNew) {
-         this.minStartIndexNew = minStartIndexNew;
+      if (minIndex > this.maxIndex) {
+         return;
       }
-      if ((this.minStartIndexNew + howMany) == (this.maxEndIndexNew + 1) && !isGone()) {
-         increaseEntriesSet(this.minStartIndexNew);
-         increaseEntriesSet(this.maxEndIndexNew);
+      if (minIndex > this.minIndex) {
+         this.minIndex = minIndex;
+      }
+      if ((this.minIndex + howMany) == (this.maxIndex + 1) && !isGone()) {
+         increaseEntriesSet(this.minIndex);
+         increaseEntriesSet(this.maxIndex);
       }
       doOverlapping = true;
    }
 
    /**
-    * @return the maxEndIndexNew
+    * @return the maxIndex
     */
-   public Integer getMaxEndIndexNew() {
-      return maxEndIndexNew;
+   public Integer getMaxIndex() {
+      return maxIndex;
    }
 
    /**
-    * Falls maxEndIndexNew < this.maxEndIndexNew wird this. maEndIndex gesetzt.
-    * Eswird auch geprüft, ob (minStartIndexNew + howMany) == (maxEndIndexNew +
-    * 1) und gone == false ist. Dann ist der Block bereits richtig platziert.
-    * Deshalb werden minStartIndexNew und maxEndIndexNew zu indeces hinzugefügt.
-    * Eine Methode im Nonosolver sorgt dafür, dass die Felder dazwischen gesetzt
-    * werden.
+    * Falls maxIndex < this.maxIndex wird this. maEndIndex gesetzt. Eswird auch
+    * geprüft, ob (minIndex + howMany) == (maxIndex + 1) und gone == false ist.
+    * Dann ist der Block bereits richtig platziert. Deshalb werden minIndex und
+    * maxIndex zu indeces hinzugefügt. Eine Methode im Nonosolver sorgt dafür,
+    * dass die Felder dazwischen gesetzt werden.
     * 
-    * @param maxEndIndexNew
-    *           the maxEndIndexNew to set
-    * @throws Exception
+    * @param maxIndex
+    *           the maxIndex to set
     */
-   public void setMaxEndIndexNew(Integer maxEndIndexNew) throws Exception {
-      if (this.minStartIndexNew > maxEndIndexNew) {
-         throw new Exception();
+   public void setMaxIndex(Integer maxIndex) {
+      if (this.maxIndex == null) {
+         this.maxIndex = maxIndex;
+         return;
       }
-      if (maxEndIndexNew < this.maxEndIndexNew) {
-         this.maxEndIndexNew = maxEndIndexNew;
+      if (this.minIndex > maxIndex) {
+         return;
       }
-      if ((minStartIndexNew + howMany) == (maxEndIndexNew + 1) && !isGone()) {
-         increaseEntriesSet(minStartIndexNew);
-         increaseEntriesSet(maxEndIndexNew);
+      if (maxIndex < this.maxIndex) {
+         this.maxIndex = maxIndex;
+      }
+      if ((minIndex + howMany) == (maxIndex + 1) && !isGone()) {
+         increaseEntriesSet(minIndex);
+         increaseEntriesSet(maxIndex);
       }
       doOverlapping = true;
    }
@@ -357,7 +310,8 @@ public class Block {
     * Erhöht {@link #entriesSet} und fügt den index {@link #indeces} hinzu.
     * Falls alle Felder gesetzt sind, wird {@link #gone} auf true gesetzt.
     * 
-    * @param index Stelle 
+    * @param index
+    *           Stelle
     * 
     * @return true if the Block is gone after set.
     */
@@ -380,9 +334,8 @@ public class Block {
     */
    @Override
    public String toString() {
-      return "Block [howMany=" + howMany + ", colour=" + colour + ", startIndex=" + startIndex + ", endIndex=" + endIndex + ", gone=" + gone + ", minStartIndex=" + minStartIndex + ", maxEndIndex="
-            + maxEndIndex + ", minStartIndexNew=" + minStartIndexNew + ", maxEndIndexNew=" + maxEndIndexNew + ", color=" + colourString + ", colorChar=" + colourChar + ", entriesSet=" + entriesSet
-            + ", indeces=" + indeces + "]\n";
+      return "Block [howMany=" + howMany + ", colour=" + colour + ", startIndex=" + startIndex + ", endIndex=" + endIndex + ", gone=" + gone + ", minIndex=" + minIndex + ", maxIndex=" + maxIndex
+            + ", color=" + colourString + ", colorChar=" + colourChar + ", entriesSet=" + entriesSet + ", indeces=" + indeces + "]\n";
    }
 
 }
