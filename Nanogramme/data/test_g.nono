@@ -1,14 +1,14 @@
 title Ein Nonogramm
 by "ProPra-Team - FernUni Hagen"
 
-# Anmerkung: Dieses Rtsel ist ohne die content-Angabe nicht eindeutig lsbar.
+# Anmerkung: Dieses Rätsel ist ohne die content-Angabe nicht eindeutig lösbar.
 
 width 4
 height 4
 numberofcolors 1
 
 colors
-A 1,65,143
+A 0,65,143
 
 rows
 0
@@ -25,5 +25,5 @@ columns
 content
 ****
 *A**
-**A*
+****
 ****

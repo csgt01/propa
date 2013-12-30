@@ -1,5 +1,5 @@
 title Discovery
-by Rtsel aus dem Heft Farb-NONOGRAMM Nr. 08
+by Rätsel aus dem Heft Farb-NONOGRAMM Nr. 08
 # Schwierigkeitsstufe mittel
 
 width 35
@@ -9,7 +9,7 @@ numberofcolors 5
 colors
 # R = rot
 # B = blau
-# G = grÃ¼n
+# G = grün
 # S = schwarz
 # Y = gelb
 R 255,0,0

@@ -1,10 +1,10 @@
 title Ein Nonogramm
 by "ProPra-Team - FernUni Hagen"
 
-# Anmerkung: Bei diesem Rtsel entsteht whrend des Lsungsvorgangs eine 
+# Anmerkung: Bei diesem Rätsel entsteht während des Lösungsvorgangs eine 
 # Situation, in der mit Logik keine weitere sichere Entscheidung getroffen 
-# werden kann. Trotzdem gibt es fr dieses Rtsel eine eindeutige Lsung.
-# Fr die Implementierung des Lsungsalgorithmus knnte es hilfreich sein,
+# werden kann. Trotzdem gibt es für dieses Rätsel eine eindeutige Lösung.
+# Für die Implementierung des Lösungsalgorithmus könnte es hilfreich sein,
 # sich weitere Literatur zu den Themen Backtracking oder 8-Damenproblem 
 # anzuschauen (s. auch die Hinweise in den Vortragsfolien).
 

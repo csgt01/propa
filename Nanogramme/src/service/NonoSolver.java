@@ -390,9 +390,6 @@ public class NonoSolver implements INonogramSolver {
     * @return true, wenn die Reihe korrekt ist
     */
    protected boolean checkStateOfWrittenMatrixByRow(char[][] checkMatrix, int rowIn) {
-      // String methodName = "checkStateOfWrittenMatrix()";
-      // // System.out.println(methodName);
-      // Date startTime = new Date();
       StringBuilder out = new StringBuilder("");
       showRow(out, rowIn);
       // System.out.println(rowIn);

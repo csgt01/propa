@@ -1,43 +1,50 @@
-title bla, aber in gruen ;-)
-by cschulte
+title Quietscheentchen…, aber in gruen ;-)
+by kreuzwortraetsel.ch
 
-width 15
-height 15
-numberofcolors 1
+# Anmerkung: Die content-Angabe enthält das bereits gelöste Rätsel.
+
+width 10
+height 10
+numberofcolors 4
 
 colors
 A 255,0,0
+B 51,102,255
+C 51,153,102
+D 0,0,0
 
 rows
-1A,1A
-2A,2A,2A,1A
-1A,1A
-1A,1A,1A,1A
-1A,1A
-5A,6A
-6A,7A
-6A,7A
-6A,7A
-6A,7A
-6A,7A
-5A,6A
-4A,2A,5A
-6A,7A
-12A
+3C
+2C,2C
+3A,1C,1D,2C
+2A,4C
+3C,1C
+3C,2C
+8C
+2C,5C
+2B,3C,3C
+3B,6C,1B
 
 columns
-8A
-14A
-2A,10A
-10A
-1A,7A,2A
-1A,1A,6A,2A
-1A,1A
-1A,1A
-1A,1A,6A,2A
-1A,7A,2A
-10A
-1A,10A
-14A
-9A
-8A
+1A,2B
+2A,2B
+1C,2A,3C,1B
+10C
+1C,1D,4C,2C
+8C,1C
+3C,2C,1C
+4C
+5C
+5C,1B
+
+content
+---CCC----
+--CC-CC---
+AAACDCC---
+-AACCCC---
+---CCC---C
+---CCC--CC
+--CCCCCCCC
+--CC-CCCCC
+BBCCC--CCC
+BBBCCCCCCB
