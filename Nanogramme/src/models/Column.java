@@ -136,12 +136,14 @@ public class Column {
     * 
     * @param row
     *           index
+    * @param withBlocks
+    *           mit Setzen von indeces bei block
     * 
     * @return true wenn alle Felder gesetzt sind.
     */
-   public boolean setEntriesSet(int row) {
+   public boolean setEntriesSet(int row, boolean withBlocks) {
       entriesSet++;
-      if (blocks != null) {
+      if (withBlocks && blocks != null) {
          if (blocks.size() == 1) {
             blocks.get(0).increaseEntriesSet(row);
          } else if (blocks.size() > 1) {

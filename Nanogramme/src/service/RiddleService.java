@@ -98,36 +98,12 @@ public class RiddleService {
 			}
 			nono += (str + "\n");
 		}
-		System.out.println("Nono:\n" + nono);
+//		System.out.println("Nono:\n" + nono);
 		riddle.setNono(nono);
-		 System.out.println("Riddle:" + riddle);
-		showMatrix();
+//		 System.out.println("Riddle:" + riddle);
 		return riddle;
 	}
 
-	/**
-	 * Display the matrix.
-	 * 
-	 * @throws Exception
-	 */
-	private void showMatrix() {
-//		String methodName = "showMatrix()";
-//		System.out.println(methodName);
-//		long startTime = new Date().getTime();
-//		for (int i = 0; i < riddle.getHeight(); i++) {
-//			String out = "";
-//			for (int j = 0; j < riddle.getWidth(); j++) {
-//				out += matrix[i][j];
-//				out += "  ";
-//			}
-//			System.out.println(out);
-//		}
-//		System.out.println();
-//		// showBlockGoneTrue(matrix);
-//		System.out.println("Time for " + methodName + ": "
-//				+ (new Date().getTime() - startTime) + " ms");
-	}
-	
 	int rowInt = 0;
 	int columnInt = 0;
 
@@ -216,30 +192,29 @@ public class RiddleService {
 						}
 					}
 					column.setIndex(columnInt);
-//					System.out.println(columnInt);
 					columnInt++;
 					riddle.addColumn(column);
 				}
 				break;
 			case 4:
-				System.out.println(contentRow);
-				System.out.println(contentColumn);
-				System.out.println(str + "\n");
+//				System.out.println(contentRow);
+//				System.out.println(contentColumn);
+//				System.out.println(str + "\n");
 				for (int i = 0; i < str.length(); i++) {
 					if (str.charAt(i) != ' ') {
-					   System.out.println(str.charAt(i));
+//					   System.out.println(str.charAt(i));
 						matrix[contentRow][contentColumn] = str.charAt(i);
-						contentColumn++;
-						if (str.charAt(i) != '*') {
+						if (str.charAt(i) != '*' && str.charAt(i) != '-') {
 						   Column column = riddle.getColumns().get(contentColumn);
 						   Row row = riddle.getRows().get(contentRow);
                      try {
-                        column.setEntriesSet(column.getEntriesSet());
-                        row.setEntriesSet(row.getEntriesSet());
+                        column.setEntriesSet(contentRow, false);
+                        row.setEntriesSet(contentColumn, false);
                      } catch (Exception e) {
                         e.printStackTrace();
                      }
 						}
+						contentColumn++;
 					}
 				}
 				if (str.length() > 0 && !str.contains("content")) {

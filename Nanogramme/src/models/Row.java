@@ -136,17 +136,18 @@ public class Row {
     * 
     * @param column
     *           Index wo gesetzt wurde.
+    * @param withBlocks mit Setzen von indeces bei block
     * 
     * @return true wenn alle Felder gesetzt sind.
     */
-   public boolean setEntriesSet(int column) {
+   public boolean setEntriesSet(int column, boolean withBlocks) {
       entriesSet++;
       if (entriesSet == maxEntries) {
          setGone(true);
          return true;
       }
       ArrayList<Integer> indeces = new ArrayList<Integer>();
-      if (blocks != null && blocks.size() > 0) {
+      if (withBlocks && blocks != null && blocks.size() > 0) {
          for (Block block : blocks) {
             if (column >= block.getMinIndex() && column <= block.getMaxIndex()) {
                indeces.add(blocks.indexOf(block));

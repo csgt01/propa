@@ -648,7 +648,7 @@ public class NonoSolver implements INonogramSolver {
                   blockInts.add(blocks.indexOf(block));
                }
             }
-            // "*" gehört nur zu einem Block
+            // gehört nur zu einem Block
             int blockIntsSize = blockInts.size();
             if (blockIntsSize == 1) {
                Block block = blocks.get(blockInts.get(0));
@@ -2117,11 +2117,11 @@ public class NonoSolver implements INonogramSolver {
          matrix[rowIndex][columnIndex] = c;
          if (matrix[rowIndex][columnIndex] != '-') {
             Row row = getRows().get(rowIndex);
-            if (row.setEntriesSet(columnIndex)) {
+            if (row.setEntriesSet(columnIndex, true)) {
                fillWithFree(true, rowIndex);
             }
             Column column = getColumns().get(columnIndex);
-            if (column.setEntriesSet(rowIndex)) {
+            if (column.setEntriesSet(rowIndex, true)) {
                fillWithFree(false, columnIndex);
             }
          }
