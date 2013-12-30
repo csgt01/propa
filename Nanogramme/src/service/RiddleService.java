@@ -32,7 +32,7 @@ public class RiddleService {
 	/**
 	 * Das Rätsel.
 	 */
-	private Riddle riddle = new Riddle();
+	private Riddle riddle;
 
 	/**
 	 * Hilfsvariable beim Parsen.
@@ -64,6 +64,7 @@ public class RiddleService {
 	 */
 	public RiddleService(IUIListener listener) {
 		this.listener = listener;
+		
 	}
 
 	/**
@@ -76,6 +77,7 @@ public class RiddleService {
 	public Riddle readFile(String filename) {
 		String nono = "";
 		Scanner scanner = null;
+		riddle = new Riddle();
 		ArrayList<String> lines = new ArrayList<String>();
 		try {
 			scanner = new Scanner(new File(filename), "UTF-8");
@@ -96,9 +98,9 @@ public class RiddleService {
 			}
 			nono += (str + "\n");
 		}
-//		System.out.println("Nono:\n" + nono);
+		System.out.println("Nono:\n" + nono);
 		riddle.setNono(nono);
-		// System.out.println("Riddle:" + riddle);
+		 System.out.println("Riddle:" + riddle);
 		showMatrix();
 		return riddle;
 	}
@@ -220,13 +222,24 @@ public class RiddleService {
 				}
 				break;
 			case 4:
-//				System.out.println(contentRow);
-//				System.out.println(contentColumn);
-//				System.out.println(str + "\n");
+				System.out.println(contentRow);
+				System.out.println(contentColumn);
+				System.out.println(str + "\n");
 				for (int i = 0; i < str.length(); i++) {
 					if (str.charAt(i) != ' ') {
+					   System.out.println(str.charAt(i));
 						matrix[contentRow][contentColumn] = str.charAt(i);
 						contentColumn++;
+						if (str.charAt(i) != '*') {
+						   Column column = riddle.getColumns().get(contentColumn);
+						   Row row = riddle.getRows().get(contentRow);
+                     try {
+                        column.setEntriesSet(column.getEntriesSet());
+                        row.setEntriesSet(row.getEntriesSet());
+                     } catch (Exception e) {
+                        e.printStackTrace();
+                     }
+						}
 					}
 				}
 				if (str.length() > 0 && !str.contains("content")) {

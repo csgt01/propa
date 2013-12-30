@@ -1,33 +1,51 @@
-title bla, aber in gruen ;-)
-by cschulte
+title Quietscheentchen, aber in gruen ;-)
+by kreuzwortraetsel.ch
+
+# Anmerkung: Es gibt zwar eine content-Angabe, diese besteht allerdings nur aus 
+# Feldern, für die noch kein Wert feststeht ('*').
 
 width 10
 height 10
-numberofcolors 5
+numberofcolors 4
 
 colors
 A 255,0,0
+B 51,102,255
+C 51,153,102
+D 0,0,0
 
 rows
-1A,7A
-7A
-2A,7A
-2A,2A,1A
-2A,1A,3A
-2A,1A
-3A,2A
-4A,2A
-5A,1A
-4A,1A,3A
+3C
+2C,2C
+3A,1C,1D,2C
+2A,4C
+3C,1C
+3C,2C
+8C
+2C,5C
+2B,3C,3C
+3B,6C,1B
 
 columns
-1A,8A
-8A
-4A
-5A,3A
-4A,1A,1A
-3A,1A,1A
-3A,1A
-3A,1A,1A,1A
-3A,2A,1A
-4A,1A,2A
+1A,2B
+2A,2B
+1C,2A,3C,1B
+10C
+1C,1D,4C,2C
+8C,1C
+3C,2C,1C
+4C
+5C
+5C,1B
+
+content
+**********
+**********
+**********
+**********
+**********
+**********
+**********
+**********
+**********
+**********

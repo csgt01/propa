@@ -109,9 +109,12 @@ public class NonoSolver implements INonogramSolver {
 
    @Override
    public char[][] getSolution() {
+      System.out.println(stacks.size());
       String methodName = "getSolution()";
       System.out.println(methodName);
       solveState = SolveStateEnum.SOLVING;
+      stacks = new LinkedList<StackHolder>();
+      solutionsFromGuising = new ArrayList<char[][]>();
       showMatrix();
       if (matrix == null) {
          setupMatrix();
@@ -131,6 +134,7 @@ public class NonoSolver implements INonogramSolver {
     */
    private void handle() {
       while (solveState != SolveStateEnum.SOLVED) {
+         System.out.println("state:" + solveState);
          // ein Fehler wurde in solve erkannt dann entweder Farbe von letzten
          // StackHolder ändern oder keine Lösung
          if (solveState == SolveStateEnum.ERROR) {
@@ -144,29 +148,23 @@ public class NonoSolver implements INonogramSolver {
                      return;
                      // 1 Lösung gefunden
                   case 1:
-                     matrix = solutionsFromGuising.get(0);
                      solveState = SolveStateEnum.SOLVED;
-                     showMatrix();
                      matrix = solutionsFromGuising.get(0);
                      return;
                      // mehrere Lösungen gefunden
                   default:
                      solveState = SolveStateEnum.MULTIPLE_SOLUTIONS;
-                     showMatrix();
                      return;
                   }
                }
                // Fehler gefunden und stack ist leer oder null
             } else {
                if (solutionsFromGuising == null || solutionsFromGuising.size() != 1) {
-                  showMatrix();
                   solveState = SolveStateEnum.NO_SOLUTION;
                   // return matrix;
                   return;
                } else {
-                  matrix = solutionsFromGuising.get(0);
                   solveState = SolveStateEnum.SOLVED;
-                  showMatrix();
                   matrix = solutionsFromGuising.get(0);
                   // return solutionsFromGuising.get(0);
                   return;
@@ -179,7 +177,7 @@ public class NonoSolver implements INonogramSolver {
                setFirstStarToSomething();
                solveState = SolveStateEnum.SOLVING;
             } catch (Exception e) {
-               // e.printStackTrace();
+                e.printStackTrace();
             }
             // Mögliche Lösung gefunden, aber mit gefüllten stack --> andere
             // Möglichkeiten prüfen um mehrere Lösungen auzuschließen
@@ -194,13 +192,10 @@ public class NonoSolver implements INonogramSolver {
                case 1:
                   matrix = solutionsFromGuising.get(0);
                   solveState = SolveStateEnum.SOLVED;
-                  showMatrix();
-                  matrix = solutionsFromGuising.get(0);
                   // return solutionsFromGuising.get(0);
                   return;
                default:
                   solveState = SolveStateEnum.MULTIPLE_SOLUTIONS;
-                  showMatrix();
                   // return null;
                   return;
                }
@@ -224,7 +219,7 @@ public class NonoSolver implements INonogramSolver {
     * @return solveState:
     */
    private SolveStateEnum solve() {
-      // System.out.println("solve()");
+       System.out.println("solve()");
       try {
          boolean run1 = true;
          while (run1) {
@@ -258,7 +253,7 @@ public class NonoSolver implements INonogramSolver {
             }
          }
       } catch (Exception e) {
-         // e.printStackTrace();
+          e.printStackTrace();
          solveState = SolveStateEnum.ERROR;
       } finally {
          // showMatrix();
@@ -517,6 +512,7 @@ public class NonoSolver implements INonogramSolver {
          }
       }
    }
+
 
    /**
     * Überprüft, ob es in der Reihe und der Spalte einen Block mit der Farbe

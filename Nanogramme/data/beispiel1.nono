@@ -1,10 +1,10 @@
 title Quietscheentchen, aber in gruen ;-)
 by kreuzwortraetsel.ch
 
-# Anmerkung: Dieses Rtsel enthlt eine content-Angabe.
+# Anmerkung: Dieses Rätsel enthält eine content-Angabe.
 # Diese entspricht dem Zwischenstand nach Schritt 3 aus der 
-# Schritt-fr-Schritt-Anleitung aus der Aufgabenstellung (siehe Seite 12).
-# Achtung: Diese content-Angabe enthlt zudem Leerzeichen zwischen den
+# Schritt-für-Schritt-Anleitung aus der Aufgabenstellung (siehe Seite 12).
+# Achtung: Diese content-Angabe enthält zudem Leerzeichen zwischen den
 # einzelnen Zeichen. 
 
 width 10
@@ -41,3 +41,14 @@ columns
 5C
 5C,1B
 
+content
+* * * C * C * - - *
+* * * C * C * - - *
+* * * C * C * - - *
+* * * C * C * - - *
+* * * C * C * - - *
+* * * C * C * - C *
+* * C C C C C C C *
+* * * C - C * C C *
+B B * C C - - C C *
+B B B C C C C C C B
