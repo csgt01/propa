@@ -1,14 +1,17 @@
 package excetions;
 
 /**
+ * Exception wird geworfen, wenn zu einem Zeitpunkt das Rätsel nicht mehr losbar
+ * ist.
  * 
  * @author csgt
- *
+ * 
  */
 public class NotSolvableException extends Exception {
 
    /**
     * Konstruktor.
+    * 
     * @param string
     */
    public NotSolvableException(String string) {
@@ -19,5 +22,5 @@ public class NotSolvableException extends Exception {
     * 
     */
    private static final long serialVersionUID = 3602531136754293725L;
-   
+
 }

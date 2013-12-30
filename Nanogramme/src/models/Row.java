@@ -2,118 +2,182 @@ package models;
 
 import java.util.ArrayList;
 
+/**
+ * Stellt eine Reihe in einem Rätsel da. Die Klasse enthält auch eine Liste
+ * von {@link Block}, die in der Reihe vorkommen.
+ * 
+ * @author csgt
+ * 
+ */
 public class Row {
-	
-	private ArrayList<Block> blocks;
+   
+   /**
+    * Der Index der Spalte.
+    */
+   private int index;
 
-	private boolean isGone = false;
-	private int entriesSet = 0;
-	private int maxEntries = 0;
+   /**
+    * Liste der Blöcke.
+    */
+   private ArrayList<Block> blocks;
 
-	/**
-	 * @return the maxEntries
-	 */
-	public int getMaxEntries() {
-		return maxEntries;
-	}
+   /**
+    * Fertig gesetzt?
+    */
+   private boolean isGone = false;
 
-	/**
-	 * @param maxEntries
-	 *            the maxEntries to set
-	 */
-	public void setMaxEntries(int maxEntries) {
-		this.maxEntries = maxEntries;
-	}
+   /**
+    * Anzahl der gesetzten Felder.
+    */
+   private int entriesSet = 0;
 
+   /**
+    * Maximale Anzahl der gesetzten Felder (Summe von howMany der Blöcke).
+    */
+   private int maxEntries = 0;
 
-	public Row() {
-		blocks = new ArrayList<Block>();
-	}
+   /**
+    * @return the maxEntries
+    */
+   public int getMaxEntries() {
+      return maxEntries;
+   }
 
-	public Row(Row row) {
-		this.entriesSet = row.entriesSet;
-		this.isGone = row.isGone;
-		this.maxEntries = row.maxEntries;
-		this.blocks = new ArrayList<Block>();
-		for (Block block : row.getBlocks()) {
-			this.blocks.add(new Block(block));
-		}
-//		this.possibilities = new ArrayList<LinkedList<String>>(row.getPossibilities());
-	}
+   /**
+    * @param maxEntries
+    *           the maxEntries to set
+    */
+   public void setMaxEntries(int maxEntries) {
+      this.maxEntries = maxEntries;
+   }
 
-	public void addBlock(Block block) {
-		if (null == blocks) {
-			blocks = new ArrayList<Block>();
-		}
-		blocks.add(block);
-		maxEntries += block.getHowMany();
-	}
+   /**
+    * Konstruktor
+    */
+   public Row() {
+      blocks = new ArrayList<Block>();
+   }
 
-	public ArrayList<Block> getBlocks() {
-		return blocks;
-	}
+   /**
+    * Konstruktor
+    * 
+    * @param row
+    */
+   public Row(Row row) {
+      this.entriesSet = row.entriesSet;
+      this.isGone = row.isGone;
+      this.maxEntries = row.maxEntries;
+      this.blocks = new ArrayList<Block>();
+      for (Block block : row.getBlocks()) {
+         this.blocks.add(new Block(block));
+      }
+      this.index = row.getIndex();
+   }
 
-	public void setBlocks(ArrayList<Block> blocks) {
-		this.blocks = blocks;
-	}
+   /**
+    * Fügt einen Block der Liste hinzu
+    * 
+    * @param block
+    */
+   public void addBlock(Block block) {
+      if (null == blocks) {
+         blocks = new ArrayList<Block>();
+      }
+      blocks.add(block);
+      maxEntries += block.getHowMany();
+   }
 
-	public boolean isGone() {
-		return isGone;
-	}
+   /**
+    * @return Blöcke der Reihe
+    */
+   public ArrayList<Block> getBlocks() {
+      return blocks;
+   }
 
-	public void setGone(boolean isGone) {
-		if (blocks != null && isGone) {
-			for (Block block : blocks) {
-				block.setGone(true);
-			}
-		}
-		this.isGone = isGone;
-	}
+   /**
+    * @param blocks
+    */
+   public void setBlocks(ArrayList<Block> blocks) {
+      this.blocks = blocks;
+   }
 
-	public int getEntriesSet() {
-		return entriesSet;
-	}
+   /**
+    * 
+    * @return true wenn Reihe fertig ist.
+    */
+   public boolean isGone() {
+      return isGone;
+   }
 
-	/**
-	 * Inkrementiert die Anzahl der gesetzten Felder.
-	 * 
-	 * @return true wenn alle Felder gesetzt sind.
-	 * @throws Exception 
-	 */
-	public boolean setEntriesSet(int column) throws Exception {
-		entriesSet++;
-		if (entriesSet == maxEntries) {
-			setGone(true);
-			return true;
-		}
-		ArrayList<Integer> indeces = new ArrayList<Integer>();
-		if (blocks != null && blocks.size() > 0) {
-			for (Block block : blocks) {
-				if (column >= block.getMinStartIndexNew()
-						&& column <= block.getMaxEndIndexNew()) {
-					indeces.add(blocks.indexOf(block));
-				}
-			}
-			if (indeces.size() == 1) {
-				blocks.get(indeces.get(0)).increaseEntriesSet(column);
-			}
-		}
+   /**
+    * Sets gone.
+    * 
+    * @param isGone
+    */
+   public void setGone(boolean isGone) {
+      if (blocks != null && isGone) {
+         for (Block block : blocks) {
+            block.setGone(true);
+         }
+      }
+      this.isGone = isGone;
+   }
 
-		return false;
-	}
+   /**
+    * 
+    * @return Wie viele Farben gesetzt wurden. Leere Felder zählen nicht.
+    */
+   public int getEntriesSet() {
+      return entriesSet;
+   }
 
-	protected int getBlockCount() {
-		int blockCount = 0;
-		for (Block block : blocks) {
-			blockCount += block.getHowMany();
-		}
-		return blockCount;
-	}
+   /**
+    * Inkrementiert die Anzahl der gesetzten Felder.
+    * 
+    * @param column
+    *           Index wo gesetzt wurde.
+    * 
+    * @return true wenn alle Felder gesetzt sind.
+    * @throws Exception
+    */
+   public boolean setEntriesSet(int column) throws Exception {
+      entriesSet++;
+      if (entriesSet == maxEntries) {
+         setGone(true);
+         return true;
+      }
+      ArrayList<Integer> indeces = new ArrayList<Integer>();
+      if (blocks != null && blocks.size() > 0) {
+         for (Block block : blocks) {
+            if (column >= block.getMinStartIndexNew() && column <= block.getMaxEndIndexNew()) {
+               indeces.add(blocks.indexOf(block));
+            }
+         }
+         if (indeces.size() == 1) {
+            blocks.get(indeces.get(0)).increaseEntriesSet(column);
+         }
+      }
 
-	@Override
-	public String toString() {
-		return "\nRow [maxEntries=" + maxEntries + ", , entriesSet="
-				+ entriesSet + ", isGone=" + isGone + ", blocks=" + blocks
-				+ "]";
-	}
+      return false;
+   }
+
+   /**
+    * @return the index
+    */
+   public int getIndex() {
+      return index;
+   }
+
+   /**
+    * @param index
+    *           the index to set
+    */
+   public void setIndex(int index) {
+      this.index = index;
+   }
+
+   @Override
+   public String toString() {
+      return "\nRow [maxEntries=" + maxEntries + ", , entriesSet=" + entriesSet + ", isGone=" + isGone + ", blocks=" + blocks + "]";
+   }
 }

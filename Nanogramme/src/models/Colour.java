@@ -1,5 +1,9 @@
 package models;
 
+/**
+ * @author csgt
+ *
+ */
 public class Colour {
 
 	/**
