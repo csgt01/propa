@@ -109,9 +109,12 @@ public class NonoSolver implements INonogramSolver {
 
    @Override
    public char[][] getSolution() {
+      System.out.println(stacks.size());
       String methodName = "getSolution()";
       System.out.println(methodName);
       solveState = SolveStateEnum.SOLVING;
+      stacks = new LinkedList<StackHolder>();
+      solutionsFromGuising = new ArrayList<char[][]>();
       showMatrix();
       if (matrix == null) {
          setupMatrix();
@@ -246,11 +249,7 @@ public class NonoSolver implements INonogramSolver {
                if (stacks == null || stacks.size() == 0) {
                   solveState = SolveStateEnum.SOLVED;
                   run1 = false;
-                  if (solutionFromTryingOk()) {
-                     // TODO: testen ob Möglichkeit ok!
                      solutionsFromGuising.add(matrix);
-                     // andere Möglichkeiten beim Raten testen!
-                  }
                } else {
                   run1 = false;
                   // TODO: testen ob Möglichkeit ok!
@@ -376,68 +375,7 @@ public class NonoSolver implements INonogramSolver {
       }
    }
 
-   /**
-    * TODO
-    * 
-    * @return
-    */
-<<<<<<< HEAD
-   protected boolean checkStateOfWrittenMatrixByRow(char[][] checkMatrix, int rowIn) {
-      StringBuilder out = new StringBuilder("");
-      showRow(out, rowIn);
-      // System.out.println(rowIn);
-      // System.out.println(out);
-      int rowInt = rowIn;
-      char empty = '-';
-      Row row = getRows().get(rowInt);
-      ArrayList<Block> blocks = row.getBlocks();
-      if (blocks != null && blocks.size() > 0) {
-         int columnInt = 0;
-         int blockInt = 0;
-         while (columnInt < riddle.getWidth()) {
-            if (checkMatrix[rowInt][columnInt] == empty) {
-               columnInt++;
-            } else {
-               // Ist eine Farbe, aber keine Blöcke mehr!
-               if (blockInt >= blocks.size()) {
-                  System.out.println("false");
-                  return false;
-               } else {
-                  // Block prüfen
-                  Block block = blocks.get(blockInt);
-                  for (int i = 0; i < block.getHowMany(); i++) {
-                     if (!(checkMatrix[rowInt][columnInt] == block.getColorChar())) {
-                        System.out.println("false");
-                        return false;
-                     }
-                  }
-                  columnInt += block.getHowMany();
-                  // Nächster Block ist gleiche Farbe, also muss -
-                  // sein!
-                  if ((blockInt + 1) < blocks.size() && block.getColourString().equals(blocks.get(blockInt + 1).getColourString()) && !(checkMatrix[rowInt][columnInt] == empty)) {
-                     System.out.println("false");
-                     return false;
-                  }
-                  blockInt++;
-               }
-            }
-         }
-      } else {
-         // nur - !!!
-         for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-            if (!(checkMatrix[rowInt][columnInt] == empty)) {
-               // // System.out.println("false4: row: " + rowInt
-               // + " column: " + columnInt);
-               System.out.println("false");
-               return false;
-            }
-         }
-      }
-=======
-   private boolean solutionFromTryingOk() {
->>>>>>> 973a8f56626607b06340f12c7b4d2b1c0d8c9110
-      return true;
-   }
+  
 
    // /**
    // * Prüft ob die Matrix korrekt ist.
