@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.JLabel;
@@ -109,9 +110,9 @@ public class PlayGame implements IPlaygame {
             for (int i = 0; i < riddle.getHeight(); i++) {
                for (int j = 0; j < riddle.getWidth(); j++) {
                   if (matrix[i][j] != '*' && matrix[i][j] != '-') {
-                     listener.placeAField(i, j, riddle.getColourByName(String.valueOf(matrix[i][j])));
+                     listener.placeAField(i, j, riddle.getColourByName(String.valueOf(matrix[i][j])), true);
                   } else if (matrix[i][j] == '-') {
-                     listener.placeAField(i, j, backGroundColour);
+                     listener.placeAField(i, j, backGroundColour, true);
                   }
                }
             }
@@ -119,12 +120,31 @@ public class PlayGame implements IPlaygame {
             setupMatrix();
          }
       } else {
+         System.out.println(solver.getSolveState());
          switch (solver.getSolveState()) {
          case SOLVING:
             listener.showAlert(SolveStateEnum.SOLVING.getMessage());
             break;
          case MULTIPLE_SOLUTIONS:
             listener.showAlert(SolveStateEnum.MULTIPLE_SOLUTIONS.getMessage());
+            
+            
+            matrix = getDifferences(solver.solutionsFromGuising);
+                  
+            listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(), riddle.getRows(), riddle.getColumns());
+            listener.setColours(riddle.getColours());
+            // ist nur gleich null, wenn ein Rätsel neu erstellt wird!
+            if (matrix != null) {
+               for (int i = 0; i < riddle.getHeight(); i++) {
+                  for (int j = 0; j < riddle.getWidth(); j++) {
+                     if (matrix[i][j] != '*' && matrix[i][j] != '-') {
+                        listener.placeAField(i, j, riddle.getColourByName(String.valueOf(matrix[i][j])), false);
+                     } else if (matrix[i][j] == '-') {
+                        listener.placeAField(i, j, backGroundColour, false);
+                     }
+                  }
+               }
+            }
             break;
          case NO_SOLUTION:
             listener.showAlert(SolveStateEnum.NO_SOLUTION.getMessage());
@@ -135,6 +155,29 @@ public class PlayGame implements IPlaygame {
          }
       }
 
+   }
+
+   private char[][] getDifferences(ArrayList<char[][]> solutionsFromGuising) {
+   
+      char[][] result = new char[riddle.getHeight()][riddle.getWidth()];
+      
+      for (int i = 0; i < riddle.getHeight(); i++) {
+         for (int j = 0; j < riddle.getWidth(); j++) {
+            result[i][j] = '*';
+         }
+      }
+      char[][] solutionOne = solutionsFromGuising.get(0);
+      for (int k = 1; k < solutionsFromGuising.size(); k++) {
+         char[][] newOne = solutionsFromGuising.get(k);
+         for (int i = 0; i < riddle.getHeight(); i++) {
+            for (int j = 0; j < riddle.getWidth(); j++) {
+               if (newOne[i][j] != solutionOne[i][j]) {
+                  result[i][j] = solutionOne[i][j];
+               }
+            }
+         }
+      }
+      return result;
    }
 
    @Override
@@ -215,11 +258,11 @@ public class PlayGame implements IPlaygame {
          System.out.println(matrix[row][column]);
          matrix[row][column] = currentColor.getName();
          showMatrix();
-         listener.placeAField(row, column, currentColor);
+         listener.placeAField(row, column, currentColor, true);
       } else {
          matrix[row][column] = '*';
          showMatrix();
-         listener.placeAField(row, column, null);
+         listener.placeAField(row, column, null, true);
       }
    }
 

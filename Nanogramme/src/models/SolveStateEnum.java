@@ -22,7 +22,7 @@ public enum SolveStateEnum {
    /**
     * Mehrere Lösungen vorhanden
     */
-   MULTIPLE_SOLUTIONS("Mehrere Lösungen gefunden"),
+   MULTIPLE_SOLUTIONS("Mehrere Lösungen gefunden.\nEs wird eine Lösung ausgewählt und einige Felder vorausgefüllt, die dann nicht mehr klickbar sind."),
    /**
     * Keine Lösung vorhanden
     */

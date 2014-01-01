@@ -34,7 +34,7 @@ public interface IUIListener {
     * @param colour
     *           Die Farbe
     */
-   void placeAField(int row, int column, Colour colour);
+   void placeAField(int row, int column, Colour colour, boolean enabled);
 
    /**
     * Informiert den Listener, ob die Lösung richtig oder falsch war.
