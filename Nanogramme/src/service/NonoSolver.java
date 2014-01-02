@@ -1192,6 +1192,7 @@ public class NonoSolver implements INonogramSolver {
                // sein muss.
                int minIndex = block.getMinIndex();
                int maxIndex = block.getMaxIndex();
+               System.out.println(minIndex + "   " + row.getIndex());
                while ((minIndex - 1 > -1) && matrix[row.getIndex()][minIndex - 1] == block.getColorChar()) {
                   minIndex++;
                   block.setMinIndex(minIndex);
@@ -1620,6 +1621,282 @@ public class NonoSolver implements INonogramSolver {
          Column column = getColumns().get(index);
          if (column.isGone()) {
             fillWithFree(false, index);
+         }
+      }
+   }
+
+   /**
+    * Füllt Blöcke am Ende der Reihen und Spalten.
+    * 
+    * @throws DataCollisionException
+    * 
+    */
+   private void fillBlocksOnEnd() throws DataCollisionException {
+      int size = getColumns().size();
+      for (int index = 0; index < size; index++) {
+         Column column = getColumns().get(index);
+         if (!column.isGone()) {
+            fillBlocksOnEnd(column, index, column.getBlocks().size() - 1, riddle.getHeight() - 1);
+         }
+      }
+      for (int index = 0; index < getRows().size(); index++) {
+         Row row = getRows().get(index);
+         if (!row.isGone()) {
+            fillBlocksOnEnd(row, row.getBlocks().size() - 1, riddle.getWidth() - 1);
+         }
+      }
+   }
+
+   /**
+    * Wenn eine Spalte mit einer Farbe endet wird der Block gefüllt. Wenn eine
+    * Spalte mit einer Farbe endet, dann können die vorherigen Felder auch
+    * gesetzt werden (je nach Größe des letzten Blocks). Leere Felder am Ende
+    * der Spalte werden übersprungen. Wenn ein Block aufgefüllt wurde wird die
+    * Methode erneut aufgerufen, um zu prüfen ob direkt wieder ein Block
+    * beginnt, der aufgefüllt werden kann.
+    * 
+    * @throws DataCollisionException
+    * 
+    */
+   private void fillBlocksOnEnd(Column column, int indexOfColumn, int blockIndex, int rowIndex) throws DataCollisionException {
+      int block = blockIndex;
+      int rowInt = rowIndex;
+      boolean run = true;
+      // bis char != - weiterlaufen
+      while (run) {
+         if (rowInt > -1 && matrix[rowInt][indexOfColumn] == '-') {
+            rowInt--;
+         } else {
+            run = false;
+         }
+      }
+      // nur wenn char eine Farbe ist Füllen
+      if (rowInt > -1 && matrix[rowInt][indexOfColumn] != '*') {
+         ArrayList<Block> blocks = column.getBlocks();
+         if (blocks != null && blocks.size() > 0) {
+            Block colourBlock = blocks.get(block);
+            if (matrix[rowInt][indexOfColumn] == colourBlock.getColorChar()) {
+               fillAreaInColumnWithChar(indexOfColumn, (rowInt - colourBlock.getHowMany() + 1), (rowInt + 1), colourBlock.getColorChar());
+               rowInt = rowInt - colourBlock.getHowMany();
+               colourBlock.setGone(true, rowInt + 1);
+               // weiter wenn es noch mehr Blöcke gibt
+               if (-1 < block - 1) {
+                  block--;
+                  Block nextBlock = blocks.get(block);
+                  // wenn nächster Block gleiche Farbe hat - setzen
+                  if (nextBlock != null && nextBlock.getColorChar() == colourBlock.getColorChar() && rowInt > -1) {
+                     fillAreaInColumnWithChar(indexOfColumn, rowInt, rowInt + 1, '-');
+                     rowInt--;
+                  }
+                  // nochmal aufrufen
+                  fillBlocksOnEnd(column, indexOfColumn, block, rowInt);
+               } else {
+                  // keine Blöcke mehr, also mit - füllen
+                  fillWithFree(false, indexOfColumn);
+               }
+            } else {
+               solveState = SolveStateEnum.ERROR;
+               throw new DataCollisionException("Char wurde nochmal in fillBlocksOnEndOfColumn gesetzt \nchar " + matrix[rowInt][indexOfColumn] + " ungleich " + colourBlock.getColorChar());
+            }
+         }
+      }
+   }
+
+   /**
+    * Füllt Blöcke am Anfang der Reihen und Spalten.
+    * 
+    * @throws DataCollisionException
+    * 
+    */
+   private void fillBlocksOnBeginning() throws DataCollisionException {
+      int size = getColumns().size();
+      for (int index = 0; index < size; index++) {
+         Column column = getColumns().get(index);
+         if (!column.isGone()) {
+            fillBlocksOnBeginning(column, index, 0, 0);
+         }
+      }
+      for (int index = 0; index < getRows().size(); index++) {
+         Row row = getRows().get(index);
+         if (!row.isGone()) {
+            fillBlocksOnBeginning(row, 0, 0);
+         }
+      }
+   }
+
+   /**
+    * Füllt Blöcke am Anfang einer Spalte. Ruft sich rekursiv auf. Wenn eine
+    * Spalte mit einer Farbe beginnt, dann können die nächsten Felder auch
+    * gesetzt werden (je nach Größe des ersen Blocks). Leere Felder am Anfang
+    * der Spalte werden übersprungen. Wenn ein Block aufgefüllt wurde wird die
+    * Methode erneut aufgerufen, um zu prüfen ob direkt wieder ein Block
+    * beginnt, der aufgefüllt werden kann.
+    * 
+    * @param column
+    * @param blockIndex
+    * @throws DataCollisionException
+    */
+   private void fillBlocksOnBeginning(Column column, int indexOfColumn, int blockIndex, int rowIndex) throws DataCollisionException {
+      if (!column.isGone()) {
+         int block = blockIndex;
+         int rowInt = rowIndex;
+         boolean run = true;
+         // '-' überspringen
+         while (run) {
+            if (rowInt < riddle.getHeight() && matrix[rowInt][indexOfColumn] == '-') {
+               rowInt++;
+            } else {
+               run = false;
+            }
+         }
+         // Wenn kein '*' und nicht hinter dem Ende
+         if (rowInt < riddle.getHeight() && matrix[rowInt][indexOfColumn] != '*') {
+            ArrayList<Block> blocks = column.getBlocks();
+            if (blocks != null && blocks.size() > 0) {
+               Block colourBlock = blocks.get(block);
+               // wenn die Farben übereinstimmen Matrix mit Block füllen
+               Integer howMany = colourBlock.getHowMany();
+               if ((rowInt + howMany) < riddle.getHeight() && matrix[rowInt][indexOfColumn] == colourBlock.getColorChar()) {
+                  fillAreaInColumnWithChar(indexOfColumn, rowInt, (rowInt + howMany), colourBlock.getColorChar());
+                  colourBlock.setGone(true, rowInt);
+                  rowInt = rowInt + howMany;
+                  // wenn dahinter noch ein Block Methode wieder aufrufen
+                  if (blocks.size() > block + 1) {
+                     block++;
+                     Block nextBlock = blocks.get(block);
+                     if (nextBlock != null && nextBlock.getColorChar() == colourBlock.getColorChar()) {
+                        fillAreaInColumnWithChar(indexOfColumn, rowInt, rowInt + 1, '-');
+                        rowInt++;
+                     }
+                     fillBlocksOnBeginning(column, indexOfColumn, block, rowInt);
+                     // falls kein Block dahinter kann Spalte mit '-'
+                     // gefüllt werden
+                  } else {
+                     fillWithFree(false, indexOfColumn);
+                  }
+               } else {
+                  if ((rowInt + howMany) < riddle.getHeight()) {
+                     solveState = SolveStateEnum.ERROR;
+                     throw new DataCollisionException("Char wurde nochmal in fillBlocksOnEndOfColumn gesetzt \nchar " + matrix[rowInt][indexOfColumn] + " at" + rowInt + "/" + indexOfColumn
+                           + " ungleich " + colourBlock.getColorChar());
+                  }
+               }
+
+            }
+         }
+      }
+   }
+
+   /**
+    * Wenn eine Reihe mit einer Farbe endet wird der Block gefüllt. Wenn eine
+    * Reihe mit einer Farbe endet, dann können die vorherigen Felder auch
+    * gesetzt werden (je nach Größe des letzten Blocks). Leere Felder am Ende
+    * der Reihe werden übersprungen. Wenn ein Block aufgefüllt wurde wird die
+    * Methode erneut aufgerufen, um zu prüfen ob direkt wieder ein Block
+    * beginnt, der aufgefüllt werden kann.
+    * 
+    * @throws DataCollisionException
+    * 
+    */
+   private void fillBlocksOnEnd(Row row, int blockIndex, int columnIndex) throws DataCollisionException {
+      int block = blockIndex;
+      int columnInt = columnIndex;
+      boolean run = true;
+      int indexOfRow = row.getIndex();
+      while (run) {
+         if (columnInt > -1 && matrix[indexOfRow][columnInt] == '-') {
+            columnInt--;
+         } else {
+            run = false;
+         }
+      }
+      if (columnInt > -1 && matrix[indexOfRow][columnInt] != '*') {
+         ArrayList<Block> blocks = row.getBlocks();
+         if (blocks != null && blocks.size() > 0) {
+            Block colourBlock = blocks.get(block);
+            if (matrix[indexOfRow][columnInt] == colourBlock.getColorChar()) {
+               fillAreaInRowWithChar(indexOfRow, (columnInt - colourBlock.getHowMany() + 1), (columnInt + 1), colourBlock.getColorChar());
+               columnInt = columnInt - colourBlock.getHowMany();
+               colourBlock.setGone(true, columnInt + 1);
+               if (-1 < block - 1) {
+                  block--;
+                  Block nextBlock = blocks.get(block);
+                  if (nextBlock != null && nextBlock.getColorChar() == colourBlock.getColorChar()) {
+                     fillAreaInRowWithChar(indexOfRow, columnInt, columnInt + 1, '-');
+                     columnInt--;
+                  }
+                  fillBlocksOnEnd(row, block, columnInt);
+               } else {
+                  fillWithFree(true, indexOfRow);
+               }
+            } else {
+               solveState = SolveStateEnum.ERROR;
+               throw new DataCollisionException("char " + matrix[indexOfRow][columnInt] + " ungleich " + colourBlock.getColorChar());
+            }
+
+         }
+      }
+   }
+
+   /**
+    * Füllt Blöcke am Anfang einer Spalte. Ruft sich rekursiv auf. Wenn eine
+    * Reihe mit einer Farbe beginnt, dann können die nächsten Felder auch
+    * gesetzt werden (je nach Größe des ersen Blocks). Leere Felder am Anfang
+    * der Reihe werden übersprungen. Wenn ein Block aufgefüllt wurde wird die
+    * Methode erneut aufgerufen, um zu prüfen ob direkt wieder ein Block
+    * beginnt, der aufgefüllt werden kann.
+    * 
+    * @param row
+    * @param blockIndex
+    * @throws DataCollisionException
+    */
+   private void fillBlocksOnBeginning(Row row, int blockIndex, int columnIndex) throws DataCollisionException {
+      if (!row.isGone()) {
+         int block = blockIndex;
+         int columnInt = columnIndex;
+         boolean run = true;
+         // '-' überspringen
+         int indexOfRow = row.getIndex();
+         while (run) {
+            if (columnInt < riddle.getWidth() && matrix[indexOfRow][columnInt] == '-') {
+               columnInt++;
+            } else {
+               run = false;
+            }
+         }
+         // Wenn kein '*' und nicht hinter dem Ende
+         if (columnInt < riddle.getWidth() && matrix[indexOfRow][columnInt] != '*') {
+            ArrayList<Block> blocks = row.getBlocks();
+            if (blocks != null && blocks.size() > 0) {
+               Block colourBlock = blocks.get(block);
+               // wenn die Farben übereinstimmen Matrix mit Block füllen
+               if ((columnInt + colourBlock.getHowMany()) <= riddle.getWidth() && matrix[indexOfRow][columnInt] == colourBlock.getColorChar()) {
+                  fillAreaInRowWithChar(indexOfRow, columnInt, (columnInt + colourBlock.getHowMany()), colourBlock.getColorChar());
+                  colourBlock.setGone(true, columnInt);
+                  columnInt = columnInt + colourBlock.getHowMany();
+                  // wenn dahinter noch ein Block Methode wieder aufrufen
+                  if (blocks.size() > block + 1) {
+                     block++;
+                     Block nextBlock = blocks.get(block);
+                     if (nextBlock != null && nextBlock.getColorChar() == colourBlock.getColorChar()) {
+                        fillAreaInRowWithChar(indexOfRow, columnInt, columnInt + 1, '-');
+                        columnInt++;
+                     }
+                     fillBlocksOnBeginning(row, block, columnInt);
+                     // falls kein Block dahinter kann Spalte mit '-'
+                     // gefüllt werden
+                  } else {
+                     // System.out.println("Hierjfjfj");
+                     fillWithFree(true, indexOfRow);
+                  }
+               } else {
+                  if ((columnInt + colourBlock.getHowMany()) < riddle.getWidth()) {
+                     solveState = SolveStateEnum.ERROR;
+                     throw new DataCollisionException("char " + matrix[columnInt][indexOfRow] + " at" + columnInt + "/" + indexOfRow + " ungleich " + colourBlock.getColorChar());
+                  }
+               }
+
+            }
          }
       }
    }

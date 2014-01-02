@@ -303,12 +303,9 @@ public class RiddleService {
 		LinkedHashSet<Color> colors = new LinkedHashSet<Color>();
 		for (int i = 0; i < image.getHeight(); i++) {
 			for (int j = 0; j < image.getWidth(); j++) {
-//				System.out.println(j + "/" + i + ":"
-//						+ new Color(image.getRGB(j, i)));
 				colors.add(new Color(image.getRGB(j, i)));
 			}
 		}
-//		System.out.println(colors.size());
 
 		HashMap<Integer, String> mapping = new HashMap<Integer, String>();
 		mapping.put(0, "A");
@@ -351,6 +348,7 @@ public class RiddleService {
 		// setzen der Blöcke in Reihe und Spalte
 		for (int i = 0; i < image.getHeight(); i++) {
 			Row row = new Row();
+			row.setIndex(i);
 			ArrayList<Block> blocks = new ArrayList<Block>();
 			Block block = null;
 			Integer blockSize = null;
@@ -396,6 +394,7 @@ public class RiddleService {
 		riddle.setRows(rows);
 		for (int i = 0; i < image.getWidth(); i++) {
 			Column column = new Column();
+			column.setIndex(i);
 			ArrayList<Block> blocks = new ArrayList<Block>();
 			Block block = null;
 			Integer blockSize = null;

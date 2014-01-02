@@ -397,13 +397,19 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    }
 
    @Override
-   public void placeAField(int row, int column, Colour colour) {
+   public void placeAField(int row, int column, Colour colour, boolean enabled) {
       if (null != colour) {
          labels[row][column].setForeground(new Color(colour.getRed(), colour.getGreen(), colour.getBlue()));
          labels[row][column].setBackground(new Color(colour.getRed(), colour.getGreen(), colour.getBlue()));
+         if (!enabled) {
+            labels[row][column].removeMouseListener(playGame);
+         }
       } else {
          labels[row][column].setForeground(Color.LIGHT_GRAY);
          labels[row][column].setBackground(Color.LIGHT_GRAY);
+         if (!enabled) {
+            labels[row][column].removeMouseListener(playGame);
+         }
       }
    }
 
