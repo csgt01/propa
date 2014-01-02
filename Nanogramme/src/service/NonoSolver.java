@@ -224,7 +224,7 @@ public class NonoSolver implements INonogramSolver {
          boolean run1 = true;
          while (run1) {
             int starCount = getStarCountInRiddle();
-            checkRowsAndColumnsForGone();
+//            checkRowsAndColumnsForGone();
             checkByBlock();
             if (starCount <= getStarCountInRiddle()) {
                solveState = SolveStateEnum.MUST_GUESS;
