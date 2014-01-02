@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
@@ -49,17 +50,16 @@ public class PictureService implements IPictureService {
       try {
          BufferedImage oi = ImageIO.read(new File(file));
          int type = oi.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : oi.getType();
-         ImageIO.write(oi, "jpg", new File("testBla.jpg"));
          resizedImage = scalePicture(width, height, oi, type);
-         ImageIO.write(resizedImage, "jpg", new File("testResi.jpg"));
-
          Node root = new Node();
-
+         Date date = new Date();
          for (int i = 0; i < resizedImage.getHeight(); i++) {
             for (int j = 0; j < resizedImage.getWidth(); j++) {
                insertNode(new Color(resizedImage.getRGB(j, i)), root);
             }
          }
+         System.out.println("time:" + (new Date().getTime() - date.getTime()));
+         date = new Date();
          TreeSet<Node> fathers = new TreeSet<Node>();
          fathers = getFathersOfLeafs(root, fathers);
 
@@ -72,7 +72,11 @@ public class PictureService implements IPictureService {
          }
          LinkedList<Color> colors = new LinkedList<Color>();
          colors = getColorsOfLeafs(root, colors);
+         System.out.println("time:" + (new Date().getTime() - date.getTime()));
+         date = new Date();
          resizedImage = mapPictureToColors(resizedImage, colors);
+         System.out.println("time:" + (new Date().getTime() - date.getTime()));
+         date = new Date();
 
       } catch (IOException e) {
          e.printStackTrace();
