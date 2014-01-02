@@ -134,7 +134,7 @@ public class NonoSolver implements INonogramSolver {
     */
    private void handle() {
       while (solveState != SolveStateEnum.SOLVED) {
-         System.out.println("state:" + solveState);
+//         System.out.println("state:" + solveState);
          // ein Fehler wurde in solve erkannt dann entweder Farbe von letzten
          // StackHolder ändern oder keine Lösung
          if (solveState == SolveStateEnum.ERROR) {
@@ -177,26 +177,23 @@ public class NonoSolver implements INonogramSolver {
                setFirstStarToSomething();
                solveState = SolveStateEnum.SOLVING;
             } catch (Exception e) {
-                e.printStackTrace();
+               e.printStackTrace();
             }
             // Mögliche Lösung gefunden, aber mit gefüllten stack --> andere
-            // Möglichkeiten prüfen um mehrere Lösungen auzuschließen
+            // Möglichkeiten prüfen um mehrere Lösungen auszuschließen
          } else if (solveState == SolveStateEnum.FOUND_SOLUTION_WITH_STACK) {
             if (!changeLastStacksMember()) {
                switch (solutionsFromGuising.size()) {
                case 0:
                   showMatrix();
                   solveState = SolveStateEnum.NO_SOLUTION;
-                  // return n1ull;
                   return;
                case 1:
                   matrix = solutionsFromGuising.get(0);
                   solveState = SolveStateEnum.SOLVED;
-                  // return solutionsFromGuising.get(0);
                   return;
                default:
                   solveState = SolveStateEnum.MULTIPLE_SOLUTIONS;
-                  // return null;
                   return;
                }
             }
@@ -219,12 +216,12 @@ public class NonoSolver implements INonogramSolver {
     * @return solveState:
     */
    private SolveStateEnum solve() {
-       System.out.println("solve()");
+//      System.out.println("solve()");
       try {
          boolean run1 = true;
          while (run1) {
             int starCount = getStarCountInRiddle();
-//            checkRowsAndColumnsForGone();
+             checkRowsAndColumnsForGone();
             checkByBlock();
             if (starCount <= getStarCountInRiddle()) {
                solveState = SolveStateEnum.MUST_GUESS;
@@ -251,7 +248,7 @@ public class NonoSolver implements INonogramSolver {
             }
          }
       } catch (Exception e) {
-          e.printStackTrace();
+//         e.printStackTrace();
          solveState = SolveStateEnum.ERROR;
       } finally {
          // showMatrix();
@@ -510,7 +507,6 @@ public class NonoSolver implements INonogramSolver {
          }
       }
    }
-
 
    /**
     * Überprüft, ob es in der Reihe und der Spalte einen Block mit der Farbe
@@ -962,7 +958,9 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Falls die Reihe fertig ist, werden alle "*" mit "-" gefüllt.
+    * Wenn ein Block in dieser Reihe gesetzt ist (gone == true), wird, wenn der
+    * vorherige bzw. folgende Block dieselbe Farbe hat, davor bzw. danach ein
+    * Leerfeld gesetzt.
     * 
     * @param row
     * @throws DataCollisionException
@@ -977,10 +975,12 @@ public class NonoSolver implements INonogramSolver {
       for (int blockInt = 0; blockInt < size; blockInt++) {
          Block block = blocks.get(blockInt);
          if (block.isGone()) {
+            // erster Block
             if (blockInt == 0) {
                if (block.getColorChar() == blocks.get(blockInt + 1).getColorChar() && block.getEndIndex() != null && (block.getEndIndex() + 1) < riddle.getWidth()) {
                   writeCharInMatrix(indexOfRow, '-', block.getEndIndex() + 1);
                }
+               // letzter Block
             } else if (blockInt == size - 1) {
                if (block.getColorChar() == (blocks.get(blockInt - 1).getColorChar()) && block.getStartIndex() != null && (block.getStartIndex() - 1) > -1) {
                   writeCharInMatrix(indexOfRow, '-', block.getStartIndex() - 1);
@@ -998,7 +998,9 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Falls die Spalte fertig ist, werden alle "*" mit "-" gefüllt.
+    * Wenn ein Block in dieser Reihe gesetzt ist (gone == true), wird, wenn der
+    * vorherige bzw. folgende Block dieselbe Farbe hat, davor bzw. danach ein
+    * Leerfeld gesetzt.
     * 
     * @param column
     * @throws DataCollisionException
@@ -1192,7 +1194,6 @@ public class NonoSolver implements INonogramSolver {
                // sein muss.
                int minIndex = block.getMinIndex();
                int maxIndex = block.getMaxIndex();
-               System.out.println(minIndex + "   " + row.getIndex());
                while ((minIndex - 1 > -1) && matrix[row.getIndex()][minIndex - 1] == block.getColorChar()) {
                   minIndex++;
                   block.setMinIndex(minIndex);
@@ -1606,7 +1607,7 @@ public class NonoSolver implements INonogramSolver {
 
    /**
     * Spalte und Reihe wird mit '-' aufgefüllt, falls gone == true ist. Es
-    * werden alle Spalten und REihen des Rätsels durchgangen.
+    * werden alle Spalten und Reihen des Rätsels durchgangen.
     */
    private void checkRowsAndColumnsForGone() {
       int size = getRows().size();
