@@ -104,7 +104,7 @@ public class PlayGame implements IPlaygame {
       if (solver.getSolveState() == SolveStateEnum.SOLVED) {
          listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(), riddle.getRows(), riddle.getColumns());
          listener.setColours(riddle.getColours());
-         matrix = riddleLoader.matrix;
+         matrix = riddleLoader.getMatrix();
          // ist nur gleich null, wenn ein Rätsel neu erstellt wird!
          if (matrix != null) {
             for (int i = 0; i < riddle.getHeight(); i++) {

@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import models.Riddle;
 
 /**
- * Interface für die Kommunikation zwischen MainFrame und PlayGame.
+ * Interface stellt Methoden zum Öffnen oder Erstellen eines Rätsels bereit.
  * 
  * @author csgt
  * 

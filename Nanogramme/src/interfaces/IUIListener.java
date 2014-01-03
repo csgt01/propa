@@ -9,7 +9,7 @@ import models.Column;
 import models.Row;
 
 /**
- * Interface für die Kommunikation zum MainFrame.
+ * Interface stellt Methoden für die Anzeige in einer GUI bereit.
  * 
  * @author cschulte
  * 
@@ -33,6 +33,8 @@ public interface IUIListener {
     *           Nummer der Spalte
     * @param colour
     *           Die Farbe
+    * @param enabled
+    *           soll das Feld aktiviert werden
     */
    void placeAField(int row, int column, Colour colour, boolean enabled);
 

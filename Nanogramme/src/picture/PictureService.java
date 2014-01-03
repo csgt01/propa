@@ -16,6 +16,9 @@ import javax.imageio.ImageIO;
 
 /**
  * Diese Klasse ist für das Erstellen eines Rätsels aus einem Bild zuständig.
+ * Das Bild wird dabei aus einer Datei geladen, auf die gewünschte Größe
+ * skalliert und dann mit Hilfe eines Octree-Algorythmus auf die gewünschte
+ * Anzahl an Farben heruntergerechnet.
  * 
  * @author cschulte
  * 
@@ -340,12 +343,6 @@ public class PictureService implements IPictureService {
          for (int j = 0; j < resizedImage.getWidth(); j++) {
             resizedImage.setRGB(j, i, getBestColor(resizedImage.getRGB(j, i), colors));
          }
-      }
-      // TODO: weg!!
-      try {
-         ImageIO.write(resizedImage, "jpg", new File("test3.jpg"));
-      } catch (IOException e) {
-         e.printStackTrace();
       }
       return resizedImage;
    }

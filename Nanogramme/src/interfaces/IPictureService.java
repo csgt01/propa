@@ -3,7 +3,7 @@ package interfaces;
 import java.awt.image.BufferedImage;
 
 /**
- * Interface für die Kommunikation zwischen MainFrame und PictureService.
+ * Interface stellt eine MEthode zum laden und herunterskallieren eines Bildes bereit.
  * 
  * @author csgt
  * 

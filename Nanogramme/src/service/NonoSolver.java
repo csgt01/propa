@@ -18,8 +18,10 @@ import excetions.NotSolvableException;
 
 /**
  * Klasse, die das Lösen eines Nonogramms übernimmt. Um eine Lösung zu erhalten
- * muss nur {@link #getSolution()} aufgerufen werden und gegebenfalls
- * {@link #solveState} betrachtet werden.
+ * muss nur {@link #getSolution()} aufgerufen werden und gegebenenfalls
+ * {@link #solveState} betrachtet werden. Der Algorithmus läuft in zwei Stufen
+ * ab.Es wird erst versucht das Rätsel logisch zu lösen. Wenn dies nicht
+ * ausreicht, wird ein Feld geraten und wieder logisch nach der Lösung gesucht.
  * 
  * 
  * @author csgt
@@ -105,7 +107,7 @@ public class NonoSolver implements INonogramSolver {
       System.out.println(methodName);
       riddleLoader = new RiddleService(null);
       riddle = riddleLoader.readFile(arg0);
-      matrix = riddleLoader.matrix;
+      matrix = riddleLoader.getMatrix();
    }
 
    @Override
@@ -181,7 +183,7 @@ public class NonoSolver implements INonogramSolver {
                setFirstStarToSomething();
                solveState = SolveStateEnum.SOLVING;
             } catch (Exception e) {
-//               e.printStackTrace();
+               // e.printStackTrace();
             }
             // Mögliche Lösung gefunden, aber mit gefüllten stack --> andere
             // Möglichkeiten prüfen um mehrere Lösungen auszuschließen
@@ -254,7 +256,7 @@ public class NonoSolver implements INonogramSolver {
             }
          }
       } catch (Exception e) {
-//          e.printStackTrace();
+         // e.printStackTrace();
          solveState = SolveStateEnum.ERROR;
       } finally {
          // showMatrix();
@@ -399,7 +401,7 @@ public class NonoSolver implements INonogramSolver {
    /**
     * Ruft mehrere Methoden auf, die versuchen das Rätsel auf Blockebene zu
     * lösen. Dabei wird der minIndex und maxIndex der Blöcke möglichst weit
-    * eingeschränkt, um bei der Methode {@link #overlapBlocks(row)} viele
+    * eingeschränkt, um bei der Methode {@link #overlapBlocks(Row)} viele
     * überlappende Bereiche zu haben. Es wird auch versucht, Felder (leer, mit
     * Farbe gesetzt oder ungesetzt) bestimmten Blöcken zuzuordnet, um dann
     * weiter zu reagieren.
@@ -1563,7 +1565,7 @@ public class NonoSolver implements INonogramSolver {
 
    /**
     * Erstellt die erste Möglichkeit den Block zu setzten. Wird in
-    * {@link #overlapBlocksInColumn} und {@link #overlapInRow} aufgerufen.
+    * {@link #overlapBlocks(Column)} und {@link #overlapBlocks(Row)} aufgerufen.
     * 
     * @param block
     *           zu bearbeitende Block
@@ -1694,8 +1696,6 @@ public class NonoSolver implements INonogramSolver {
       }
    }
 
-   // TODO
-
    /**
     * Berechnet den minimalen Startindex eines Blockes, indem die Größen der
     * vorherigen Blöcke unter Berücksichtigung etwaiger Zwischenräume addiert
@@ -1707,7 +1707,7 @@ public class NonoSolver implements INonogramSolver {
     *           Index des zu betrachteten Blocks
     * @param size
     *           Breite / Höhe des Rätsels
-    * @return den neuen minStartIndex
+    * @return den neuen minIndex
     */
    private int getMinStartIndexOfBlock(ArrayList<Block> blocks, int indexOfBlock, int size) {
       int index = 0;
@@ -1724,7 +1724,9 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Berechnet den maximalen Index für einen Block.
+    * Berechnet den maximalen Index für einen Block, indem die Größen der
+    * nachfolgenden Blöcke unter Berücksichtigung etwaiger Zwischenräume addiert
+    * werden.
     * 
     * @param blocks
     *           alle Blöcke dieser Reihe/Spalte
@@ -1732,7 +1734,7 @@ public class NonoSolver implements INonogramSolver {
     *           Index des zu betrachteten Blocks.
     * @param size
     *           Breite / Höhe des Rätsels
-    * @return den neuen maxEndIndex
+    * @return den neuen maxIndex
     */
    private int getMaxEndIndexOfBlock(ArrayList<Block> blocks, int indexOfBlock, int size) {
       int index = 0;
@@ -1749,7 +1751,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Returns the Row of the current mfatrix as String.
+    * Returns the Row with the index i of the current matrix as String.
     * 
     * @param out
     *           String in den die Reihe geschriben wird.
