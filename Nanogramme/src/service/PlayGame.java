@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.swing.JLabel;
 
@@ -17,7 +16,10 @@ import models.Riddle;
 import models.SolveStateEnum;
 
 /**
- * Managed den Spielablauf
+ * Managed den Spielablauf. Die Klasse implementiert das Interface
+ * {@link IPlaygame}, über das Methoden dieser Klasse aufgerufen werden können.
+ * Die Klasse implementiert über IPlaygame auch die Interfaces ActionListener und
+ * MouseListener, so kann auf Ereignisse in der UI reagiert werden.
  * 
  * @author csgt
  * 
@@ -76,7 +78,7 @@ public class PlayGame implements IPlaygame {
          System.out.println(methodName);
          riddleLoader = new RiddleService(listener);
          riddle = riddleLoader.readFile(arg0);
-         setupIt(riddle);
+         setupIt(riddle, riddleLoader.getMatrix());
          return true;
       } catch (Exception e) {
          e.printStackTrace();
@@ -85,18 +87,24 @@ public class PlayGame implements IPlaygame {
    }
 
    @Override
-   public void setupIt(Riddle riddle) {
+   public void setupIt(Riddle riddle, char[][] matrix) {
       backGroundColour = new Colour();
       backGroundColour.setName('-');
       backGroundColour.setRed(Color.WHITE.getRed());
       backGroundColour.setGreen(Color.WHITE.getGreen());
       backGroundColour.setBlue(Color.WHITE.getBlue());
       this.riddle = riddle;
-      setupMatrix();
+      System.out.println(riddle);
+      this.matrix = matrix;
+      // matrix kann null sein!
+      if (this.matrix == null) {
+         setupMatrix();
+      }
+      // neues Objekt, da die MAtrix im Nonosolver verändert wird
       char[][] matrixNeu = new char[riddle.getHeight()][riddle.getWidth()];
       for (int i = 0; i < riddle.getHeight(); i++) {
          for (int j = 0; j < riddle.getWidth(); j++) {
-            matrixNeu[i][j] = matrix[i][j];
+            matrixNeu[i][j] = this.matrix[i][j];
          }
       }
       NonoSolver solver = new NonoSolver(matrixNeu, riddle);
@@ -104,7 +112,6 @@ public class PlayGame implements IPlaygame {
       if (solver.getSolveState() == SolveStateEnum.SOLVED) {
          listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(), riddle.getRows(), riddle.getColumns());
          listener.setColours(riddle.getColours());
-         matrix = riddleLoader.getMatrix();
          // ist nur gleich null, wenn ein Rätsel neu erstellt wird!
          if (matrix != null) {
             for (int i = 0; i < riddle.getHeight(); i++) {
@@ -119,6 +126,7 @@ public class PlayGame implements IPlaygame {
          } else {
             setupMatrix();
          }
+         // Fehler ist aufgetreten
       } else {
          System.out.println(solver.getSolveState());
          switch (solver.getSolveState()) {
@@ -127,13 +135,12 @@ public class PlayGame implements IPlaygame {
             break;
          case MULTIPLE_SOLUTIONS:
             listener.showAlert(SolveStateEnum.MULTIPLE_SOLUTIONS.getMessage());
-            
-            
+            // erstes char[][] von solutionsFromGuising wird als Lösung
+            // genommen. Abweichende Positionen werden als vorausgefüllte
+            // Stellen übernommen, um das Rätsel eindeutig zu machen
             matrix = getDifferences(solver.solutionsFromGuising);
-                  
             listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(), riddle.getRows(), riddle.getColumns());
             listener.setColours(riddle.getColours());
-            // ist nur gleich null, wenn ein Rätsel neu erstellt wird!
             if (matrix != null) {
                for (int i = 0; i < riddle.getHeight(); i++) {
                   for (int j = 0; j < riddle.getWidth(); j++) {
@@ -157,10 +164,20 @@ public class PlayGame implements IPlaygame {
 
    }
 
+   /**
+    * Vergleicht das erste char[][] mit den Restlichen der Liste. Das char[][],
+    * das zurück gegeben wird, wird zuerst mit '*' gefüllt. An den Stellen, an
+    * denen das erste char[][] von einem anderen char[][] abweicht wird an
+    * dieser Stelle der char des ersten Arrays in das zurückgegebene Array
+    * geschrieben.
+    * 
+    * @param solutionsFromGuising
+    *           Liste der gefundenen Lösungen für das Rätsel
+    * @return char[][], das mit '*' oder an abweichenden Stellen mit dem char
+    *         des ersten char[][] gefüllt ist.
+    */
    private char[][] getDifferences(ArrayList<char[][]> solutionsFromGuising) {
-   
       char[][] result = new char[riddle.getHeight()][riddle.getWidth()];
-      
       for (int i = 0; i < riddle.getHeight(); i++) {
          for (int j = 0; j < riddle.getWidth(); j++) {
             result[i][j] = '*';
@@ -183,7 +200,7 @@ public class PlayGame implements IPlaygame {
    @Override
    public Riddle createRiddle(BufferedImage image) {
       this.riddle = riddleLoader.createRiddle(image);
-      setupIt(this.riddle);
+      setupIt(this.riddle, null);
       return this.riddle;
    }
 
@@ -193,7 +210,11 @@ public class PlayGame implements IPlaygame {
       System.out.println(actionCommand);
       if (actionCommand.equals("check")) {
          boolean isRight = checkSolution();
-         listener.wasRight(isRight);
+         if (isRight) {
+            listener.wasRight(isRight, null);
+         } else {
+            listener.wasRight(isRight, wrongCoordinates);
+         }
       } else if (actionCommand.equals("Reset")) {
          currentColor = null;
       } else if (actionCommand.equals("Speichern")) {
@@ -209,22 +230,32 @@ public class PlayGame implements IPlaygame {
       }
    }
 
+   String wrongCoordinates;
+
    /**
-    * Prüft, ob das vom User gelöste Rätsel mit der Lösung übereinstimmt. TODO:
-    * Zwischenprüfung! und vielleicht Fehler anzeigen
+    * Prüft, ob das vom User gelöste Rätsel mit der Lösung übereinstimmt. Falls
+    * das Rätsel nicht richtig gelöst wurde, werden die Koordinaten von den
+    * falschen Feldern im String wrongCoordinates gespeichert.
     * 
     * @return true wenn Lösung richtig ist.
     */
    private boolean checkSolution() {
       boolean isRight = true;
+      StringBuilder builder = new StringBuilder();
       for (int row = 0; row < riddle.getHeight(); row++) {
          for (int column = 0; column < riddle.getWidth(); column++) {
             if (matrix[row][column] != solutions[row][column]) {
+               if (matrix[row][column] != '*') {
+                  if (builder.length() == 0) {
+                     builder.append("Fehler an Folgenden Koordinaten:\n");
+                  }
+                  builder.append("Reihe:" + row + " Spalte:" + column + "\n");
+               }
                isRight = false;
             }
          }
       }
-      showMatrix();
+      wrongCoordinates = builder.toString();
       return isRight;
    }
 
@@ -233,16 +264,12 @@ public class PlayGame implements IPlaygame {
     * diese mit '*'.
     */
    private void setupMatrix() {
-      String methodName = "setupBlocks()";
-      // // System.out.println(methodName);
-      long startTime = new Date().getTime();
-      matrix = new char[riddle.getHeight()][riddle.getWidth()];
+      this.matrix = new char[riddle.getHeight()][riddle.getWidth()];
       for (int i = 0; i < riddle.getHeight(); i++) {
          for (int j = 0; j < riddle.getWidth(); j++) {
-            matrix[i][j] = '*';
+            this.matrix[i][j] = '*';
          }
       }
-      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
    }
 
    @Override
@@ -257,11 +284,9 @@ public class PlayGame implements IPlaygame {
       if (null != currentColor) {
          System.out.println(matrix[row][column]);
          matrix[row][column] = currentColor.getName();
-         showMatrix();
          listener.placeAField(row, column, currentColor, true);
       } else {
          matrix[row][column] = '*';
-         showMatrix();
          listener.placeAField(row, column, null, true);
       }
    }
@@ -286,22 +311,4 @@ public class PlayGame implements IPlaygame {
 
    }
 
-   /**
-    * Zeigt die Matrix zum Debuggen an.
-    */
-   private void showMatrix() {
-      String methodName = "showMatrix()";
-      System.out.println(methodName);
-      long startTime = new Date().getTime();
-      for (int i = 0; i < riddle.getHeight(); i++) {
-         String out = "";
-         for (int j = 0; j < riddle.getWidth(); j++) {
-            out += matrix[i][j];
-            out += "  ";
-         }
-         System.out.println(out);
-      }
-      System.out.println();
-      System.out.println("Time for " + methodName + ": " + (new Date().getTime() - startTime) + " ms");
-   }
 }

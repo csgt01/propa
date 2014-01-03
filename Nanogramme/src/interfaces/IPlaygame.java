@@ -27,8 +27,11 @@ public interface IPlaygame extends ActionListener, MouseListener {
     * das Rätsel bzw. lässt beim Listener eine Fehlermeldung ausgeben
     * 
     * @param riddle
+    *           das Rätsle
+    * @param matrix
+    *           die erstellte Matrix des Rätsels
     */
-   void setupIt(Riddle riddle);
+   void setupIt(Riddle riddle, char[][] matrix);
 
    /**
     * Erstellt ein Rätsel aus einem Foto.

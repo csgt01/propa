@@ -3,7 +3,7 @@ package interfaces;
 import java.awt.image.BufferedImage;
 
 /**
- * Interface stellt eine MEthode zum laden und herunterskallieren eines Bildes bereit.
+ * Interface stellt eine Methode zum laden und herunterskallieren eines Bildes bereit.
  * 
  * @author csgt
  * 

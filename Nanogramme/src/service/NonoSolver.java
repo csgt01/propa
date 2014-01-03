@@ -69,12 +69,9 @@ public class NonoSolver implements INonogramSolver {
     */
    public NonoSolver(char[][] matrix, Riddle riddle) {
 
-      if (matrix == null) {
-
-      } else {
+      if (matrix != null) {
          this.matrix = matrix;
-      }
-
+      } 
       this.riddle = riddle;
 
    }
@@ -126,7 +123,6 @@ public class NonoSolver implements INonogramSolver {
          setupMatrix();
       }
       setupBlocks();
-      System.out.println(solveState);
       handle();
       showMatrix();
       return matrix;

@@ -16,8 +16,6 @@ import interfaces.IPlaygame;
  */
 public class MyMenuBar extends JMenuBar {
 
-   ActionListener mainFrame;
-
    /**
     * 
     */
@@ -55,7 +53,6 @@ public class MyMenuBar extends JMenuBar {
     * Konstruktor
     */
    public MyMenuBar() {
-
       init();
    }
 
@@ -66,7 +63,6 @@ public class MyMenuBar extends JMenuBar {
     * @param playGame
     */
    public MyMenuBar(ActionListener mainFrame, IPlaygame playGame) {
-      this.mainFrame = mainFrame;
       this.playGame = playGame;
       init();
       laden.addActionListener(mainFrame);
@@ -85,25 +81,20 @@ public class MyMenuBar extends JMenuBar {
       // Untermenüelemente erzeugen
       oeffnen = new JMenuItem("Speichern");
       oeffnen.addActionListener(playGame);
-      // faq = new JMenuItem("F.A.Q.");
-      // about = new JMenuItem("Über");
       laden = new JMenuItem("Rätsel laden");
       erstellen = new JMenuItem("Rätsel erstellen");
-      check = new JMenuItem("check");
+      check = new JMenuItem("Rätsel prüfen");
       check.addActionListener(playGame);
 
       // Menüelemente hinzufügen
       this.add(datei);
       this.add(riddle);
-      // this.add(hilfe);
 
       // Untermenüelemente hinzufügen
       datei.add(oeffnen);
-      // hilfe.add(faq);
       riddle.add(laden);
       riddle.add(erstellen);
       riddle.add(check);
-      // hilfe.add(about);
    }
 
 }

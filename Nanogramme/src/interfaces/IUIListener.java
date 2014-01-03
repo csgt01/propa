@@ -43,8 +43,10 @@ public interface IUIListener {
     * 
     * @param isRight
     *           True, falls die Lösung richtig ist.
+    * @param message
+    *           zusätzliche Nachricht zur Anzeige
     */
-   void wasRight(boolean isRight);
+   void wasRight(boolean isRight, String message);
 
    /**
     * Erstellt und füllt die UI-Matrix für das Rätsel.

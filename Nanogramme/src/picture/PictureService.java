@@ -8,7 +8,6 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
@@ -55,14 +54,11 @@ public class PictureService implements IPictureService {
          int type = oi.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : oi.getType();
          resizedImage = scalePicture(width, height, oi, type);
          Node root = new Node();
-         Date date = new Date();
          for (int i = 0; i < resizedImage.getHeight(); i++) {
             for (int j = 0; j < resizedImage.getWidth(); j++) {
                insertNode(new Color(resizedImage.getRGB(j, i)), root);
             }
          }
-         System.out.println("time:" + (new Date().getTime() - date.getTime()));
-         date = new Date();
          TreeSet<Node> fathers = new TreeSet<Node>();
          fathers = getFathersOfLeafs(root, fathers);
 
@@ -75,12 +71,7 @@ public class PictureService implements IPictureService {
          }
          LinkedList<Color> colors = new LinkedList<Color>();
          colors = getColorsOfLeafs(root, colors);
-         System.out.println("time:" + (new Date().getTime() - date.getTime()));
-         date = new Date();
          resizedImage = mapPictureToColors(resizedImage, colors);
-         System.out.println("time:" + (new Date().getTime() - date.getTime()));
-         date = new Date();
-
       } catch (IOException e) {
          e.printStackTrace();
          return null;

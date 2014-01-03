@@ -266,6 +266,7 @@ public class RiddleService {
       riddle.getColours().remove(backgroundCol);
 //    System.out.println("riddle in create in rs:" + riddle);
       this.riddle = riddle;
+      
       return riddle;
    }
 	

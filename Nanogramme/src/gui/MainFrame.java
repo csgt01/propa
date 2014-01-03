@@ -445,12 +445,12 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    }
 
    @Override
-   public void wasRight(boolean isRight) {
+   public void wasRight(boolean isRight, String message) {
       System.out.println("wasRight:" + isRight);
       if (isRight) {
          showAlert("Richtig gelöst!");
       } else {
-         showAlert("Falsch gelöst!");
+         showAlert("Nicht komplett gelöst!\n" + message);
       }
 
    }
