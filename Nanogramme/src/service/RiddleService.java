@@ -23,7 +23,10 @@ import models.Riddle;
 import models.Row;
 
 /**
- * Diese Klasse 
+ * Diese Klasse beinhaltet Methoden, um Rätsel aus Dateien zu laden und zu speichern.
+ * Beim Laden wird eine nono-Datei geparsed und die Informationen in einem {@link Riddle} gespeichert.
+ * Beim Speichern wird das {@link Riddle} und zusätzlich der Inhalt der MAtrix in eine Datei zurückgespeichert.
+ * 
  * @author csgt
  *
  */
@@ -333,14 +336,13 @@ public class RiddleService {
 	private void analyzeLine(String str) {
 		str = str.trim();
 		if (!str.startsWith("#")) {
-			// TODO: regex wgitespace and tab
 			switch (parsingState) {
 			case 0:
 				if (str.startsWith("width")) {
 					String splitted = str.split("width ")[1];
-					riddle.setWidth(Integer.valueOf(splitted));
+					riddle.setWidth(Integer.valueOf(splitted.trim()));
 				} else if (str.startsWith("height")) {
-					riddle.setHeight(Integer.valueOf(str.split("height ")[1]));
+					riddle.setHeight(Integer.valueOf(str.split("height ")[1].trim()));
 				} else if (str.startsWith("color")) {
 					parsingState = 1;
 				}
@@ -415,12 +417,8 @@ public class RiddleService {
 				}
 				break;
 			case 4:
-//				System.out.println(contentRow);
-//				System.out.println(contentColumn);
-//				System.out.println(str + "\n");
 				for (int i = 0; i < str.length(); i++) {
 					if (str.charAt(i) != ' ') {
-//					   System.out.println(str.charAt(i));
 						matrix[contentRow][contentColumn] = str.charAt(i);
 						if (str.charAt(i) != '*' && str.charAt(i) != '-') {
 						   Column column = riddle.getColumns().get(contentColumn);
@@ -466,7 +464,6 @@ public class RiddleService {
 	 * @return neue nono.
 	 */
 	private String createNono(Riddle riddle2) {
-//		System.out.println("CREATENONO:" + riddle2);
 		String nono = "";
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format("width %1d", riddle.getWidth()));
@@ -519,7 +516,6 @@ public class RiddleService {
 			}
 		}
 		nono = sb.toString();
-//		System.out.println("nono:" + nono);
 		riddle.setNono(nono);
 		return nono;
 	}

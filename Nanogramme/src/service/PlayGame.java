@@ -18,8 +18,10 @@ import models.SolveStateEnum;
 /**
  * Managed den Spielablauf. Die Klasse implementiert das Interface
  * {@link IPlaygame}, über das Methoden dieser Klasse aufgerufen werden können.
- * Die Klasse implementiert über IPlaygame auch die Interfaces ActionListener und
- * MouseListener, so kann auf Ereignisse in der UI reagiert werden.
+ * Die Klasse implementiert über IPlaygame auch die Interfaces ActionListener
+ * und MouseListener, so kann auf Ereignisse in der UI reagiert werden. Sie hält
+ * mit dem {@link #riddle} und {@link #matrix} die Informationen zu dem Rätsel.
+ * Wenn Aktionen in der UI ausgelöst werden, werden sie heir verarbeitet.
  * 
  * @author csgt
  * 
