@@ -23,10 +23,10 @@ import models.Riddle;
 import models.Row;
 
 /**
- * Diese Klasse beinhaltet Methoden, um Rätsel aus Dateien zu laden und zu
+ * Diese Klasse beinhaltet Methoden, um Raetsel aus Dateien zu laden und zu
  * speichern. Beim Laden wird eine nono-Datei geparsed und die Informationen in
  * einem {@link Riddle} gespeichert. Beim Speichern wird das {@link Riddle} und
- * zusätzlich der Inhalt der MAtrix in eine Datei zurückgespeichert.
+ * zusaetzlich der Inhalt der MAtrix in eine Datei zurueckgespeichert.
  * 
  * @author csgt
  * 
@@ -34,7 +34,7 @@ import models.Row;
 public class RiddleService {
 
    /**
-    * Das Rätsel.
+    * Das Raetsel.
     */
    private Riddle riddle;
 
@@ -83,11 +83,11 @@ public class RiddleService {
    }
 
    /**
-    * Lädt eine Datei ein und parst das Rätsel Reihe für Reihe in
+    * Laedt eine Datei ein und parst das Raetsel Reihe fuer Reihe in
     * {@link #analyzeLine(String)}.
     * 
     * @param filename
-    *           Pfad zum Rätsel.
+    *           Pfad zum Raetsel.
     * @return Riddle
     */
    protected Riddle readFile(String filename) {
@@ -118,11 +118,11 @@ public class RiddleService {
    }
 
    /**
-    * Erstellt das Rätsel aus dem Bild.
+    * Erstellt das Raetsel aus dem Bild.
     * 
     * @param image
     *           Basisbild
-    * @return das Rätsel
+    * @return das Raetsel
     */
    protected Riddle createRiddle(BufferedImage image) {
       Riddle riddle = new Riddle();
@@ -144,7 +144,7 @@ public class RiddleService {
       Colour backgroundCol = listener.getBackgroundColour(colorList);
       ArrayList<Row> rows = new ArrayList<Row>();
       ArrayList<Column> columns = new ArrayList<Column>();
-      // setzen der Blöcke in Reihe und Spalte
+      // setzen der Bloecke in Reihe und Spalte
       setRows(image, backgroundCol, colarMap, rows);
       riddle.setRows(rows);
 
@@ -186,12 +186,12 @@ public class RiddleService {
    }
 
    /**
-    * Erstellt die Reihen für das Rätsel.
+    * Erstellt die Reihen fuer das Raetsel.
     * 
     * @param image
     *           Das Bild
     * @param backgroundCol
-    *           gewählte Hintergrundfarbe
+    *           gewaehlte Hintergrundfarbe
     * @param colorMap
     *           Das Mapping zwischen Color und Colour
     * @param rows
@@ -219,7 +219,7 @@ public class RiddleService {
                // nicht Hintergrundfarbe
                if (!currentColour.equals(backgroundCol)) {
                   // Farbe ist dieselbe, wie die des derzeitigen Blocks, also
-                  // Größe des Blocks erhöhen
+                  // Groesse des Blocks erhoehen
                   if (currentColour.equals(block.getColour())) {
                      blockSize++;
                      // andere Farbe, also neuer Block
@@ -251,7 +251,7 @@ public class RiddleService {
    }
 
    /**
-    * Erstellt die Spalten für das Rätsel.
+    * Erstellt die Spalten fuer das Raetsel.
     * 
     * @param image
     * @param backgroundCol
@@ -368,9 +368,11 @@ public class RiddleService {
    }
 
    /**
-    * Speichert das Rätsel als nono-Datei.
+    * Speichert das Raetsel als nono-Datei.
     * 
     * @param matrix
+    *           die zu speichernde Matrix
+    * @return true wenn das Raetsel gespeichert wurde
     */
    protected boolean save(char[][] matrix) {
       BufferedWriter writer = null;
@@ -417,7 +419,8 @@ public class RiddleService {
    }
 
    /**
-    * Analysiert eine Reihe in {@link #readFile(String)}.
+    * Analysiert eine Reihe in {@link #readFile(String)} und füllt das Riddle
+    * Objekt mit Informationen.
     * 
     * @param str
     */
@@ -426,98 +429,20 @@ public class RiddleService {
       if (!str.startsWith("#")) {
          switch (parsingState) {
          case 0:
-            if (str.startsWith("width")) {
-               String splitted = str.split("width ")[1];
-               riddle.setWidth(Integer.valueOf(splitted.trim()));
-            } else if (str.startsWith("height")) {
-               riddle.setHeight(Integer.valueOf(str.split("height ")[1].trim()));
-            } else if (str.startsWith("color")) {
-               parsingState = 1;
-            }
+            parseGeneralInformation(str);
             break;
          case 1:
-            if (str.startsWith("rows")) {
-               parsingState = 2;
-            } else {
-               String[] splits = str.split(" ");
-               Colour colour = new Colour();
-               colour.setName(splits[0].charAt(0));
-               String rgbsString = splits[1];
-               String[] rgbs = rgbsString.split(",");
-               colour.setRed(Integer.valueOf(rgbs[0]));
-               colour.setGreen(Integer.valueOf(rgbs[1]));
-               colour.setBlue(Integer.valueOf(rgbs[2]));
-               riddle.addColour(colour);
-            }
+            parseColours(str);
             break;
          case 2:
-            if (str.startsWith("column")) {
-               parsingState = 3;
-            } else {
-               str = str.trim();
-               Row row = new Row();
-               row.setIndex(rowInt);
-               String[] blocks = str.split(",");
-               for (int i = 0; i < blocks.length; i++) {
-                  Block cb = new Block();
-                  String block = blocks[i];
-                  block = block.trim();
-                  if (!block.equals("0") && !block.equals("")) {
-                     cb.setColour(riddle.getColourByName(block.substring(block.length() - 1)));
-                     cb.setHowMany(Integer.valueOf(block.substring(0, (block.length() - 1))));
-                     row.addBlock(cb);
-                  }
-               }
-               rowInt++;
-               riddle.addRow(row);
-            }
+            parseRows(str);
             break;
          case 3:
             setupMatrix();
-            if (str.startsWith("content")) {
-               contentColumn = 0;
-               contentRow = 0;
-               parsingState = 4;
-            } else {
-               str = str.trim();
-               Column column = new Column();
-               String[] blocks = str.split(",");
-               for (int i = 0; i < blocks.length; i++) {
-                  Block cb = new Block();
-                  String block = blocks[i];
-                  block = block.trim();
-                  if (!block.equals("0") && !block.equals("")) {
-                     cb.setColour(riddle.getColourByName(block.substring(block.length() - 1)));
-                     cb.setHowMany(Integer.valueOf(block.substring(0, (block.length() - 1))));
-                     column.addBlock(cb);
-                  }
-               }
-               column.setIndex(columnInt);
-               columnInt++;
-               riddle.addColumn(column);
-            }
+            parseColumns(str);
             break;
          case 4:
-            for (int i = 0; i < str.length(); i++) {
-               if (str.charAt(i) != ' ') {
-                  matrix[contentRow][contentColumn] = str.charAt(i);
-                  if (str.charAt(i) != '*' && str.charAt(i) != '-') {
-                     Column column = riddle.getColumns().get(contentColumn);
-                     Row row = riddle.getRows().get(contentRow);
-                     try {
-                        column.setEntriesSet(contentRow, false);
-                        row.setEntriesSet(contentColumn, false);
-                     } catch (Exception e) {
-                        e.printStackTrace();
-                     }
-                  }
-                  contentColumn++;
-               }
-            }
-            if (str.length() > 0 && !str.contains("content")) {
-               contentRow++;
-            }
-            contentColumn = 0;
+            parseContent(str);
             break;
          default:
             break;
@@ -526,7 +451,130 @@ public class RiddleService {
    }
 
    /**
-    * Erstellt eine neue Matrix mit der Breite und Höhe des Rätsels und füllt
+    * Parsed eine Zeile des Contents
+    * 
+    * @param str
+    */
+   public void parseContent(String str) {
+      for (int i = 0; i < str.length(); i++) {
+         if (str.charAt(i) != ' ') {
+            matrix[contentRow][contentColumn] = str.charAt(i);
+            if (str.charAt(i) != '*' && str.charAt(i) != '-') {
+               Column column = riddle.getColumns().get(contentColumn);
+               Row row = riddle.getRows().get(contentRow);
+               try {
+                  column.setEntriesSet(contentRow, false);
+                  row.setEntriesSet(contentColumn, false);
+               } catch (Exception e) {
+                  e.printStackTrace();
+               }
+            }
+            contentColumn++;
+         }
+      }
+      if (str.length() > 0 && !str.contains("content")) {
+         contentRow++;
+      }
+      contentColumn = 0;
+   }
+
+   /**
+    * Parsed eine Zeile als Column
+    * 
+    * @param str
+    */
+   public void parseColumns(String str) {
+      if (str.startsWith("content")) {
+         contentColumn = 0;
+         contentRow = 0;
+         parsingState = 4;
+      } else {
+         str = str.trim();
+         Column column = new Column();
+         String[] blocks = str.split(",");
+         for (int i = 0; i < blocks.length; i++) {
+            Block cb = new Block();
+            String block = blocks[i];
+            block = block.trim();
+            if (!block.equals("0") && !block.equals("")) {
+               cb.setColour(riddle.getColourByName(block.substring(block.length() - 1)));
+               cb.setHowMany(Integer.valueOf(block.substring(0, (block.length() - 1))));
+               column.addBlock(cb);
+            }
+         }
+         column.setIndex(columnInt);
+         columnInt++;
+         riddle.addColumn(column);
+      }
+   }
+
+   /**
+    * Parsed eine Zeile als Row
+    * 
+    * @param str
+    */
+   public void parseRows(String str) {
+      if (str.startsWith("column")) {
+         parsingState = 3;
+      } else {
+         str = str.trim();
+         Row row = new Row();
+         row.setIndex(rowInt);
+         String[] blocks = str.split(",");
+         for (int i = 0; i < blocks.length; i++) {
+            Block cb = new Block();
+            String block = blocks[i];
+            block = block.trim();
+            if (!block.equals("0") && !block.equals("")) {
+               cb.setColour(riddle.getColourByName(block.substring(block.length() - 1)));
+               cb.setHowMany(Integer.valueOf(block.substring(0, (block.length() - 1))));
+               row.addBlock(cb);
+            }
+         }
+         rowInt++;
+         riddle.addRow(row);
+      }
+   }
+
+   /**
+    * Parse eine Zeile als Colour
+    * 
+    * @param str
+    */
+   public void parseColours(String str) {
+      if (str.startsWith("rows")) {
+         parsingState = 2;
+      } else {
+         String[] splits = str.split(" ");
+         Colour colour = new Colour();
+         colour.setName(splits[0].charAt(0));
+         String rgbsString = splits[1];
+         String[] rgbs = rgbsString.split(",");
+         colour.setRed(Integer.valueOf(rgbs[0]));
+         colour.setGreen(Integer.valueOf(rgbs[1]));
+         colour.setBlue(Integer.valueOf(rgbs[2]));
+         riddle.addColour(colour);
+      }
+   }
+
+   /**
+    * Parsed eine Zeile mit allgemeinen Informationen
+    * 
+    * @param str
+    */
+   public void parseGeneralInformation(String str) {
+      if (str.startsWith("width")) {
+         String splitted = str.split("width ")[1];
+         riddle.setWidth(Integer.valueOf(splitted.trim()));
+      } else if (str.startsWith("height")) {
+         riddle.setHeight(Integer.valueOf(str.split("height ")[1].trim()));
+      } else if (str.startsWith("color")) {
+         parsingState = 1;
+      }
+   }
+
+   /**
+    * Erstellt eine neue Matrix mit der Breite und Hoehe des Raetsels und fuellt
     * diese mit '*'.
     */
    private void setupMatrix() {
@@ -539,7 +587,7 @@ public class RiddleService {
    }
 
    /**
-    * Erstellt eine nono-Datei aus dem Rätsel.
+    * Erstellt eine nono-Datei aus dem Raetsel.
     * 
     * @param riddle2
     * @return neue nono.

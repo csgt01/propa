@@ -3,7 +3,7 @@ package models;
 import java.util.ArrayList;
 
 /**
- * Stellt eine Reihe in einem Rätsel da. Die Klasse enthält auch eine Liste
+ * Stellt eine Reihe in einem Raetsel da. Die Klasse enthaelt auch eine Liste
  * von {@link Block}, die in der Reihe vorkommen.
  * 
  * @author csgt
@@ -17,7 +17,7 @@ public class Row {
    private int index;
 
    /**
-    * Liste der Blöcke.
+    * Liste der Bloecke.
     */
    private ArrayList<Block> blocks;
 
@@ -32,7 +32,7 @@ public class Row {
    private int entriesSet = 0;
 
    /**
-    * Maximale Anzahl der gesetzten Felder (Summe von howMany der Blöcke).
+    * Maximale Anzahl der gesetzten Felder (Summe von howMany der Bloecke).
     */
    private int maxEntries = 0;
 
@@ -75,7 +75,7 @@ public class Row {
    }
 
    /**
-    * Fügt einen Block der Liste hinzu
+    * Fuegt einen Block der Liste hinzu
     * 
     * @param block
     */
@@ -88,7 +88,7 @@ public class Row {
    }
 
    /**
-    * @return Blöcke der Reihe
+    * @return Bloecke der Reihe
     */
    public ArrayList<Block> getBlocks() {
       return blocks;
@@ -125,7 +125,7 @@ public class Row {
 
    /**
     * 
-    * @return Wie viele Farben gesetzt wurden. Leere Felder zählen nicht.
+    * @return Wie viele Farben gesetzt wurden. Leere Felder zaehlen nicht.
     */
    public int getEntriesSet() {
       return entriesSet;

@@ -17,11 +17,11 @@ import models.SolveStateEnum;
 
 /**
  * Managed den Spielablauf. Die Klasse implementiert das Interface
- * {@link IPlaygame}, über das Methoden dieser Klasse aufgerufen werden können.
- * Die Klasse implementiert über IPlaygame auch die Interfaces ActionListener
- * und MouseListener, so kann auf Ereignisse in der UI reagiert werden. Sie hält
- * mit dem {@link #riddle} und {@link #matrix} die Informationen zu dem Rätsel.
- * Wenn Aktionen in der UI ausgelöst werden, werden sie heir verarbeitet.
+ * {@link IPlaygame}, ueber das Methoden dieser Klasse aufgerufen werden koennen.
+ * Die Klasse implementiert ueber IPlaygame auch die Interfaces ActionListener
+ * und MouseListener, so kann auf Ereignisse in der UI reagiert werden. Sie haelt
+ * mit dem {@link #riddle} und {@link #matrix} die Informationen zu dem Raetsel.
+ * Wenn Aktionen in der UI ausgeloest werden, werden sie heir verarbeitet.
  * 
  * @author csgt
  * 
@@ -34,7 +34,7 @@ public class PlayGame implements IPlaygame {
    private char[][] matrix;
 
    /**
-    * Hilfvariable für den Lösungscheck
+    * Hilfvariable fuer den Loesungscheck
     */
    private String wrongCoordinates;
 
@@ -44,7 +44,7 @@ public class PlayGame implements IPlaygame {
    private Colour currentColor;
 
    /**
-    * Hintergrungfarbe des Rätsels.
+    * Hintergrungfarbe des Raetsels.
     */
    private Colour backGroundColour;
 
@@ -54,7 +54,7 @@ public class PlayGame implements IPlaygame {
    private RiddleService riddleLoader;
 
    /**
-    * Das Rätsel.
+    * Das Raetsel.
     */
    private Riddle riddle;
 
@@ -64,7 +64,7 @@ public class PlayGame implements IPlaygame {
    private IUIListener listener;
 
    /**
-    * Die Lösung des Rätsels.
+    * Die Loesung des Raetsels.
     */
    private char[][] solutions;
 
@@ -104,7 +104,7 @@ public class PlayGame implements IPlaygame {
       if (this.matrix == null) {
          setupMatrix();
       }
-      // neues Objekt, da die MAtrix im Nonosolver verändert wird
+      // neues Objekt, da die MAtrix im Nonosolver veraendert wird
       char[][] matrixNeu = new char[riddle.getHeight()][riddle.getWidth()];
       for (int i = 0; i < riddle.getHeight(); i++) {
          for (int j = 0; j < riddle.getWidth(); j++) {
@@ -116,7 +116,7 @@ public class PlayGame implements IPlaygame {
       if (solver.getSolveState() == SolveStateEnum.SOLVED) {
          listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(), riddle.getRows(), riddle.getColumns());
          listener.setColours(riddle.getColours());
-         // ist nur gleich null, wenn ein Rätsel neu erstellt wird!
+         // ist nur gleich null, wenn ein Raetsel neu erstellt wird!
          if (matrix != null) {
             for (int i = 0; i < riddle.getHeight(); i++) {
                for (int j = 0; j < riddle.getWidth(); j++) {
@@ -138,9 +138,9 @@ public class PlayGame implements IPlaygame {
             break;
          case MULTIPLE_SOLUTIONS:
             listener.showAlert(SolveStateEnum.MULTIPLE_SOLUTIONS.getMessage());
-            // erstes char[][] von solutionsFromGuising wird als Lösung
-            // genommen. Abweichende Positionen werden als vorausgefüllte
-            // Stellen übernommen, um das Rätsel eindeutig zu machen
+            // erstes char[][] von solutionsFromGuising wird als Loesung
+            // genommen. Abweichende Positionen werden als vorausgefuellte
+            // Stellen uebernommen, um das Raetsel eindeutig zu machen
             matrix = getDifferences(solver.solutionsFromGuising);
             listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(), riddle.getRows(), riddle.getColumns());
             listener.setColours(riddle.getColours());
@@ -169,15 +169,15 @@ public class PlayGame implements IPlaygame {
 
    /**
     * Vergleicht das erste char[][] mit den Restlichen der Liste. Das char[][],
-    * das zurück gegeben wird, wird zuerst mit '*' gefüllt. An den Stellen, an
+    * das zurueck gegeben wird, wird zuerst mit '*' gefuellt. An den Stellen, an
     * denen das erste char[][] von einem anderen char[][] abweicht wird an
-    * dieser Stelle der char des ersten Arrays in das zurückgegebene Array
+    * dieser Stelle der char des ersten Arrays in das zurueckgegebene Array
     * geschrieben.
     * 
     * @param solutionsFromGuising
-    *           Liste der gefundenen Lösungen für das Rätsel
+    *           Liste der gefundenen Loesungen fuer das Raetsel
     * @return char[][], das mit '*' oder an abweichenden Stellen mit dem char
-    *         des ersten char[][] gefüllt ist.
+    *         des ersten char[][] gefuellt ist.
     */
    private char[][] getDifferences(ArrayList<char[][]> solutionsFromGuising) {
       char[][] result = new char[riddle.getHeight()][riddle.getWidth()];
@@ -217,7 +217,7 @@ public class PlayGame implements IPlaygame {
          } else {
             listener.wasRight(isRight, wrongCoordinates);
          }
-      } else if (actionCommand.equals("Rätsel lösen lassen")) {
+      } else if (actionCommand.equals("Raetsel loesen lassen")) {
          for (int row = 0; row < riddle.getHeight(); row++) {
             for (int column = 0; column < riddle.getWidth(); column++) {
                if (solutions[row][column] != '-') {
@@ -242,11 +242,11 @@ public class PlayGame implements IPlaygame {
    }
 
    /**
-    * Prüft, ob das vom User gelöste Rätsel mit der Lösung übereinstimmt. Falls
-    * das Rätsel nicht richtig gelöst wurde, werden die Koordinaten von den
+    * Prueft, ob das vom User geloeste Raetsel mit der Loesung uebereinstimmt. Falls
+    * das Raetsel nicht richtig geloest wurde, werden die Koordinaten von den
     * falschen Feldern im String wrongCoordinates gespeichert.
     * 
-    * @return true wenn Lösung richtig ist.
+    * @return true wenn Loesung richtig ist.
     */
    private boolean checkSolution() {
       boolean isRight = true;
@@ -269,7 +269,7 @@ public class PlayGame implements IPlaygame {
    }
 
    /**
-    * Erstellt eine neue Matrix mit der Breite und Höhe des Rätsels und füllt
+    * Erstellt eine neue Matrix mit der Breite und Hoehe des Raetsels und fuellt
     * diese mit '*'.
     */
    private void setupMatrix() {

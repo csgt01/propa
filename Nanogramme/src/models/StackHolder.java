@@ -2,7 +2,7 @@ package models;
 
 
 /**
- * Klasse, um den Zustand beim "Raten" der Lösung zu speichern.
+ * Klasse, um den Zustand beim "Raten" der Loesung zu speichern.
  * 
  * @author cschulte
  * 
@@ -88,14 +88,14 @@ public class StackHolder {
 
 	/**
 	 * 
-	 * @return Rätsel zum Zeitpunkt des Ratens.
+	 * @return Raetsel zum Zeitpunkt des Ratens.
 	 */
 	public Riddle getRiddle() {
 		return riddle;
 	}
 
 	/**
-	 * Setzt das Rätsel.
+	 * Setzt das Raetsel.
 	 * 
 	 * @param riddle
 	 *            .
@@ -107,7 +107,7 @@ public class StackHolder {
 	}
 
 	/**
-	 * Gibt die Matrix zum Zeitpunkt des Ratens zurück.
+	 * Gibt die Matrix zum Zeitpunkt des Ratens zurueck.
 	 * 
 	 * @return .
 	 */
@@ -121,7 +121,7 @@ public class StackHolder {
 	 * @param matrix
 	 *            original MAtrix
 	 * @param height
-	 *            Höhe
+	 *            Hoehe
 	 * @param width
 	 *            Breite
 	 */

@@ -14,9 +14,9 @@ import java.util.TreeSet;
 import javax.imageio.ImageIO;
 
 /**
- * Diese Klasse ist für das Erstellen eines Rätsels aus einem Bild zuständig.
- * Das Bild wird dabei aus einer Datei geladen, auf die gewünschte Größe
- * skalliert und dann mit Hilfe eines Octree-Algorythmus auf die gewünschte
+ * Diese Klasse ist fuer das Erstellen eines Raetsels aus einem Bild zustaendig.
+ * Das Bild wird dabei aus einer Datei geladen, auf die gewuenschte Groesse
+ * skalliert und dann mit Hilfe eines Octree-Algorythmus auf die gewuenschte
  * Anzahl an Farben heruntergerechnet.
  * 
  * @author cschulte
@@ -25,21 +25,21 @@ import javax.imageio.ImageIO;
 public class PictureService implements IPictureService {
 
    /**
-    * ID für die Nodes.
+    * ID fuer die Nodes.
     */
    int count = 0;
 
    /**
-    * Rechnet die Farben mit Hilfe eines Octrees auf die gewünschte Anzahl
+    * Rechnet die Farben mit Hilfe eines Octrees auf die gewuenschte Anzahl
     * Farben herunter. Ruft
     * {@link #mapPictureToColors(BufferedImage, LinkedList)} auf, um die Farben
     * des Originalbildes anzupassen. Gibt das Bild mit herruntergerechneten
-    * Farben zurück.
+    * Farben zurueck.
     * 
     * @param file
     *           Pfad zum Bild
     * @param height
-    *           Höhe des neuen Bildes
+    *           Hoehe des neuen Bildes
     * @param width
     *           Breite des neuen Bildes
     * @param numberOfColors
@@ -80,13 +80,13 @@ public class PictureService implements IPictureService {
    }
 
    /**
-    * Fügt einen Pixel (Farbe) dem root Element hinzu. Dies muss für alle Pixel
+    * Fuegt einen Pixel (Farbe) dem root Element hinzu. Dies muss fuer alle Pixel
     * des Bildes gemacht werden.
     * 
     * @param color
     *           Die Farbe des Pixels.
     * @param root
-    *           Das root Element, in das alle Pixel hinzugefügt werden.
+    *           Das root Element, in das alle Pixel hinzugefuegt werden.
     */
    private void insertNode(Color color, Node root) {
       int red = color.getRed();
@@ -108,7 +108,6 @@ public class PictureService implements IPictureService {
             binary12 = "0" + binary12;
          }
       }
-
 
       if (binary13.length() < 8) {
          for (int i = binary13.length(); i < 8; i++) {
@@ -139,7 +138,7 @@ public class PictureService implements IPictureService {
     * @param width
     *           Breite des skallierten Bildes.
     * @param height
-    *           Höhe des skallierten Bildes.
+    *           Hoehe des skallierten Bildes.
     * @param originalImage
     *           zu skallierende Bild
     * @param type
@@ -155,13 +154,13 @@ public class PictureService implements IPictureService {
    }
 
    /**
-    * Fügt fathers alle Väter der Blätter hinzu.
+    * Fuegt fathers alle Vaeter der Blaetter hinzu.
     * 
     * @param root
     *           Startelement
     * @param fathers
-    *           Liste der Väter der Blätter.
-    * @return Liste der Väter
+    *           Liste der Vaeter der Blaetter.
+    * @return Liste der Vaeter
     */
    private TreeSet<Node> getFathersOfLeafs(Node root, TreeSet<Node> fathers) {
       Node[] nodes = root.getNodes();
@@ -181,10 +180,10 @@ public class PictureService implements IPictureService {
    }
 
    /**
-    * Gibt die Anzahl der Blätter im Octree zurück.
+    * Gibt die Anzahl der Blaetter im Octree zurueck.
     * 
     * @param root
-    * @return Anzahl an Blättern im Octree
+    * @return Anzahl an Blaettern im Octree
     */
    private int getNumbersOfLeafs(Node root) {
       int result = 0;
@@ -210,7 +209,7 @@ public class PictureService implements IPictureService {
     * @param root
     *           Basiselement.
     * @param colors
-    *           Liste der bereits hinzugefügten Farben.
+    *           Liste der bereits hinzugefuegten Farben.
     * @return Liste der Farben im Octree.
     */
    private LinkedList<Color> getColorsOfLeafs(Node root, LinkedList<Color> colors) {
@@ -229,18 +228,18 @@ public class PictureService implements IPictureService {
    }
 
    /**
-    * Merged die beiden Blätter, dessen Farben am ähnlichsten sind miteinander.
+    * Merged die beiden Blaetter, dessen Farben am aehnlichsten sind, miteinander.
     * 
     * @param less
-    *           Der Knoten, dessen ähnlichste Blätter gemerged werden sollen.
+    *           Der Knoten, dessen aehnlichste Blaetter gemerged werden sollen.
     */
    private void cluster(Node less) {
       Node similiar1 = null;
       Node similiar2 = null;
       int sim1 = 0;
       int sim2 = 0;
-      double distance = 800.0;
-      // suche die ähnlichsten Blätter
+      double distance = 8000.0;
+      // suche die aehnlichsten Blaetter
       for (int i = 0; i < less.getNodes().length; i++) {
          Node node1 = less.getNode(i);
          if (node1 != null) {
@@ -260,13 +259,27 @@ public class PictureService implements IPictureService {
          }
       }
       if (similiar1 != null && similiar2 != null) {
-
+         // do nothing
       }
-      // merge die Ähnlichsten
+      // merge die aehnlichsten
+      mergeTwoNodes(less, sim1, sim2);
+   }
+
+   /**
+    * Merged die beiden Nodes mit Index sim1 und sim2 aus less.nodes
+    * miteinander.
+    * 
+    * @param less
+    *           Node mit den beiden zu verschmelzenden Nodes (in nodes)
+    * @param sim1
+    *           Index des ersten zu mergenden Nodes.
+    * @param sim2
+    *           Index des zweiten zu mergenden Nodes.
+    */
+   private void mergeTwoNodes(Node less, int sim1, int sim2) {
       Node node1 = less.getNode(sim1);
       Node node2 = less.getNode(sim2);
       if (node1 != null && node2 != null) {
-
          node1.setReferences(node1.getReferences() + node2.getReferences());
          node1.setRed(node1.getRed() + node2.getRed());
          node1.setGreen(node1.getGreen() + node2.getGreen());
@@ -276,8 +289,8 @@ public class PictureService implements IPictureService {
    }
 
    /**
-    * Liefert den Abstand der Farben der Blätter zueinander (entspricht der
-    * Ähnlichkeit der Farben).
+    * Liefert den Abstand der Farben der Blaetter zueinander (entspricht der
+    * aehnlichkeit der Farben).
     * 
     * @param node1
     * @param node2
@@ -298,18 +311,18 @@ public class PictureService implements IPictureService {
    }
 
    /**
-    * Berechnet die Ähnlichkeit con zwei Farben.
+    * Berechnet die aehnlichkeit con zwei Farben.
     * 
     * @param color1
     * @param color2
-    * @return Ähnlichkeit
+    * @return aehnlichkeit
     */
    private Double getDistance(Color color1, Color color2) {
       return Math.sqrt((Math.pow((color2.getRed() - color1.getRed()), 2.0) + Math.pow((color2.getGreen() - color1.getGreen()), 2.0) + Math.pow((color2.getBlue() - color2.getBlue()), 2.0)));
    }
 
    /**
-    * Sucht zu jedem Pixel die Ähnlichste Farbe aus colors und setzt diese als
+    * Sucht zu jedem Pixel die aehnlichste Farbe aus colors und setzt diese als
     * neue Farbe des Pixels. Dadurch wird das Bild auf die Anzahl der Farben in
     * colors herruntergerechnet.
     * 
@@ -327,13 +340,13 @@ public class PictureService implements IPictureService {
    }
 
    /**
-    * Sucht aus colors die ähnlichste Farbe aus colors.
+    * Sucht aus colors die aehnlichste Farbe.
     * 
     * @param rgb
-    *           der zu ersetzenden Farbe
+    *           die zu ersetzenden Farbe als rgb-wert
     * @param colors
     *           Liste der Vergleichsfarben
-    * @return den rgb-Wert der ähnlichsten Farbe.
+    * @return den rgb-Wert der aehnlichsten Farbe.
     */
    private int getBestColor(int rgb, LinkedList<Color> colors) {
       Color color = colors.get(0);
@@ -351,7 +364,7 @@ public class PictureService implements IPictureService {
    }
 
    /**
-    * Gibt die Anzahl der Kinder in {@link Node#getNodes()} zurück.
+    * Gibt die Anzahl der Kinder in {@link Node#getNodes()} zurueck.
     * 
     * @param node
     * @return Anzahl der Kinder.
@@ -368,50 +381,73 @@ public class PictureService implements IPictureService {
 
    /**
     * Alle Kinder dieses Knotens werden in diesem Knoten zusammengefasst. Falls
-    * der Vater dieses Knotens danach nur Blätter als Kinder hat, wird dieser
-    * fathers hinzugefügt.
+    * der Vater dieses Knotens danach nur Blaetter als Kinder hat, wird dieser
+    * fathers hinzugefuegt.
     * 
     * @param fathers
-    *           Liste der Väter von nur Blättern im Octree.
-    * @return Aktuallisierte Liste der Väter von nur Blättern im Octree.
+    *           Liste der Vaeter von nur Blaettern im Octree.
+    * @return Aktuallisierte Liste der Vaeter von nur Blaettern im Octree.
     */
    private TreeSet<Node> reduceColorsInFathers(TreeSet<Node> fathers) {
       Node node = fathers.first();
       fathers.remove(node);
-      int red = 0;
-      int green = 0;
-      int blue = 0;
       if (getChildrenOfNode(node) > 0) {
-         for (int i = 0; i < node.getNodes().length; i++) {
-            Node child = node.getNode(i);
-            if (null != child) {
-               red += child.getRed();
-               green += child.getGreen();
-               blue += child.getBlue();
-               node.setNode(i, null);
-            }
-         }
-         node.setBlue(blue);
-         node.setRed(red);
-         node.setGreen(green);
+         setRGBFromChildren(node);
          Node father = node.getFather();
-         boolean isGood = true;
-         // Falls ein Kind des Vaters kein Blatt iat, wird isGood false, dann
-         // ist der
-         // Knoten kein Vater von nur Blättern.
-         for (Node child : father.getNodes()) {
-            if (null != child) {
-               for (Node childsChild : child.getNodes()) {
-                  if (childsChild != null) {
-                     isGood = false;
-                  }
-               }
-            }
-         }
-         if (isGood) {
+         // Falls ein Kind des Vaters kein Blatt ist, wird isGood false, dann
+         // ist der Knoten kein Vater von nur Blaettern.
+         if (isNodeFatherJustFromLeafs(father)) {
             fathers.add(father);
          }
       }
       return fathers;
+   }
+
+   /**
+    * Addiert red, green und blue der Kinder zu den eigenen Werten und loescht
+    * dann das Kind.
+    * 
+    * @param node
+    *           Node aus dessen kindern die RGB Werte kopiert werden
+    */
+   private void setRGBFromChildren(Node node) {
+      int red = 0;
+      int green = 0;
+      int blue = 0;
+      int length = node.getNodes().length;
+      for (int i = 0; i < length; i++) {
+         Node child = node.getNode(i);
+         if (null != child) {
+            red += child.getRed();
+            green += child.getGreen();
+            blue += child.getBlue();
+            node.setNode(i, null);
+         }
+      }
+      node.setBlue(blue);
+      node.setRed(red);
+      node.setGreen(green);
+   }
+
+   /**
+    * Falls ein Node in father.nodes kein Blatt ist, sondern ein Knoten, ist
+    * father kein Vater von nur Blaettern.
+    * 
+    * @param father
+    *           zu ueberpruefender Node
+    * @return true, falls father nur Blaetter als Kinder hat.
+    */
+   private boolean isNodeFatherJustFromLeafs(Node father) {
+      boolean isGood = true;
+      for (Node child : father.getNodes()) {
+         if (null != child) {
+            for (Node childsChild : child.getNodes()) {
+               if (childsChild != null) {
+                  isGood = false;
+               }
+            }
+         }
+      }
+      return isGood;
    }
 }

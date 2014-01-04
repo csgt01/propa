@@ -3,7 +3,7 @@ package models;
 import java.util.ArrayList;
 
 /**
- * Stellt eine Spalte in einem Rätsel dar. Die Klasse enthält auch eine Liste
+ * Stellt eine Spalte in einem Raetsel dar. Die Klasse enthaelt auch eine Liste
  * von {@link Block}, die in der Spalte vorkommen.
  * 
  * @author csgt
@@ -17,7 +17,7 @@ public class Column {
    private int index;
 
    /**
-    * Liste der Blöcke.
+    * Liste der Bloecke.
     */
    private ArrayList<Block> blocks;
 
@@ -32,7 +32,7 @@ public class Column {
    private int entriesSet = 0;
 
    /**
-    * Maximale Anzahl der gesetzten Felder (Summe von howMany der Blöcke).
+    * Maximale Anzahl der gesetzten Felder (Summe von howMany der Bloecke).
     */
    private int maxEntries = 0;
 
@@ -44,7 +44,7 @@ public class Column {
    }
 
    /**
-    * Konstruktor, der aus einer Column ein neues Objekt erzeugt. Gebraucht für
+    * Konstruktor, der aus einer Column ein neues Objekt erzeugt. Gebraucht fuer
     * das Raten.
     * 
     * @param column
@@ -61,10 +61,10 @@ public class Column {
    }
 
    /**
-    * Fügt einen Block hinzu und erhöht maxEntries um die Blockgröße.
+    * Fuegt einen Block hinzu und erhoeht maxEntries um die Blockgroesse.
     * 
     * @param block
-    *           Hinzuzufügende Block.
+    *           Hinzuzufuegende Block.
     */
    public void addBlock(Block block) {
       if (null == blocks) {
@@ -83,7 +83,7 @@ public class Column {
    }
 
    /**
-    * Setzt isGone. Ausserdem werden alle Blöcke auch auf gone = true gesetzt
+    * Setzt isGone. Ausserdem werden alle Bloecke auch auf gone = true gesetzt
     * wenn isGone == true.
     * 
     * @param isGone
@@ -98,16 +98,16 @@ public class Column {
    }
 
    /**
-    * Gibt die Blöcke der Column zurück.
+    * Gibt die Bloecke der Column zurueck.
     * 
-    * @return Blöcke
+    * @return Bloecke
     */
    public ArrayList<Block> getBlocks() {
       return blocks;
    }
 
    /**
-    * Gibt die Anzahl der gesetzten Felder in der Column zurück.
+    * Gibt die Anzahl der gesetzten Felder in der Column zurueck.
     * 
     * @return Anzahl gesetzter Felder.
     */
@@ -132,7 +132,7 @@ public class Column {
 
    /**
     * Inkrementiert die Anzahl der gesetzten Felder. Ausserdem wird auch beim
-    * zugehörigen Block die entriesSet erhöht, falls der Block eindeutig ist.
+    * zugehoerigen Block die entriesSet erhoeht, falls der Block eindeutig ist.
     * 
     * @param row
     *           index

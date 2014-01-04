@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import models.Riddle;
 
 /**
- * Interface stellt Methoden zum Öffnen oder Erstellen eines Rätsels bereit.
+ * Interface stellt Methoden zum oeffnen oder Erstellen eines Raetsels bereit.
  * 
  * @author csgt
  * 
@@ -15,29 +15,29 @@ import models.Riddle;
 public interface IPlaygame extends ActionListener, MouseListener {
 
    /**
-    * Lädt ein Rätsel aus einer Datei heraus.
+    * Laedt ein Raetsel aus einer Datei heraus.
     * 
     * @param filename
-    * @return true falls die Datei korrekt geöffnet wurde.
+    * @return true falls die Datei korrekt geoeffnet wurde.
     */
    boolean openRiddleFromFile(String filename);
 
    /**
-    * Holt die Lösung des Rätseln vom Nonosolver, informiert den Listener über
-    * das Rätsel bzw. lässt beim Listener eine Fehlermeldung ausgeben
+    * Holt die Loesung des Raetseln vom Nonosolver, informiert den Listener ueber
+    * das Raetsel bzw. laesst beim Listener eine Fehlermeldung ausgeben
     * 
     * @param riddle
-    *           das Rätsle
+    *           das Raetsle
     * @param matrix
-    *           die erstellte Matrix des Rätsels
+    *           die erstellte Matrix des Raetsels
     */
    void setupIt(Riddle riddle, char[][] matrix);
 
    /**
-    * Erstellt ein Rätsel aus einem Foto.
+    * Erstellt ein Raetsel aus einem Foto.
     * 
     * @param image
-    * @return das Rätsel
+    * @return das Raetsel
     */
    Riddle createRiddle(BufferedImage image);
 

@@ -1,7 +1,7 @@
 package excetions;
 
 /**
- * Exception wird geworfen, wenn zu einem Zeitpunkt das Rätsel nicht mehr losbar
+ * Exception wird geworfen, wenn zu einem Zeitpunkt das Raetsel nicht mehr losbar
  * ist.
  * 
  * @author csgt

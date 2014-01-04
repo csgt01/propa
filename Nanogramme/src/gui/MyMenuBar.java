@@ -9,7 +9,7 @@ import javax.swing.JMenuItem;
 import interfaces.IPlaygame;
 
 /**
- * Menu für den Nonosolver
+ * Menu fuer den Nonosolver
  * 
  * @author csgt
  * 
@@ -78,26 +78,26 @@ public class MyMenuBar extends JMenuBar {
     * Initialisieren des Menus
     */
    private void init() {
-      // Menüelemente erzeugen
+      // Menueelemente erzeugen
       datei = new JMenu("Datei");
       // hilfe = new JMenu("Hilfe");
-      riddle = new JMenu("Rätsel");
+      riddle = new JMenu("Raetsel");
 
-      // Untermenüelemente erzeugen
+      // Untermenueelemente erzeugen
       oeffnen = new JMenuItem("Speichern");
       oeffnen.addActionListener(playGame);
-      laden = new JMenuItem("Rätsel laden");
-      erstellen = new JMenuItem("Rätsel erstellen");
-      check = new JMenuItem("Rätsel prüfen");
+      laden = new JMenuItem("Raetsel laden");
+      erstellen = new JMenuItem("Raetsel erstellen");
+      check = new JMenuItem("Raetsel pruefen");
       check.addActionListener(playGame);
-      show = new JMenuItem("Rätsel lösen lassen");
+      show = new JMenuItem("Raetsel loesen lassen");
       show.addActionListener(playGame);
 
-      // Menüelemente hinzufügen
+      // Menueelemente hinzufuegen
       this.add(datei);
       this.add(riddle);
 
-      // Untermenüelemente hinzufügen
+      // Untermenueelemente hinzufuegen
       datei.add(oeffnen);
       riddle.add(laden);
       riddle.add(erstellen);

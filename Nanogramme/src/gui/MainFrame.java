@@ -40,26 +40,73 @@ import picture.PictureService;
 import service.PlayGame;
 
 /**
- * Das MainFraim der App.
+ * Enthält die GUI des Programms.
  * 
  * @author cschulte
  * 
  */
 public class MainFrame extends JFrame implements ActionListener, IUIListener {
 
+   /**
+    * 
+    */
    private static final long serialVersionUID = -8026416994513756565L;
 
+   /**
+    * 
+    */
    private Border border = LineBorder.createGrayLineBorder();
+   
+   /**
+    * Die Applikation
+    */
    private JFrame applikation;
+   
+   /**
+    * Container
+    */
    private Container container;
+   
+   /**
+    * Das Menu
+    */
    private JMenuBar menuLeiste;
+   
+   /**
+    * Die Bottom-Toolbar
+    */
    private JToolBar toolbar;
+   
+   /**
+    * Alle Felder der Matrix
+    */
    private JLabel[][] labels;
+   
+   /**
+    * Gemerktes Verzeichnis fuer das Erstellen eines Raetsels
+    */
    private static File lastSelectedDirForPicture = null;
+   
+   /**
+    * Gemerktes Verzeichnis fuer das Laden eines Raetsels
+    */
    private static File lastSelectedDirForLoad = null;
+   
    // Services und Listener
+   /**
+    * Nutze diesen PictureService
+    */
    private IPictureService ps;
+   
+   /**
+    * Nutze diesen PlayGame
+    */
    private IPlaygame playGame;
+   
+   /**
+    * Scrollen fuer die Matrix
+    */
+   private JScrollPane scrollbar;
 
    /**
     * Konstruktor
@@ -69,7 +116,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    }
 
    /**
-    * Lädt den JFrame.
+    * Laedt den JFrame.
     */
    protected void init() {
       playGame = new PlayGame(this);
@@ -77,7 +124,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
       applikation = new JFrame("Main");
       container = applikation.getContentPane();
 
-      // Menüleiste erzeugen
+      // Menueleiste erzeugen
       menuLeiste = new MyMenuBar(this, playGame);
 
       applikation.add(menuLeiste, BorderLayout.NORTH);
@@ -90,8 +137,6 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
       applikation.setVisible(true);
    }
 
-   private JScrollPane scrollbar;
-
    @Override
    public Colour getBackgroundColour(LinkedList<Colour> colours) {
       setColours(colours);
@@ -99,7 +144,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
       for (int i = 0; i < colours.size(); i++) {
          buttons[i] = String.valueOf(colours.get(i).getName());
       }
-      int returnValue = JOptionPane.showOptionDialog(null, "Bitte wählen Sie aus den Farben in der Bottombar eine als Hintergrund aus.", "Hintergrundauswahl", JOptionPane.WARNING_MESSAGE, 0, null,
+      int returnValue = JOptionPane.showOptionDialog(null, "Bitte waehlen Sie aus den Farben in der Bottombar eine als Hintergrund aus.", "Hintergrundauswahl", JOptionPane.WARNING_MESSAGE, 0, null,
             buttons, buttons[0]);
       if (returnValue == -1) {
          return colours.get(0);
@@ -130,7 +175,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    }
 
    /**
-    * Erstellt und füllt die Matrix (Spielfeld) des UI.
+    * Erstellt und fuellt die Matrix (Spielfeld) des UI.
     * 
     * @param rowInt
     *           Anzahl der Reihen
@@ -236,7 +281,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    }
 
    /**
-    * Setzt eine Beschriftung wie viele Blöcke es in der Reihe gibt in die UI
+    * Setzt eine Beschriftung wie viele Bloecke es in der Reihe gibt in die UI
     * ein.
     * 
     * @param rows
@@ -285,10 +330,10 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 
    @Override
    public void actionPerformed(ActionEvent e) {
-      // Ein Rätsel soll geladen werden.
-      if (e.getActionCommand().equalsIgnoreCase("Rätsel laden")) {
+      // Ein Raetsel soll geladen werden.
+      if (e.getActionCommand().equalsIgnoreCase("Raetsel laden")) {
 
-         // Datei auswählen.
+         // Datei auswaehlen.
          File file = getFileOrDirectryFromChooser(applikation, JFileChooser.OPEN_DIALOG, true);
          if (file != null && file.getAbsoluteFile() != null) {
             if (!file.getName().endsWith("nono")) {
@@ -314,30 +359,34 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
       // JOptionPane.PLAIN_MESSAGE);
    }
 
+   /**
+    * oeffnet Dialoge und ruft Methoden auf, um aus einem Foto ein Raetsel zu
+    * erstellen.
+    */
    private void createRiddle() {
       File file = getFileOrDirectryFromChooser(applikation, JFileChooser.OPEN_DIALOG, false);
       if (file != null && file.getAbsoluteFile() != null) {
-         // Abfrage der Größe
-         String height = JOptionPane.showInputDialog(null, "Höhe:", "Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
+         // Abfrage der Groesse
+         String height = JOptionPane.showInputDialog(null, "Hoehe:", "Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
          String width = JOptionPane.showInputDialog(null, "Breite", "Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
          String numberOfColors = JOptionPane.showInputDialog(null, "Anzahl der Farben (inklusive Hintergrundfarbe)", "Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
 
          // Laden, Verkleinern und Farben herrunterrechnen
          BufferedImage image = ps.loadAndDownColorPicture(file.getAbsoluteFile().toString(), Integer.valueOf(height), Integer.valueOf(width), Integer.valueOf(numberOfColors));
 
-         // Das Rätsel aufbauen
+         // Das Raetsel aufbauen
          playGame.createRiddle(image);
       }
    }
 
    /**
-    * Erstellt einen Filechooser-Dialog und gibt das ausgewählte File zurück.
+    * Erstellt einen Filechooser-Dialog und gibt das ausgewaehlte File zurueck.
     * 
     * @param parent
     * @param type
     * @param forPicture
     *           Bild oder nono laden.
-    * @return gewählte Datei
+    * @return gewaehlte Datei
     */
    private File getFileOrDirectryFromChooser(Component parent, int type, boolean forPicture) {
       JFileChooser chooser = null;
@@ -421,19 +470,19 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
       JButton backgroundButton = new JButton("-");
       backgroundButton.setForeground(Color.DARK_GRAY);
       backgroundButton.addActionListener(playGame);
-      backgroundButton.setToolTipText("Leerfeld setzen wird ausgewählt.");
+      backgroundButton.setToolTipText("Leerfeld setzen wird ausgewaehlt.");
       toolbar.add(backgroundButton);
       JButton resetButton = new JButton("Reset");
       resetButton.setForeground(Color.DARK_GRAY);
       resetButton.addActionListener(playGame);
-      resetButton.setToolTipText("Zurücksetzen eines Feldes wird ausgewählt.");
+      resetButton.setToolTipText("Zuruecksetzen eines Feldes wird ausgewaehlt.");
       toolbar.add(resetButton);
       for (Colour colour : colours) {
          Color color = new Color(colour.getRed(), colour.getGreen(), colour.getBlue());
          JButton comp = new JButton(String.valueOf(colour.getName()));
          comp.setForeground(color);
          comp.addActionListener(playGame);
-         comp.setToolTipText("Diese Farbe auswählen, um ein Feld zu setzen.");
+         comp.setToolTipText("Diese Farbe auswaehlen, um ein Feld zu setzen.");
          toolbar.add(comp);
       }
    }
@@ -441,9 +490,9 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    @Override
    public void wasRight(boolean isRight, String message) {
       if (isRight) {
-         showAlert("Richtig gelöst!");
+         showAlert("Richtig geloest!");
       } else {
-         showAlert("Nicht komplett gelöst!\n" + message);
+         showAlert("Nicht komplett geloest!\n" + message);
       }
 
    }
@@ -452,7 +501,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    public void showAlert(String string) {
       JOptionPane.showMessageDialog(applikation, string, string, JOptionPane.WARNING_MESSAGE);
    }
-   
+
    @Override
    public File getSaveFile() {
       JFileChooser chooser = new JFileChooser();

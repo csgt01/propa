@@ -9,7 +9,7 @@ import models.Column;
 import models.Row;
 
 /**
- * Interface stellt Methoden für die Anzeige in einer GUI bereit.
+ * Interface stellt Methoden fuer die Anzeige in einer GUI bereit.
  * 
  * @author cschulte
  * 
@@ -39,17 +39,17 @@ public interface IUIListener {
    void placeAField(int row, int column, Colour colour, boolean enabled);
 
    /**
-    * Informiert den Listener, ob die Lösung richtig oder falsch war.
+    * Informiert den Listener, ob die Loesung richtig oder falsch war.
     * 
     * @param isRight
-    *           True, falls die Lösung richtig ist.
+    *           True, falls die Loesung richtig ist.
     * @param message
-    *           zusätzliche Nachricht zur Anzeige
+    *           zusaetzliche Nachricht zur Anzeige
     */
    void wasRight(boolean isRight, String message);
 
    /**
-    * Erstellt und füllt die UI-Matrix für das Rätsel.
+    * Erstellt und fuellt die UI-Matrix fuer das Raetsel.
     * 
     * @param rowInt
     *           Anzahl der Reihen.
@@ -72,7 +72,7 @@ public interface IUIListener {
    /**
     * 
     * @param col
-    * @return Gibt die Colour aus der Liste zurück, die als Hintergrund verwandt
+    * @return Gibt die Colour aus der Liste zurueck, die als Hintergrund verwandt
     *         werden soll.
     */
    Colour getBackgroundColour(LinkedList<Colour> col);
@@ -80,7 +80,7 @@ public interface IUIListener {
    /**
     * Liefert ein File zum speichern des Nonogramms.
     * 
-    * @return ausgewählten File.
+    * @return ausgewaehlten File.
     */
    File getSaveFile();
 

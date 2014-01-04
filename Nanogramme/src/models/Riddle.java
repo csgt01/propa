@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Die Klasse hält alle Informationen über das Rätsel.
+ * Die Klasse haelt alle Informationen ueber das Raetsel.
  * 
  * @author cschulte
  * 
@@ -12,16 +12,33 @@ import java.util.List;
 public class Riddle {
 
    /**
-    * Liste der {@link Colour} des Rätsels.
+    * Liste der {@link Colour} des Raetsels.
     */
    private List<Colour> colours;
 
+   /**
+    * Breite
+    */
    private int width;
+   
+   /**
+    * Hoehe
+    */
    private int height;
 
+   /**
+    * Alles Reihen
+    */
    private ArrayList<Row> rows;
+   
+   /**
+    * Alle Spalten
+    */
    private ArrayList<Column> columns;
 
+   /**
+    * Das Raetsle als nono-String
+    */
    private String nono;
 
    /**
@@ -73,7 +90,7 @@ public class Riddle {
    }
 
    /**
-    * @return Farben des Rätsels
+    * @return Farben des Raetsels
     */
    public List<Colour> getColours() {
       return colours;
@@ -87,7 +104,7 @@ public class Riddle {
    }
 
    /**
-    * @return Breite des Rätsels
+    * @return Breite des Raetsels
     */
    public int getWidth() {
       return width;
@@ -101,7 +118,7 @@ public class Riddle {
    }
 
    /**
-    * @return Höhe des Rätsels
+    * @return Hoehe des Raetsels
     */
    public int getHeight() {
       return height;
@@ -159,7 +176,7 @@ public class Riddle {
    }
 
    /**
-    * @return Reihen des Rätsels
+    * @return Reihen des Raetsels
     */
    public ArrayList<Row> getRows() {
       return rows;
@@ -173,7 +190,7 @@ public class Riddle {
    }
 
    /**
-    * @return Spalten des Rätsels
+    * @return Spalten des Raetsels
     */
    public ArrayList<Column> getColumns() {
       return columns;

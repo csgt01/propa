@@ -1,7 +1,7 @@
 package models;
 
 /**
- * Beinhaltet Informationen über ein Farbobjekt, das die Klasse {@link Block}
+ * Beinhaltet Informationen ueber ein Farbobjekt, das die Klasse {@link Block}
  * verwendet.
  * 
  * @author csgt
@@ -15,7 +15,7 @@ public class Colour {
    private int red;
 
    /**
-    * Grünwert der Farbe.
+    * Gruenwert der Farbe.
     */
    private int green;
 
@@ -49,17 +49,17 @@ public class Colour {
 
    /**
     * 
-    * @return Grünwert
+    * @return Gruenwert
     */
    public int getGreen() {
       return green;
    }
 
    /**
-    * Setzt den Grünwert
+    * Setzt den Gruenwert
     * 
     * @param green
-    *           Grünwert
+    *           Gruenwert
     */
    public void setGreen(Integer green) {
       this.green = green;

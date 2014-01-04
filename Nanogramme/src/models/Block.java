@@ -3,9 +3,9 @@ package models;
 import java.util.TreeSet;
 
 /**
- * Farbblock in einer Reihe oder Spalte. Die Klasse Block spielt eine große
- * Rolle im Lösungsprozess. Im Laufe des Prozesses werden minIndex und maxIndex
- * immer wieder verändert, bis der Block eindeutig gesetzt werden kann.
+ * Farbblock in einer Reihe oder Spalte. Die Klasse Block spielt eine grosse
+ * Rolle im Loesungsprozess. Im Laufe des Prozesses werden minIndex und maxIndex
+ * immer wieder veraendert, bis der Block eindeutig gesetzt werden kann.
  * 
  * @author cschulte
  * 
@@ -13,13 +13,13 @@ import java.util.TreeSet;
 public class Block {
 
    /**
-    * Flag für Methoden beim Lösen.Wird auf true gesetzt, wenn minIndex oder
-    * maxIndex geändert werden.
+    * Flag fuer Methoden beim Loesen.Wird auf true gesetzt, wenn minIndex oder
+    * maxIndex geaendert werden.
     */
    public boolean doOverlapping;
 
    /**
-    * Größe des Blocks.
+    * Groesse des Blocks.
     */
    private Integer howMany;
 
@@ -41,11 +41,11 @@ public class Block {
     */
    private boolean gone;
    /**
-    * Index wird im Laufe des Lösens angepasst.
+    * Index wird im Laufe des Loesens angepasst.
     */
    private Integer minIndex;
    /**
-    * Index wird im Laufe des Lösens angepasst.
+    * Index wird im Laufe des Loesens angepasst.
     */
    private Integer maxIndex;
    /**
@@ -91,8 +91,8 @@ public class Block {
    }
 
    /**
-    * Konstruktor, der aus einem Block ein neues Objekt erzeugt. Benötigt für
-    * das Raten der Lösung.
+    * Konstruktor, der aus einem Block ein neues Objekt erzeugt. Benoetigt fuer
+    * das Raten der Loesung.
     * 
     * @param block
     */
@@ -231,9 +231,9 @@ public class Block {
 
    /**
     * Falls minIndex > this.minIndex wird this. maEndIndex gesetzt. Eswird auch
-    * geprüft, ob (minIndex + howMany) == (maxIndex + 1) und gone == false ist.
+    * geprueft, ob (minIndex + howMany) == (maxIndex + 1) und gone == false ist.
     * Dann ist der Block bereits richtig platziert. Deshalb werden minIndex und
-    * maxIndex zu indeces hinzugefügt. Eine Methode im Nonosolver sorgt dafür,
+    * maxIndex zu indeces hinzugefuegt. Eine Methode im Nonosolver sorgt dafuer,
     * dass die Felder dazwischen gesetzt werden.
     * 
     * @param minIndex
@@ -266,9 +266,9 @@ public class Block {
 
    /**
     * Falls maxIndex < this.maxIndex wird this. maEndIndex gesetzt. Eswird auch
-    * geprüft, ob (minIndex + howMany) == (maxIndex + 1) und gone == false ist.
+    * geprueft, ob (minIndex + howMany) == (maxIndex + 1) und gone == false ist.
     * Dann ist der Block bereits richtig platziert. Deshalb werden minIndex und
-    * maxIndex zu indeces hinzugefügt. Eine Methode im Nonosolver sorgt dafür,
+    * maxIndex zu indeces hinzugefuegt. Eine Methode im Nonosolver sorgt dafuer,
     * dass die Felder dazwischen gesetzt werden.
     * 
     * @param maxIndex
@@ -307,7 +307,7 @@ public class Block {
    }
 
    /**
-    * Erhöht {@link #entriesSet} und fügt den index {@link #indeces} hinzu.
+    * Erhoeht {@link #entriesSet} und fuegt den index {@link #indeces} hinzu.
     * Falls alle Felder gesetzt sind, wird {@link #gone} auf true gesetzt.
     * 
     * @param index

@@ -17,11 +17,11 @@ import excetions.DataCollisionException;
 import excetions.NotSolvableException;
 
 /**
- * Klasse, die das Lösen eines Nonogramms übernimmt. Um eine Lösung zu erhalten
+ * Klasse, die das Loesen eines Nonogramms uebernimmt. Um eine Loesung zu erhalten
  * muss nur {@link #getSolution()} aufgerufen werden und gegebenenfalls
- * {@link #solveState} betrachtet werden. Der Algorithmus läuft in zwei Stufen
- * ab.Es wird erst versucht das Rätsel logisch zu lösen. Wenn dies nicht
- * ausreicht, wird ein Feld geraten und wieder logisch nach der Lösung gesucht.
+ * {@link #solveState} betrachtet werden. Der Algorithmus laeuft in zwei Stufen
+ * ab.Es wird erst versucht das Raetsel logisch zu loesen. Wenn dies nicht
+ * ausreicht, wird ein Feld geraten und wieder logisch nach der Loesung gesucht.
  * 
  * 
  * @author csgt
@@ -35,31 +35,31 @@ public class NonoSolver implements INonogramSolver {
    private RiddleService riddleLoader;
 
    /**
-    * Das zu lösende {@link Riddle}.
+    * Das zu loesende {@link Riddle}.
     */
    private Riddle riddle;
 
    /**
-    * Die Matrix mit dem aktuellen Stand der Lösung.
+    * Die Matrix mit dem aktuellen Stand der Loesung.
     */
    private char[][] matrix;
 
    /**
-    * Der Status beim Lösen.
+    * Der Status beim Loesen.
     */
    private SolveStateEnum solveState = SolveStateEnum.SOLVING;
    /**
-    * Lösungen, die beim raten der Lösung gefunden wurden.
+    * Loesungen, die beim raten der Loesung gefunden wurden.
     */
    ArrayList<char[][]> solutionsFromGuising = new ArrayList<char[][]>();
    /**
-    * Liste der StackHolder, die bei jedem Raten hinzugefügt werden.
+    * Liste der StackHolder, die bei jedem Raten hinzugefuegt werden.
     */
    LinkedList<StackHolder> stacks = new LinkedList<StackHolder>();
 
    /**
-    * Konstruktor. Er kann mit einer bereits gefüllten matrix und einem
-    * bestehenden Rätsel aufgerufen werden. Sonst wird eine matrix
+    * Konstruktor. Er kann mit einer bereits gefuellten matrix und einem
+    * bestehenden Raetsel aufgerufen werden. Sonst wird eine matrix
     * initialisiert.
     * 
     * @param matrix
@@ -122,7 +122,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Steuert den Lösungsprozess. Je nach Status von {@link #solveState} wird
+    * Steuert den Loesungsprozess. Je nach Status von {@link #solveState} wird
     * {@link #solve()}, {@link #setFirstStarToSomething()} oder
     * {@link #changeLastStacksMember()} aufgerufen oder die Methode abgebrochen.
     * 
@@ -130,22 +130,22 @@ public class NonoSolver implements INonogramSolver {
    private void handle() {
       while (solveState != SolveStateEnum.SOLVED) {
          // ein Fehler wurde in solve erkannt dann entweder Farbe von letzten
-         // StackHolder ändern oder keine Lösung
+         // StackHolder aendern oder keine Loesung
          if (solveState == SolveStateEnum.ERROR) {
             if (stacks != null && stacks.size() > 0) {
-               // wenn alle Möglichkeiten im Stack getestet wurden:
+               // wenn alle Moeglichkeiten im Stack getestet wurden:
                if (!changeLastStacksMember()) {
                   switch (solutionsFromGuising.size()) {
-                  // keine Lösung gefunden
+                  // keine Loesung gefunden
                   case 0:
                      solveState = SolveStateEnum.NO_SOLUTION;
                      return;
-                     // 1 Lösung gefunden
+                     // 1 Loesung gefunden
                   case 1:
                      solveState = SolveStateEnum.SOLVED;
                      matrix = solutionsFromGuising.get(0);
                      return;
-                     // mehrere Lösungen gefunden
+                     // mehrere Loesungen gefunden
                   default:
                      solveState = SolveStateEnum.MULTIPLE_SOLUTIONS;
                      return;
@@ -173,8 +173,8 @@ public class NonoSolver implements INonogramSolver {
             } catch (Exception e) {
                // e.printStackTrace();
             }
-            // Mögliche Lösung gefunden, aber mit gefüllten stack --> andere
-            // Möglichkeiten prüfen um mehrere Lösungen auszuschließen
+            // Moegliche Loesung gefunden, aber mit gefuellten stack --> andere
+            // Moeglichkeiten pruefen um mehrere Loesungen auszuschliessen
          } else if (solveState == SolveStateEnum.FOUND_SOLUTION_WITH_STACK) {
             if (!changeLastStacksMember()) {
                switch (solutionsFromGuising.size()) {
@@ -198,8 +198,8 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Ruft die eigentlichen Methoden zum Lösen solange auf, bis sich keine
-    * Veränderung mehr in einem Durchlauf ergibt. Dann wird der
+    * Ruft die eigentlichen Methoden zum Loesen solange auf, bis sich keine
+    * Veraenderung mehr in einem Durchlauf ergibt. Dann wird der
     * {@link #solveState} entweder auf {@link SolveStateEnum#MUST_GUESS}
     * gesetzt, falls noch '*' in der matrix sind. Anderenfalls auf
     * {@link SolveStateEnum#SOLVED} wenn der Stack leer ist oder auf
@@ -218,9 +218,9 @@ public class NonoSolver implements INonogramSolver {
                solveState = SolveStateEnum.MUST_GUESS;
                run1 = false;
             }
-            // mögliche Lösung gefunden
+            // moegliche Loesung gefunden
             if (getStarCountInRiddle() == 0) {
-               // direkte Lösung, da vorher nicht geraten wurde
+               // direkte Loesung, da vorher nicht geraten wurde
                if (stacks == null || stacks.size() == 0) {
                   solveState = SolveStateEnum.SOLVED;
                   run1 = false;
@@ -229,7 +229,7 @@ public class NonoSolver implements INonogramSolver {
                   } else {
                      solveState = SolveStateEnum.ERROR;
                   }
-                  // andere Möglichkeiten beim Raten testen!
+                  // andere Moeglichkeiten beim Raten testen!
                } else {
                   run1 = false;
                   if (isSolutionOk()) {
@@ -249,7 +249,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Überprüft die Matrix auf Korrektheit.
+    * ueberprueft die Matrix auf Korrektheit.
     * 
     * @return true wenn die Matrix korrekt ist.
     */
@@ -272,15 +272,15 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Holt den zuletzt hinzugefügten Stackholder und ändert die Farbe, falls die
+    * Holt den zuletzt hinzugefuegten Stackholder und aendert die Farbe, falls die
     * neue Farbe in der Reihe und der Spalte, in der der StackHolder gesetzt
-    * wurde, vorkommt. Falls dies nicht der Fall ist, wird die nächste Farbe
+    * wurde, vorkommt. Falls dies nicht der Fall ist, wird die naechste Farbe
     * genommen.Das Riddle und die Matrix werden auf den Stand, der im
-    * Stackholder gespeichert ist zurückgesetzt. Falls alle Farben getestet
+    * Stackholder gespeichert ist zurueckgesetzt. Falls alle Farben getestet
     * wurden, wird der Stackholder entfernt und diese Methode nochmal
-    * aufgerufen, um den vorherigen Stackholder zu ändern.
+    * aufgerufen, um den vorherigen Stackholder zu aendern.
     * 
-    * @return false, wenn stacks null oder leer ist, also alle Möglichkeiten
+    * @return false, wenn stacks null oder leer ist, also alle Moeglichkeiten
     *         getestet wurden.
     */
    private boolean changeLastStacksMember() {
@@ -288,14 +288,14 @@ public class NonoSolver implements INonogramSolver {
          // letzten StackHolder holen
          StackHolder lastStackHolder = stacks.get(stacks.size() - 1);
          int indexOfColor = lastStackHolder.getIndexOfColor();
-         // Farbe ändern
+         // Farbe aendern
          indexOfColor--;
          // wenn die Farbe an der Stelle in der Matrix niht vorkommen kann,
-         // nächste Farbe testen
+         // naechste Farbe testen
          while (indexOfColor > -1 && !isColorInThisRowAndColumn(lastStackHolder.getRow(), lastStackHolder.getColumn(), indexOfColor)) {
             indexOfColor--;
          }
-         // alle Farben getestet, also diesen StackHolder löschen und nächsten
+         // alle Farben getestet, also diesen StackHolder loeschen und naechsten
          // aufrufen
          if (indexOfColor < -1) {
             Riddle stackRiddle = lastStackHolder.getRiddle();
@@ -312,7 +312,7 @@ public class NonoSolver implements INonogramSolver {
             if (!changeLastStacksMember()) {
                return false;
             }
-            // Matrix und Riddle auf den Stand des StackHolders zurücksetzen
+            // Matrix und Riddle auf den Stand des StackHolders zuruecksetzen
             // neue Farbe in Matrix eintragen
          } else {
             lastStackHolder.setIndexOfColor(indexOfColor);
@@ -338,15 +338,15 @@ public class NonoSolver implements INonogramSolver {
          }
          return true;
       } else {
-         // es wurden bereits alle Möglicheiten getestet
+         // es wurden bereits alle Moeglicheiten getestet
          return false;
       }
    }
 
    /**
     * Setzt den ersten "*" in der Matrix auf "-". Des weiteren wird ein
-    * StackHolder-Objekt angelegt, um den Status des Lösungsweges zu speichern.
-    * Überprüft nun auch, ob es die Farbe, die geraten werden soll, in der Reihe
+    * StackHolder-Objekt angelegt, um den Status des Loesungsweges zu speichern.
+    * ueberprueft nun auch, ob es die Farbe, die geraten werden soll, in der Reihe
     * und Spalte gibt.
     * 
     * @throws DataCollisionException
@@ -381,11 +381,11 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Ruft mehrere Methoden auf, die versuchen das Rätsel auf Blockebene zu
-    * lösen. Dabei wird der minIndex und maxIndex der Blöcke möglichst weit
-    * eingeschränkt, um bei der Methode {@link #overlapBlocks(Row)} viele
-    * überlappende Bereiche zu haben. Es wird auch versucht, Felder (leer, mit
-    * Farbe gesetzt oder ungesetzt) bestimmten Blöcken zuzuordnet, um dann
+    * Ruft mehrere Methoden auf, die versuchen das Raetsel auf Blockebene zu
+    * loesen. Dabei wird der minIndex und maxIndex der Bloecke moeglichst weit
+    * eingeschraenkt, um bei der Methode {@link #overlapBlocks(Row)} viele
+    * ueberlappende Bereiche zu haben. Es wird auch versucht, Felder (leer, mit
+    * Farbe gesetzt oder ungesetzt) bestimmten Bloecken zuzuordnet, um dann
     * weiter zu reagieren.
     * 
     * @throws NotSolvableException
@@ -425,10 +425,10 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Prüft für jeden Block in dieser Reihe, ob es einen Block in der jeweiligen
-    * Spalte gibt, der sich mit diesem überschneidet. Dabei wird jeder Block in
+    * Prueft fuer jeden Block in dieser Reihe, ob es einen Block in der jeweiligen
+    * Spalte gibt, der sich mit diesem ueberschneidet. Dabei wird jeder Block in
     * jeder Splate zwischen minIndex und maxIndex betrachtet. Wenn es keinen
-    * Block gibt, kann unter Vorraussetzungen minIndex oder maxIndex geändert
+    * Block gibt, kann unter Vorraussetzungen minIndex oder maxIndex geaendert
     * werden.
     * 
     * @param row
@@ -444,14 +444,14 @@ public class NonoSolver implements INonogramSolver {
       for (int blockInt = 0; blockInt < size; blockInt++) {
          Block block = row.getBlocks().get(blockInt);
          if (!block.isGone()) {
-            // für jede Column zwischen min und max prüfen
+            // fuer jede Column zwischen min und max pruefen
             for (int columnInt = block.getMinIndex(); columnInt <= block.getMaxIndex(); columnInt++) {
                Column column = getColumns().get(columnInt);
                int index = 0;
                int size2 = column.getBlocks().size();
                boolean isPresent = false;
                // Wenn es einen Block in der Column gibt, der sich mit dieser
-               // Stelle überschneidet abbrechen.
+               // Stelle ueberschneidet abbrechen.
                while (index < size2 && !isPresent) {
                   Block columnBlock = column.getBlocks().get(index);
                   if (block.getColorChar() == columnBlock.getColorChar()) {
@@ -461,7 +461,7 @@ public class NonoSolver implements INonogramSolver {
                   }
                   index++;
                }
-               // wenn es keine Überschneidungen gibt prüfen, ob sich Bereiche
+               // wenn es keine ueberschneidungen gibt pruefen, ob sich Bereiche
                // am Anfang oder am Ende ergeben, die kleiner sind als howMany
                if (!isPresent) {
                   if ((columnInt - block.getMinIndex() + 1) < block.getHowMany()) {
@@ -477,11 +477,11 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Prüft für jeden Block in dieser Spalte, ob es einen Block in der
-    * jeweiligen Reihe gibt, der sich mit diesem überschneidet. Dabei wird jeder
+    * Prueft fuer jeden Block in dieser Spalte, ob es einen Block in der
+    * jeweiligen Reihe gibt, der sich mit diesem ueberschneidet. Dabei wird jeder
     * Block in jeder Splate zwischen minIndex und maxIndex betrachtet. Wenn es
     * keinen Block gibt, kann unter Vorraussetzungen minIndex oder maxIndex
-    * geändert werden.
+    * geaendert werden.
     * 
     * @param column
     *           Spalte
@@ -498,7 +498,7 @@ public class NonoSolver implements INonogramSolver {
       for (int blockInt = 0; blockInt < size; blockInt++) {
          Block block = column.getBlocks().get(blockInt);
          if (!block.isGone()) {
-            // für jede Row zwischen min und max prüfen
+            // fuer jede Row zwischen min und max pruefen
             for (int rowInt = block.getMinIndex(); rowInt <= block.getMaxIndex(); rowInt++) {
                Row row = getRows().get(rowInt);
                int index = 0;
@@ -514,7 +514,7 @@ public class NonoSolver implements INonogramSolver {
                   }
                   index++;
                }
-               // wenn es keine Überschneidungen gibt prüfen, ob sich Bereiche
+               // wenn es keine ueberschneidungen gibt pruefen, ob sich Bereiche
                // am Anfang oder am Ende ergeben, die kleiner sind als howMany
                if (!isPresent) {
                   if ((rowInt - block.getMinIndex() + 1) < block.getHowMany()) {
@@ -530,7 +530,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Überprüft, ob es in der Reihe und der Spalte einen Block mit der Farbe
+    * ueberprueft, ob es in der Reihe und der Spalte einen Block mit der Farbe
     * gibt.
     * 
     * @param rowInt
@@ -546,7 +546,7 @@ public class NonoSolver implements INonogramSolver {
       boolean isPresent = false;
       int index = 0;
       int size = row.getBlocks().size();
-      // alle Blöcke der Reihe durchgehen, bis ein Block gefunden ist, der die
+      // alle Bloecke der Reihe durchgehen, bis ein Block gefunden ist, der die
       // richtige Farbe hat und columnInt zwischen dessen minIndex und maxIndex
       // ist.
       while (index < size && !isPresent) {
@@ -561,7 +561,7 @@ public class NonoSolver implements INonogramSolver {
       if (!isPresent) {
          return false;
       }
-      // alle Blöcke der Spalte durchgehen, bis ein Block gefunden ist, der die
+      // alle Bloecke der Spalte durchgehen, bis ein Block gefunden ist, der die
       // richtige Farbe hat und rowInt zwischen dessen minIndex und maxIndex
       // ist.
       Column column = getColumns().get(columnInt);
@@ -581,8 +581,8 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Überprüft, ob ein "*" nur zu einem Block gehört. Falls dies der Fall ist,
-    * wird überprüft, ob row.getMaxEntries() - row.getEntriesSet() - starCount
+    * ueberprueft, ob ein "*" nur zu einem Block gehoert. Falls dies der Fall ist,
+    * wird ueberprueft, ob row.getMaxEntries() - row.getEntriesSet() - starCount
     * == 0 ist. Dies bedeutet, dass nur noch ein Farbfeld zu setzen ist und es
     * mit der Farbe des Blocks gesetzt werden kann.
     * 
@@ -621,7 +621,7 @@ public class NonoSolver implements INonogramSolver {
                // Wenn es keinen Block in der Spalte gibt mit derselben
                // Farbe und
                // rowInt >= block2.getMinStartIndexNew() && rowInt <=
-               // block2.getMaxEndIndexNew() dann mit leer füllen
+               // block2.getMaxEndIndexNew() dann mit leer fuellen
                boolean fillIt = true;
                for (Integer i : blockIndeces) {
                   Block block = blocks.get(i);
@@ -643,13 +643,13 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Prüft, ob eine gesetzte Farbe zu einem Block gehört. Wenn ja wird der
+    * Prueft, ob eine gesetzte Farbe zu einem Block gehoert. Wenn ja wird der
     * Index in indeces von Block geschrieben und die maximale und minimale
-    * Ausdehnung geändert.
+    * Ausdehnung geaendert.
     * 
     * @param row
     * @throws NotSolvableException
-    *            Wenn die gesetzte Farbe zu keinem Block gehört
+    *            Wenn die gesetzte Farbe zu keinem Block gehoert
     */
    private void checkColorBelongingToBlock(Row row) throws NotSolvableException {
       ArrayList<Block> blocks = row.getBlocks();
@@ -669,7 +669,7 @@ public class NonoSolver implements INonogramSolver {
                   blockIndeces.add(blocks.indexOf(block));
                }
             }
-            // gehört nur zu einem Block
+            // gehoert nur zu einem Block
             int blockIndecesSize = blockIndeces.size();
             if (blockIndecesSize == 1) {
                Block block = blocks.get(blockIndeces.get(0));
@@ -684,20 +684,20 @@ public class NonoSolver implements INonogramSolver {
                block.setMaxIndex(max);
                block.setMinIndex(min);
             } else if (blockIndecesSize == 0) {
-               throw new NotSolvableException("Farbe gehört zu keinem Block:" + row.getIndex() + "/" + columnInt + ":" + c);
+               throw new NotSolvableException("Farbe gehoert zu keinem Block:" + row.getIndex() + "/" + columnInt + ":" + c);
             }
          }
       }
    }
 
    /**
-    * Prüft, ob eine gesetzte Farbe zu einem Block gehört. Wenn ja wird der
+    * Prueft, ob eine gesetzte Farbe zu einem Block gehoert. Wenn ja wird der
     * Index in indeces von Block geschrieben und die maximale und minimale
-    * Ausdehnung geändert.
+    * Ausdehnung geaendert.
     * 
     * @param column
     * @throws NotSolvableException
-    *            Wenn die gesetzte Farbe zu keinem Block gehört.
+    *            Wenn die gesetzte Farbe zu keinem Block gehoert.
     */
    private void checkColorBelongingToBlock(Column column) throws NotSolvableException {
       ArrayList<Block> blocks = column.getBlocks();
@@ -710,7 +710,7 @@ public class NonoSolver implements INonogramSolver {
          // color
          if (c != '*' && c != '-') {
             LinkedList<Integer> blockIndeces = new LinkedList<Integer>();
-            // alle Blöcke, die an der Stelle gesetzt werden könnten in die
+            // alle Bloecke, die an der Stelle gesetzt werden koennten in die
             // Liste schreiben
             for (int index = 0; index < blocks.size(); index++) {
                Block block = blocks.get(index);
@@ -719,7 +719,7 @@ public class NonoSolver implements INonogramSolver {
                }
             }
             int blockIndecesSize = blockIndeces.size();
-            // nur ein Block --> minIndex und maxIndex ändern
+            // nur ein Block --> minIndex und maxIndex aendern
             if (blockIndecesSize == 1) {
                Block block = blocks.get(blockIndeces.get(0));
                int min = rowInt - block.getHowMany() + 1;
@@ -733,15 +733,15 @@ public class NonoSolver implements INonogramSolver {
                block.setMaxIndex(max);
                block.setMinIndex(min);
             } else if (blockIndecesSize == 0) {
-               throw new NotSolvableException("Farbe gehört zu keinem Block:" + rowInt + "/" + column.getIndex() + ":" + c);
+               throw new NotSolvableException("Farbe gehoert zu keinem Block:" + rowInt + "/" + column.getIndex() + ":" + c);
             }
          }
       }
    }
 
    /**
-    * Überprüft, ob ein "*" nur zu einem Block gehört. Falls dies der Fall ist,
-    * wird überprüft, ob row.getMaxEntries() - row.getEntriesSet() - starCount)
+    * ueberprueft, ob ein "*" nur zu einem Block gehoert. Falls dies der Fall ist,
+    * wird ueberprueft, ob row.getMaxEntries() - row.getEntriesSet() - starCount)
     * == 0 ist. Dies bedeutet, dass nur noch ein Farbfeld zu setzen ist und es
     * mit der Farbe des Blocks gesetzt werden kann.
     * 
@@ -754,11 +754,11 @@ public class NonoSolver implements INonogramSolver {
          return;
       }
       int columnInt = column.getIndex();
-      // alle Reihen der Spalte durchgehen und auf '*' prüfen
+      // alle Reihen der Spalte durchgehen und auf '*' pruefen
       for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
          if (matrix[rowInt][columnInt] == '*') {
             LinkedList<Integer> blockIndeces = new LinkedList<Integer>();
-            // alle Blöcke, die an der Stelle gesetzt werden könnten in die
+            // alle Bloecke, die an der Stelle gesetzt werden koennten in die
             // Liste schreiben
             for (int index = 0; index < blocks.size(); index++) {
                Block block = blocks.get(index);
@@ -784,7 +784,7 @@ public class NonoSolver implements INonogramSolver {
                // Wenn es keinen Block in der Reihe gibt mit derselben
                // Farbe und
                // columnInt >= block2.getMinStartIndexNew() && columnInt <=
-               // block2.getMaxEndIndexNew() dann mit leer füllen
+               // block2.getMaxEndIndexNew() dann mit leer fuellen
                boolean fillIt = true;
                for (Integer i : blockIndeces) {
                   Block block = blocks.get(i);
@@ -805,7 +805,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
+    * ueberprueft, ob ein Leerfeld zu einem Block gehoert. Wenn der Index gleich
     * dem minIndex oder maxIndex ist, werden diese in/dekrementiert. Wird in
     * {@link #checkByBlock()} aufgerufen.
     * 
@@ -821,13 +821,13 @@ public class NonoSolver implements INonogramSolver {
          if (matrix[rowInt][columnInt] == '-') {
             for (int index = 0; index < blocks.size(); index++) {
                Block block = blocks.get(index);
-               // Leeres Feld am Anfang des Blocks --> minIndex ändern
+               // Leeres Feld am Anfang des Blocks --> minIndex aendern
                if (!block.isGone() && columnInt == block.getMinIndex()) {
                   block.setMinIndex(block.getMinIndex() + 1);
-                  // Leeres Feld am Ende des Blocks --> maxIndex ändern
+                  // Leeres Feld am Ende des Blocks --> maxIndex aendern
                } else if (!block.isGone() && columnInt == block.getMaxIndex()) {
                   block.setMaxIndex(block.getMaxIndex() - 1);
-                  // Leeres Feld innerhalb des möglichen Blocks.
+                  // Leeres Feld innerhalb des moeglichen Blocks.
                } else if (block.getMinIndex() < columnInt && block.getMaxIndex() > columnInt) {
                   checkSizesBeforeAndAfterEmptyInBlockRange(block, columnInt);
                }
@@ -837,7 +837,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Prüft, ob nach bzw. vor dem leeren Feld noch genug Platz für den Block
+    * Prueft, ob nach bzw. vor dem leeren Feld noch genug Platz fuer den Block
     * ist. falls nicht, wird minIndex bzw maxIndex angepasst. Wird in
     * {@link #checkEmptyBelongingToBlock(Row)} und
     * {@link #checkEmptyBelongingToBlock(Column)} aufgerufen.
@@ -856,7 +856,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Überprüft, ob ein Leerfeld zu einem Block gehört. Wenn der Index gleich
+    * ueberprueft, ob ein Leerfeld zu einem Block gehoert. Wenn der Index gleich
     * dem minIndex oder maxIndex ist, werden diese in/dekrementiert. Wird in
     * {@link #checkByBlock()} aufgerufen.
     * 
@@ -872,13 +872,13 @@ public class NonoSolver implements INonogramSolver {
          if (matrix[rowInt][columnInt] == '-') {
             for (int index = 0; index < blocks.size(); index++) {
                Block block = blocks.get(index);
-               // Leeres Feld am Anfang des Blocks --> minIndex ändern
+               // Leeres Feld am Anfang des Blocks --> minIndex aendern
                if (!block.isGone() && rowInt == block.getMinIndex()) {
                   block.setMinIndex(block.getMinIndex() + 1);
-                  // Leeres Feld am Ende des Blocks --> maxIndex ändern
+                  // Leeres Feld am Ende des Blocks --> maxIndex aendern
                } else if (!block.isGone() && rowInt == block.getMaxIndex()) {
                   block.setMaxIndex(block.getMaxIndex() - 1);
-                  // Leeres Feld innerhalb des möglichen Blocks.
+                  // Leeres Feld innerhalb des moeglichen Blocks.
                } else if (block.getMinIndex() < rowInt && block.getMaxIndex() > rowInt) {
                   checkSizesBeforeAndAfterEmptyInBlockRange(block, rowInt);
                }
@@ -943,8 +943,8 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt den Bereich zwischen {@link Block#minIndex} und
-    * {@link Block#maxIndex} des Blockes, falls die Differenz gleich der Größe
+    * Fuellt den Bereich zwischen {@link Block#minIndex} und
+    * {@link Block#maxIndex} des Blockes, falls die Differenz gleich der Groesse
     * des Blocks ({@link Block#howMany}) ist
     * 
     * @param row
@@ -959,8 +959,8 @@ public class NonoSolver implements INonogramSolver {
       for (int index = 0; index < size; index++) {
          Block block = blocks.get(index);
          // nur wenn minIndexNew und
-         // maxIndexNew sich geändert haben. Dies wird mit doOverlapping
-         // geprüft
+         // maxIndexNew sich geaendert haben. Dies wird mit doOverlapping
+         // geprueft
          if (block.doOverlapping) {
             if (block.getMaxIndex() + 1 - block.getMinIndex() == block.getHowMany()) {
                fillAreaInRowWithChar(row.getIndex(), block.getMinIndex(), block.getMaxIndex() + 1, block.getColorChar());
@@ -971,8 +971,8 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt den Bereich zwischen {@link Block#minIndex} und
-    * {@link Block#maxIndex} des Blockes, falls die Differenz gleich der Größe
+    * Fuellt den Bereich zwischen {@link Block#minIndex} und
+    * {@link Block#maxIndex} des Blockes, falls die Differenz gleich der Groesse
     * des Blocks ({@link Block#howMany}) ist
     * 
     * @param column
@@ -987,8 +987,8 @@ public class NonoSolver implements INonogramSolver {
       for (int index = 0; index < size; index++) {
          Block block = blocks.get(index);
          // nur wenn block noch nicht fertig und wenn minIndexNew und
-         // maxIndexNew sich geändert haben. Dies wird mit doOverlapping
-         // geprüft
+         // maxIndexNew sich geaendert haben. Dies wird mit doOverlapping
+         // geprueft
          if (block.doOverlapping) {
             if (block.getMaxIndex() + 1 - block.getMinIndex() == block.getHowMany()) {
                fillAreaInColumnWithChar(column.getIndex(), block.getMinIndex(), block.getMaxIndex() + 1, block.getColorChar());
@@ -1080,8 +1080,8 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Wenn es ein '-' innerhalb von minIndex und maxIndex gibt, wird überprüft,
-    * ob davor oder danach noch genug Platz für den Block ist. Wenn nicht können
+    * Wenn es ein '-' innerhalb von minIndex und maxIndex gibt, wird ueberprueft,
+    * ob davor oder danach noch genug Platz fuer den Block ist. Wenn nicht koennen
     * die Werte neu gesetzt werden
     * 
     * @param row
@@ -1113,8 +1113,8 @@ public class NonoSolver implements INonogramSolver {
 
    /**
     * Wenn es ein - innerhalb von {@link Block#minIndex} und
-    * {@link Block#maxIndex} gibt, wird überprüft, ob davor oder danach noch
-    * genug Platz für den Block ist, wenn nicht können die Werte neu gesetzt
+    * {@link Block#maxIndex} gibt, wird ueberprueft, ob davor oder danach noch
+    * genug Platz fuer den Block ist, wenn nicht koennen die Werte neu gesetzt
     * werden
     * 
     * @param column
@@ -1146,8 +1146,8 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Testet, ob Felder innerhalb von Blöcken gesetzt werden können. Z.B. wenn
-    * in {@link Block#indeces} 2 und 5 eingetragen sind, müssen 3 und 4 auch
+    * Testet, ob Felder innerhalb von Bloecken gesetzt werden koennen. Z.B. wenn
+    * in {@link Block#indeces} 2 und 5 eingetragen sind, muessen 3 und 4 auch
     * gesetzt werden.
     * 
     * @param row
@@ -1177,8 +1177,8 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Testet, ob Felder innerhalb von Blöcken gesetzt werden können. Z.B. wenn
-    * in {@link Block#indeces} 2 und 5 eingetragen sind, müssen 3 und 4 auch
+    * Testet, ob Felder innerhalb von Bloecken gesetzt werden koennen. Z.B. wenn
+    * in {@link Block#indeces} 2 und 5 eingetragen sind, muessen 3 und 4 auch
     * gesetzt werden.
     * 
     * @param column
@@ -1207,10 +1207,10 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Setzt {@link Block#minIndex}/{@link Block#maxIndex} von Blöcken neu, falls
-    * der vorherige bzw. nachfolgende gone ist. Somit schränkt sich der Bereich,
-    * in dem der Block gesetzt werden kann, ein. Überprüft auch, ob bei nicht
-    * fertigen Blöcken das nächste/vorherige von maxIndex/minIndex gleich der
+    * Setzt {@link Block#minIndex}/{@link Block#maxIndex} von Bloecken neu, falls
+    * der vorherige bzw. nachfolgende gone ist. Somit schraenkt sich der Bereich,
+    * in dem der Block gesetzt werden kann, ein. ueberprueft auch, ob bei nicht
+    * fertigen Bloecken das naechste/vorherige von maxIndex/minIndex gleich der
     * Blockfarbe ist und passt dann die Werte an.
     * 
     * @param row
@@ -1238,7 +1238,7 @@ public class NonoSolver implements INonogramSolver {
             } else {
                // wenn der vorherige/nachfolgende char von Min/Max (in der
                // Matrix) gleich
-               // block.char dann erhöhen/erniedrigen, da ein Feld leer
+               // block.char dann erhoehen/erniedrigen, da ein Feld leer
                // sein muss.
                int minIndex = block.getMinIndex();
                int maxIndex = block.getMaxIndex();
@@ -1256,11 +1256,11 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Geht durch die Blöcke der Reihe. Wenn es mehr als einen Block gibt, werden
-    * immer zwei aufeinander folgende Blöcke überprüft, ob der
+    * Geht durch die Bloecke der Reihe. Wenn es mehr als einen Block gibt, werden
+    * immer zwei aufeinander folgende Bloecke ueberprueft, ob der
     * {@link Block#maxIndex} - {@link Block#howMany} des 2. Blocks kleiner ist,
     * als der {@link Block#maxIndex} des ersten Blocks. Dann muss der Index des
-    * 1. Blocks angepasst werden. Gleiches geschieht für den
+    * 1. Blocks angepasst werden. Gleiches geschieht fuer den
     * {@link Block#minIndex} , nur dass hier der 2. Block angepasst wird.
     * 
     * @param row
@@ -1272,14 +1272,14 @@ public class NonoSolver implements INonogramSolver {
       if (blocks != null && size > 1) {
          for (int blockIndex = 0; blockIndex < size; blockIndex++) {
             Block block = blocks.get(blockIndex);
-            // prüfen, ob min/maxIndex gleich einer anderen Farbe ist
+            // pruefen, ob min/maxIndex gleich einer anderen Farbe ist
             if (matrix[row.getIndex()][block.getMaxIndex()] != '*' && matrix[row.getIndex()][block.getMaxIndex()] != block.getColorChar()) {
                block.setMaxIndex(block.getMaxIndex() - 1);
             }
             if (matrix[row.getIndex()][block.getMinIndex()] != '*' && matrix[row.getIndex()][block.getMinIndex()] != block.getColorChar()) {
                block.setMinIndex(block.getMinIndex() + 1);
             }
-            // es gibt noch einen nächsten Block
+            // es gibt noch einen naechsten Block
             if (blockIndex + 1 < size) {
                Block nextBlock = blocks.get(blockIndex + 1);
                // maxIndex des ersten Blocks anpassen
@@ -1302,7 +1302,7 @@ public class NonoSolver implements INonogramSolver {
                      nextBlock.setMinIndex(block.getMinIndex() + block.getHowMany() + 1);
                   }
                }
-               // kein nächster, also nur vorherigen anpassen!
+               // kein naechster, also nur vorherigen anpassen!
             } else {
                if (blockIndex - 1 > -1) {
                   Block previousBlock = blocks.get(blockIndex - 1);
@@ -1322,11 +1322,11 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Geht durch die Blöcke der Reihe. Wenn es mehr als einen Block gibt, werden
-    * immer zwei aufeinander folgende Blöcke überprüft, ob der
-    * {@link Block#maxIndex} - der Größe des 2. Blocks kleiner ist, als der
+    * Geht durch die Bloecke der Reihe. Wenn es mehr als einen Block gibt, werden
+    * immer zwei aufeinander folgende Bloecke ueberprueft, ob der
+    * {@link Block#maxIndex} - der Groesse des 2. Blocks kleiner ist, als der
     * {@link Block#maxIndex} des ersten Blocks. Dann muss der Index des 1.
-    * Blocks angepasst werden. Gleiches geschieht für den {@link Block#minIndex}
+    * Blocks angepasst werden. Gleiches geschieht fuer den {@link Block#minIndex}
     * , nur dass hier der 2. Block angepasst wird.
     * 
     * @param column
@@ -1337,14 +1337,14 @@ public class NonoSolver implements INonogramSolver {
       if (blocks != null && size > 1) {
          for (int blockIndex = 0; blockIndex < size; blockIndex++) {
             Block block = blocks.get(blockIndex);
-            // prüfen, ob min/maxIndex gleich einer anderen Farbe ist
+            // pruefen, ob min/maxIndex gleich einer anderen Farbe ist
             if (matrix[block.getMaxIndex()][column.getIndex()] != '*' && matrix[block.getMaxIndex()][column.getIndex()] != block.getColorChar()) {
                block.setMaxIndex(block.getMaxIndex() - 1);
             }
             if (matrix[block.getMinIndex()][column.getIndex()] != '*' && matrix[block.getMinIndex()][column.getIndex()] != block.getColorChar()) {
                block.setMinIndex(block.getMinIndex() + 1);
             }
-            // es gibt noch einen nächsten Block
+            // es gibt noch einen naechsten Block
             if (blockIndex + 1 < size) {
                Block nextBlock = blocks.get(blockIndex + 1);
                // maxIndex des ersten Block anpassen
@@ -1367,7 +1367,7 @@ public class NonoSolver implements INonogramSolver {
                      nextBlock.setMinIndex(block.getMinIndex() + block.getHowMany() + 1);
                   }
                }
-               // kein nächster, also nur vorherigen anpassen!
+               // kein naechster, also nur vorherigen anpassen!
             } else {
                if (blockIndex - 1 > -1) {
                   Block previousBlock = blocks.get(blockIndex - 1);
@@ -1387,16 +1387,16 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Setzt {@link Block#maxIndex} der vorherigen Blöcke neu, falls
+    * Setzt {@link Block#maxIndex} der vorherigen Bloecke neu, falls
     * {@link Block#maxIndex} des vorherigen Blocks >= {@link Block#minIndex} des
     * Blocks ist. Wird aufgerufen, wenn ein Block abgeschlossen wurde.
     * 
     * @param blocks
-    *           zu überprüfende Blöcke
+    *           zu ueberpruefende Bloecke
     * @param blockIndex
-    *           index des Blocks, dessen Vorgänger geprüft werden sollen
+    *           index des Blocks, dessen Vorgaenger geprueft werden sollen
     * @param block
-    *           Block, dessen Vorgänger geprüft werden sollen
+    *           Block, dessen Vorgaenger geprueft werden sollen
     * @param minIndex
     *           minIndex des Blocks
     */
@@ -1416,16 +1416,16 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Setzt {@link Block#minIndex} der vorherigen Blöcke neu, falls
+    * Setzt {@link Block#minIndex} der vorherigen Bloecke neu, falls
     * {@link Block#minIndex} des vorherigen Blocks <= {@link Block#maxIndex} des
     * Blocks ist. Wird aufgerufen, wenn ein Block abgeschlossen wurde.
     * 
     * @param blocks
-    *           zu überprüfende Blöcke
+    *           zu ueberpruefende Bloecke
     * @param blockIndex
-    *           index des Blocks, dessen Nachfolger geprüft werden sollen
+    *           index des Blocks, dessen Nachfolger geprueft werden sollen
     * @param block
-    *           Block, dessen Nachfolger geprüft werden sollen
+    *           Block, dessen Nachfolger geprueft werden sollen
     * @param maxIndex
     *           minIndex des Blocks
     */
@@ -1445,10 +1445,10 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Setzt {@link Block#minIndex}/{@link Block#maxIndex} von Blöcken neu, falls
-    * der vorherige oder nachfolgende gone ist. Somit schränkt sich der Bereich,
-    * in dem der Block gesetzt werden kann ein. Überprüft auch, ob bei nicht
-    * fertigen Blöcken das nächste/vorherige von maxIndex/minIndex gleich der
+    * Setzt {@link Block#minIndex}/{@link Block#maxIndex} von Bloecken neu, falls
+    * der vorherige oder nachfolgende gone ist. Somit schraenkt sich der Bereich,
+    * in dem der Block gesetzt werden kann ein. ueberprueft auch, ob bei nicht
+    * fertigen Bloecken das naechste/vorherige von maxIndex/minIndex gleich der
     * Blockfarbe ist und passt dann die Werte an.
     * 
     * @param column
@@ -1472,7 +1472,7 @@ public class NonoSolver implements INonogramSolver {
                }
             } else {
                // wenn der vorherige/nachfolgende char von Min/Max gleich
-               // block.char dann erhöhen/erniedrigen, da ein Feld leer
+               // block.char dann erhoehen/erniedrigen, da ein Feld leer
                // sein muss.
                int minIndex = block.getMinIndex();
                int maxIndex = block.getMaxIndex();
@@ -1490,9 +1490,9 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Erstellt alle Möglichkeiten, den Block innerhalb von
+    * Erstellt alle Moeglichkeiten, den Block innerhalb von
     * {@link Block#minIndex} und {@link Block#maxIndex} zu platzieren und setzt
-    * die Felder in der Matrix, die bei allen Möglichkeiten gesetzt sind.
+    * die Felder in der Matrix, die bei allen Moeglichkeiten gesetzt sind.
     * 
     * @param row
     * @throws DataCollisionException
@@ -1503,15 +1503,15 @@ public class NonoSolver implements INonogramSolver {
          for (int index = 0; index < blocks.size(); index++) {
             Block block = blocks.get(index);
             // nur wenn block noch nicht fertig und wenn minIndex und
-            // maxIndex sich geändert haben. Dies wird mit doOverlapping
-            // geprüft
+            // maxIndex sich geaendert haben. Dies wird mit doOverlapping
+            // geprueft
             if (!block.isGone() && block.doOverlapping) {
                int start = block.getMinIndex();
                // Liste mit der Startbelegung
                LinkedList<String> first = initializeBlockList(block);
                LinkedList<String> workingList = new LinkedList<String>();
                workingList.addAll(first);
-               // Liste mit indeces für "first"
+               // Liste mit indeces fuer "first"
                LinkedList<Integer> result = new LinkedList<Integer>();
                for (int i = 0; i < first.size(); i++) {
                   if (!first.get(i).equals("-")) {
@@ -1520,13 +1520,13 @@ public class NonoSolver implements INonogramSolver {
                }
                String removed;
                // so lange nach rechts verschieben, bis Ende erreicht und
-               // zu workingList hinzufügen.
+               // zu workingList hinzufuegen.
                while (workingList.getLast().equals("-")) {
                   removed = workingList.removeLast();
                   workingList.addFirst(removed);
                   int size = result.size();
                   // Wenn eine Position von workingList nicht mit first
-                  // übereinstimmt den Index aus result entfernen
+                  // uebereinstimmt den Index aus result entfernen
                   for (int i = size - 1; i > -1; i--) {
                      Integer index2 = result.get(i);
                      if (!first.get(index2).equals(workingList.get(index2))) {
@@ -1534,7 +1534,7 @@ public class NonoSolver implements INonogramSolver {
                      }
                   }
                }
-               // überlappende Bereiche in die MAtrix schreiben
+               // ueberlappende Bereiche in die MAtrix schreiben
                for (Integer column : result) {
                   char charAt = first.get(column).charAt(0);
                   writeCharInMatrix(row.getIndex(), charAt, (column + start));
@@ -1545,24 +1545,24 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Erstellt die erste Möglichkeit den Block zu setzten. Wird in
+    * Erstellt die erste Moeglichkeit den Block zu setzten. Wird in
     * {@link #overlapBlocks(Column)} und {@link #overlapBlocks(Row)} aufgerufen.
     * 
     * @param block
     *           zu bearbeitende Block
-    * @return LinkedList<String> mit der Startbesetzung der Blöcke
+    * @return LinkedList<String> mit der Startbesetzung der Bloecke
     */
    private LinkedList<String> initializeBlockList(Block block) {
       int end = block.getMaxIndex();
       int start = block.getMinIndex();
       int colorsSet = 0;
-      // start liste anlegen und mit so vielen chars füllen
+      // start liste anlegen und mit so vielen chars fuellen
       LinkedList<String> first = new LinkedList<String>();
       for (int i = 0; i < block.getHowMany(); i++) {
          first.add(String.valueOf(block.getColorChar()));
          colorsSet++;
       }
-      // Wenn maxIndex - minIndex > howMany dann mit '-' auffüllen
+      // Wenn maxIndex - minIndex > howMany dann mit '-' auffuellen
       int fillWithEmpty = end - start + 1 - colorsSet;
       while (fillWithEmpty > 0) {
          first.add("-");
@@ -1572,9 +1572,9 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Erstellt alle Möglichkeiten, den Block innerhalb von minIndex und maxIndex
+    * Erstellt alle Moeglichkeiten, den Block innerhalb von minIndex und maxIndex
     * zu platzieren und setzt die Felder in der Matrix, die bei allen
-    * Möglichkeiten gesetzt sind.
+    * Moeglichkeiten gesetzt sind.
     * 
     * @param column
     * @throws DataCollisionException
@@ -1585,8 +1585,8 @@ public class NonoSolver implements INonogramSolver {
          for (int index = 0; index < blocks.size(); index++) {
             Block block = blocks.get(index);
             // nur wenn block noch nicht fertig und wenn minIndexNew und
-            // maxIndexNew sich geändert haben. Dies wird mit doOverlapping
-            // geprüft
+            // maxIndexNew sich geaendert haben. Dies wird mit doOverlapping
+            // geprueft
             if (!block.isGone() && block.doOverlapping) {
                int start = block.getMinIndex();
                LinkedList<String> first = initializeBlockList(block);
@@ -1600,7 +1600,7 @@ public class NonoSolver implements INonogramSolver {
                }
                // String removed;
                // so lange nach rechts verschieben, bis Ende erreicht und
-               // zu workingList hinzufügen.
+               // zu workingList hinzufuegen.
                while (workingList.getLast().equals("-")) {
                   moveBlocksInList(workingList, first, result);
                }
@@ -1614,7 +1614,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Erstellt eine neue Matrix mit der Breite und Höhe des Rätsels und füllt
+    * Erstellt eine neue Matrix mit der Breite und Hoehe des Raetsels und fuellt
     * diese mit '*'.
     */
    private void setupMatrix() {
@@ -1627,7 +1627,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Setzt die initialen Werte für minIndex und maxIndex bei den Blöcken.
+    * Setzt die initialen Werte fuer minIndex und maxIndex bei den Bloecken.
     */
    private void setupBlocks() {
       // alle Reihen durchgehen.
@@ -1636,7 +1636,7 @@ public class NonoSolver implements INonogramSolver {
          Row row = getRows().get(index);
          ArrayList<Block> blocks = row.getBlocks();
          if (blocks != null && blocks.size() > 0) {
-            // Blöcke durchgehen.
+            // Bloecke durchgehen.
             setupBlocksInRowAndColumn(blocks, riddle.getWidth());
          }
       }
@@ -1644,7 +1644,7 @@ public class NonoSolver implements INonogramSolver {
       for (int index = 0; index < size; index++) {
          Column column = getColumns().get(index);
          ArrayList<Block> blocks = column.getBlocks();
-         // Blöcke durchgehen.
+         // Bloecke durchgehen.
          if (blocks != null && blocks.size() > 0) {
             setupBlocksInRowAndColumn(blocks, riddle.getHeight());
          }
@@ -1655,14 +1655,14 @@ public class NonoSolver implements INonogramSolver {
     * Verschiebt das letzte Zeichen (immer ein -) von der letzten an die erste
     * Position. Dann wird jede Position der workingList mit der Position in der
     * firstList verglichen. Falls die Posiitonen nicht gleich sind wird die
-    * Position aus result gelöscht.
+    * Position aus result geloescht.
     * 
     * @param workingList
-    *           Liste, in der die Einträge geschoben werden
+    *           Liste, in der die Eintraege geschoben werden
     * @param firstList
     *           Vergleichsliste
     * @param result
-    *           Liste mit Positionen (aus firstList) die gesetzt werden können.
+    *           Liste mit Positionen (aus firstList) die gesetzt werden koennen.
     */
    private void moveBlocksInList(LinkedList<String> workingList, LinkedList<String> firstList, LinkedList<Integer> result) {
       String removed = workingList.removeLast();
@@ -1678,16 +1678,16 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Berechnet den minimalen Startindex eines Blockes, indem die Größen der
-    * vorherigen Blöcke unter Berücksichtigung etwaiger Zwischenräume addiert
+    * Berechnet den minimalen Startindex eines Blockes, indem die Groessen der
+    * vorherigen Bloecke unter Beruecksichtigung etwaiger Zwischenraeume addiert
     * werden.
     * 
     * @param blocks
-    *           alle Blöcke der Reihe / Spalte
+    *           alle Bloecke der Reihe / Spalte
     * @param indexOfBlock
     *           Index des zu betrachteten Blocks
     * @param size
-    *           Breite / Höhe des Rätsels
+    *           Breite / Hoehe des Raetsels
     * @return den neuen minIndex
     */
    private int getMinStartIndexOfBlock(ArrayList<Block> blocks, int indexOfBlock, int size) {
@@ -1705,16 +1705,16 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Berechnet den maximalen Index für einen Block, indem die Größen der
-    * nachfolgenden Blöcke unter Berücksichtigung etwaiger Zwischenräume addiert
+    * Berechnet den maximalen Index fuer einen Block, indem die Groessen der
+    * nachfolgenden Bloecke unter Beruecksichtigung etwaiger Zwischenraeume addiert
     * werden.
     * 
     * @param blocks
-    *           alle Blöcke dieser Reihe/Spalte
+    *           alle Bloecke dieser Reihe/Spalte
     * @param indexOfBlock
     *           Index des zu betrachteten Blocks.
     * @param size
-    *           Breite / Höhe des Rätsels
+    *           Breite / Hoehe des Raetsels
     * @return den neuen maxIndex
     */
    private int getMaxEndIndexOfBlock(ArrayList<Block> blocks, int indexOfBlock, int size) {
@@ -1732,11 +1732,11 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt alle '*' der Reihe oder Spalte mit '-'. Kann aufgerufen werden, wenn
+    * Fuellt alle '*' der Reihe oder Spalte mit '-'. Kann aufgerufen werden, wenn
     * eine Reihe gone ist.
     * 
     * @param forRow
-    *           Soll eine Reihe gefüllt werden.
+    *           Soll eine Reihe gefuellt werden.
     * @param index
     *           Index der Reihe oder Spalte
     */
@@ -1757,13 +1757,13 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Setzt die initialen Werte für minIndex und maxIndex für alle Blöcke in
+    * Setzt die initialen Werte fuer minIndex und maxIndex fuer alle Bloecke in
     * blocks.
     * 
     * @param blocks
-    *           Blöcke der Reihe oder Spalte.
+    *           Bloecke der Reihe oder Spalte.
     * @param size
-    *           Höhe oder Breite des Rätsels.
+    *           Hoehe oder Breite des Raetsels.
     */
    private void setupBlocksInRowAndColumn(ArrayList<Block> blocks, int size) {
       int size2 = blocks.size();
@@ -1772,7 +1772,7 @@ public class NonoSolver implements INonogramSolver {
       }
       for (int i = 0; i < size2; i++) {
          Block block = blocks.get(i);
-         // wenn es nur ein Block ist, kann er sich über die gesamte Breite/Höhe
+         // wenn es nur ein Block ist, kann er sich ueber die gesamte Breite/Hoehe
          // ziehen
          if (size2 == 1) {
             block.setMinIndex(0);
@@ -1793,7 +1793,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt den Bereich in der column zwischen rowBegin (inklusive) und rowEnd
+    * Fuellt den Bereich in der column zwischen rowBegin (inklusive) und rowEnd
     * (exklusive) mit dem char c.
     * 
     * @param columnIndex
@@ -1809,7 +1809,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt den Bereich in der row zwischen columnBegin (inklusive) und
+    * Fuellt den Bereich in der row zwischen columnBegin (inklusive) und
     * columnEnd (exklusive) mit dem char c.
     * 
     * @param rowIndex
@@ -1825,7 +1825,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Füllt die Stelle in der Matrix.
+    * Fuellt die Stelle in der Matrix.
     * 
     * @param rowIndex
     *           Nummer der Reihe in der Matrix.
@@ -1857,7 +1857,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Gibt die Anzahl der nicht belegten Felder zurück.
+    * Gibt die Anzahl der nicht belegten Felder zurueck.
     * 
     * @return Anzahl der noch nicht belegten Felder in der Matrix
     */
@@ -1876,7 +1876,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Gibt alle Spalten des Rätsels zurück.
+    * Gibt alle Spalten des Raetsels zurueck.
     * 
     * @return alle Spalten
     */
@@ -1885,7 +1885,7 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Gibt alle Reihen des Rätsels zurück.
+    * Gibt alle Reihen des Raetsels zurueck.
     * 
     * @return alle Reihen
     */

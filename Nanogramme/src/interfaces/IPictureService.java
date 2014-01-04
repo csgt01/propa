@@ -11,13 +11,13 @@ import java.awt.image.BufferedImage;
 public interface IPictureService {
 
    /**
-    * Lädt ein Foto und verringert die Anzahl der Farben.
+    * Laedt ein Foto und verringert die Anzahl der Farben.
     * 
     * @param file
     *           das Foto
     * @param height
-    *           Höhe des neuen Fotos
-    * @param width
+    *           Hoehe des neuen Fotos
+    * @param width 
     *           Breite des neuen Fotos
     * @param numberOfColors
     *           Anzahl der Farben des neuen Fotos

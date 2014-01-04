@@ -4,7 +4,7 @@
 package models;
 
 /**
- * Dieses Enum zeigt den Zustand beim Lösen des Rätsels an.
+ * Dieses Enum zeigt den Zustand beim Loesen des Raetsels an.
  * 
  * @author cschulte
  * 
@@ -14,25 +14,25 @@ public enum SolveStateEnum {
    /**
     * Suchend
     */
-   SOLVING("Such Lösung"),
+   SOLVING("Such Loesung"),
    /**
-    * Gelöst
+    * Geloest
     */
-   SOLVED("Gelöst"),
+   SOLVED("Geloest"),
    /**
-    * Mehrere Lösungen vorhanden
+    * Mehrere Loesungen vorhanden
     */
-   MULTIPLE_SOLUTIONS("Mehrere Lösungen gefunden.\nEs wird eine Lösung ausgewählt und einige Felder vorausgefüllt, die dann nicht mehr klickbar sind."),
+   MULTIPLE_SOLUTIONS("Mehrere Loesungen gefunden.\nEs wird eine Loesung ausgewaehlt und einige Felder vorausgefuellt, die dann nicht mehr klickbar sind."),
    /**
-    * Keine Lösung vorhanden
+    * Keine Loesung vorhanden
     */
-   NO_SOLUTION("Keine Lösung gefunden"),
+   NO_SOLUTION("Keine Loesung gefunden"),
    /**
     * Fehler
     */
    ERROR("Error"),
    /**
-    * Lösung gefunden, aber mit Stack gefüllt
+    * Loesung gefunden, aber mit Stack gefuellt
     */
    FOUND_SOLUTION_WITH_STACK("Found Solution with Stack"),
    /**
@@ -55,7 +55,7 @@ public enum SolveStateEnum {
    }
 
    /**
-    * Gibt die Nachricht für das Enum zurück.
+    * Gibt die Nachricht fuer das Enum zurueck.
     * 
     * @return Nachricht
     */
