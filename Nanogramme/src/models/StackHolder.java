@@ -127,12 +127,8 @@ public class StackHolder {
 	 */
 	public void setMatrix(char[][] matrix, int height, int width) {
 		this.matrix = new char[height][width];
-//		System.out.println("setmatrix");
-		// String str = "";
 		for (int i = 0; i < height; i++) {
-			// str += "\n";
 			for (int j = 0; j < width; j++) {
-				// str += matrix[i][j] + " ";
 				this.matrix[i][j] = matrix[i][j];
 			}
 		}

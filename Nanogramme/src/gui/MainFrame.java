@@ -109,7 +109,6 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 
    @Override
    public void setupUIMatrix(int rowInt, int columnInt, List<Row> rows, List<Column> columns) {
-      System.out.println("setupMatrix in MainFrame");
       if (scrollbar != null) {
          container.remove(scrollbar);
          container.validate();
@@ -286,8 +285,6 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 
    @Override
    public void actionPerformed(ActionEvent e) {
-      System.out.println("Action");
-      System.out.println(e.getActionCommand());
       // Ein Rätsel soll geladen werden.
       if (e.getActionCommand().equalsIgnoreCase("Rätsel laden")) {
 
@@ -298,7 +295,6 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
                showAlert("Nur .nono Dateien laden.");
                return;
             }
-            System.out.println(file.getAbsoluteFile());
             if (!playGame.openRiddleFromFile(file.getAbsoluteFile().toString())) {
                showAlert("Fehler beim Laden!");
                return;
@@ -321,8 +317,6 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    private void createRiddle() {
       File file = getFileOrDirectryFromChooser(applikation, JFileChooser.OPEN_DIALOG, false);
       if (file != null && file.getAbsoluteFile() != null) {
-         System.out.println(file.getAbsoluteFile());
-
          // Abfrage der Größe
          String height = JOptionPane.showInputDialog(null, "Höhe:", "Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
          String width = JOptionPane.showInputDialog(null, "Breite", "Eine Eingabeaufforderung", JOptionPane.PLAIN_MESSAGE);
@@ -446,7 +440,6 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 
    @Override
    public void wasRight(boolean isRight, String message) {
-      System.out.println("wasRight:" + isRight);
       if (isRight) {
          showAlert("Richtig gelöst!");
       } else {
@@ -457,7 +450,6 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
 
    @Override
    public void showAlert(String string) {
-      System.out.println("showAlert");
       JOptionPane.showMessageDialog(applikation, string, string, JOptionPane.WARNING_MESSAGE);
    }
    

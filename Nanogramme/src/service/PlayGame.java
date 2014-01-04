@@ -34,6 +34,11 @@ public class PlayGame implements IPlaygame {
    private char[][] matrix;
 
    /**
+    * Hilfvariable für den Lösungscheck
+    */
+   private String wrongCoordinates;
+
+   /**
     * Colour, die zum Setzten eingestellt ist.
     */
    private Colour currentColor;
@@ -76,8 +81,6 @@ public class PlayGame implements IPlaygame {
    @Override
    public boolean openRiddleFromFile(String arg0) {
       try {
-         String methodName = "openFile(" + arg0 + ")";
-         System.out.println(methodName);
          riddleLoader = new RiddleService(listener);
          riddle = riddleLoader.readFile(arg0);
          setupIt(riddle, riddleLoader.getMatrix());
@@ -96,7 +99,6 @@ public class PlayGame implements IPlaygame {
       backGroundColour.setGreen(Color.WHITE.getGreen());
       backGroundColour.setBlue(Color.WHITE.getBlue());
       this.riddle = riddle;
-      System.out.println(riddle);
       this.matrix = matrix;
       // matrix kann null sein!
       if (this.matrix == null) {
@@ -130,7 +132,6 @@ public class PlayGame implements IPlaygame {
          }
          // Fehler ist aufgetreten
       } else {
-         System.out.println(solver.getSolveState());
          switch (solver.getSolveState()) {
          case SOLVING:
             listener.showAlert(SolveStateEnum.SOLVING.getMessage());
@@ -209,13 +210,22 @@ public class PlayGame implements IPlaygame {
    @Override
    public void actionPerformed(ActionEvent arg0) {
       String actionCommand = arg0.getActionCommand();
-      System.out.println(actionCommand);
       if (actionCommand.equals("check")) {
          boolean isRight = checkSolution();
          if (isRight) {
             listener.wasRight(isRight, null);
          } else {
             listener.wasRight(isRight, wrongCoordinates);
+         }
+      } else if (actionCommand.equals("Rätsel lösen lassen")) {
+         for (int row = 0; row < riddle.getHeight(); row++) {
+            for (int column = 0; column < riddle.getWidth(); column++) {
+               if (solutions[row][column] != '-') {
+                  listener.placeAField(row, column, riddle.getColourByName(String.valueOf(solutions[row][column])), false);
+               } else {
+                  listener.placeAField(row, column, backGroundColour, false);
+               }
+            }
          }
       } else if (actionCommand.equals("Reset")) {
          currentColor = null;
@@ -228,11 +238,8 @@ public class PlayGame implements IPlaygame {
          currentColor = backGroundColour;
       } else {
          currentColor = riddle.getColourByName(actionCommand);
-         System.out.println(currentColor);
       }
    }
-
-   String wrongCoordinates;
 
    /**
     * Prüft, ob das vom User gelöste Rätsel mit der Lösung übereinstimmt. Falls
@@ -277,14 +284,10 @@ public class PlayGame implements IPlaygame {
    @Override
    public void mouseClicked(MouseEvent e) {
       String actionCommand = ((JLabel) e.getSource()).getText();
-      System.out.println(actionCommand);
       String[] splits = actionCommand.split("--");
       int row = Integer.valueOf(splits[0]);
-      System.out.println(row);
       int column = Integer.valueOf(splits[1]);
-      System.out.println(column);
       if (null != currentColor) {
-         System.out.println(matrix[row][column]);
          matrix[row][column] = currentColor.getName();
          listener.placeAField(row, column, currentColor, true);
       } else {

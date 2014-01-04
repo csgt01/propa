@@ -102,7 +102,6 @@ public class PictureService implements IPictureService {
             binary11 = "0" + binary11;
          }
       }
-      // System.out.println(binary11);
 
       if (binary12.length() < 8) {
          for (int i = binary12.length(); i < 8; i++) {
@@ -110,32 +109,25 @@ public class PictureService implements IPictureService {
          }
       }
 
-      // System.out.println(binary13);
 
       if (binary13.length() < 8) {
          for (int i = binary13.length(); i < 8; i++) {
             binary13 = "0" + binary13;
          }
       }
-      // System.out.println(binary13);
       Node node = root;
-      // Node lastNode = root;
       for (int i = 0; i < 8; i++) {
          String indexString = "" + (binary11.charAt(i) + "" + binary12.charAt(i) + "" + binary13.charAt(i));
          int index = Integer.parseInt(indexString, 2);
-         // System.out.println(index);
          if (node.getNode(index) == null) {
             count++;
             node.setNode(index, new Node());
             node.getNode(index).setCount(count);
          }
-         // lastNode = node;
          node.getNode(index).setFather(node);
          node = node.getNode(index);
          node.setReferences(node.getReferences() + 1);
       }
-      // lastNode.setReferencesOfChilds();
-
       node.setRed(node.getRed() + red);
       node.setGreen(node.getGreen() + green);
       node.setBlue(node.getBlue() + blue);
@@ -248,7 +240,6 @@ public class PictureService implements IPictureService {
       int sim1 = 0;
       int sim2 = 0;
       double distance = 800.0;
-      // System.out.println(less.getNodes().length);
       // suche die ähnlichsten Blätter
       for (int i = 0; i < less.getNodes().length; i++) {
          Node node1 = less.getNode(i);
@@ -257,7 +248,6 @@ public class PictureService implements IPictureService {
                Node node2 = less.getNode(j);
                if (node2 != null) {
                   Double newDistance = getDistance(node1, node2);
-                  // System.out.println(newDistance);
                   if (newDistance != null && newDistance < distance) {
                      distance = newDistance;
                      similiar1 = node1;
@@ -282,8 +272,6 @@ public class PictureService implements IPictureService {
          node1.setGreen(node1.getGreen() + node2.getGreen());
          node1.setBlue(node1.getBlue() + node2.getBlue());
          less.setNode(sim2, null);
-         // System.out.println("sim1:" + similiar1 + "  \n sim2:" +
-         // similiar2);
       }
    }
 
@@ -394,7 +382,6 @@ public class PictureService implements IPictureService {
       int green = 0;
       int blue = 0;
       if (getChildrenOfNode(node) > 0) {
-         // System.out.println(node);
          for (int i = 0; i < node.getNodes().length; i++) {
             Node child = node.getNode(i);
             if (null != child) {

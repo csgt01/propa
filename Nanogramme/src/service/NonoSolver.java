@@ -100,8 +100,6 @@ public class NonoSolver implements INonogramSolver {
 
    @Override
    public void openFile(String arg0) throws IOException {
-      String methodName = "openFile(" + arg0 + ")";
-      System.out.println(methodName);
       riddleLoader = new RiddleService(null);
       riddle = riddleLoader.readFile(arg0);
       matrix = riddleLoader.getMatrix();
@@ -109,22 +107,17 @@ public class NonoSolver implements INonogramSolver {
 
    @Override
    public char[][] getSolution() {
-      System.out.println(stacks.size());
-      String methodName = "getSolution()";
-      System.out.println(methodName);
       if (riddle == null) {
          return null;
       }
       solveState = SolveStateEnum.SOLVING;
       stacks = new LinkedList<StackHolder>();
       solutionsFromGuising = new ArrayList<char[][]>();
-      showMatrix();
       if (matrix == null) {
          setupMatrix();
       }
       setupBlocks();
       handle();
-      showMatrix();
       return matrix;
    }
 
@@ -136,7 +129,6 @@ public class NonoSolver implements INonogramSolver {
     */
    private void handle() {
       while (solveState != SolveStateEnum.SOLVED) {
-         // System.out.println("state:" + solveState);
          // ein Fehler wurde in solve erkannt dann entweder Farbe von letzten
          // StackHolder ändern oder keine Lösung
          if (solveState == SolveStateEnum.ERROR) {
@@ -187,7 +179,6 @@ public class NonoSolver implements INonogramSolver {
             if (!changeLastStacksMember()) {
                switch (solutionsFromGuising.size()) {
                case 0:
-                  showMatrix();
                   solveState = SolveStateEnum.NO_SOLUTION;
                   return;
                case 1:
@@ -218,7 +209,6 @@ public class NonoSolver implements INonogramSolver {
     * @return solveState:
     */
    private SolveStateEnum solve() {
-      // System.out.println("solve()");
       try {
          boolean run1 = true;
          while (run1 && solveState != SolveStateEnum.ERROR) {
@@ -254,10 +244,7 @@ public class NonoSolver implements INonogramSolver {
       } catch (Exception e) {
          // e.printStackTrace();
          solveState = SolveStateEnum.ERROR;
-      } finally {
-         // showMatrix();
-         // showBlockGoneTrue();
-      }
+      } 
       return solveState;
    }
 
@@ -281,7 +268,6 @@ public class NonoSolver implements INonogramSolver {
          columnIndex = 0;
          rowIndex++;
       }
-      System.out.println("isSolutionOk:" + isOk);
       return isOk;
    }
 
@@ -630,7 +616,6 @@ public class NonoSolver implements INonogramSolver {
                   fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1, blocks.get(blockIndeces.get(0)).getColorChar());
                }
             } else if (blockIndecesSize == 0) {
-               // // System.out.println("EMPTYEMPTYEMPTY");
                fillAreaInRowWithChar(rowInt, columnInt, columnInt + 1, '-');
             } else if (blockIndecesSize > 1) {
                // Wenn es keinen Block in der Spalte gibt mit derselben
@@ -1747,54 +1732,6 @@ public class NonoSolver implements INonogramSolver {
    }
 
    /**
-    * Returns the Row with the index i of the current matrix as String.
-    * 
-    * @param out
-    *           String in den die Reihe geschriben wird.
-    * @param i
-    * @return eine Reihe in der Matrix als StringBuilder
-    */
-   private StringBuilder showRow(StringBuilder out, int i) {
-      for (int j = 0; j < riddle.getWidth(); j++) {
-         out.append(matrix[i][j]);
-         out.append("  ");
-      }
-      out.append("\n");
-      return out;
-   }
-
-   // /**
-   // * Zum debuggen.
-   // */
-   // private void showBlockGoneTrue() {
-   // String methodName = "showBlockGoneTrue()";
-   // System.out.println(methodName);
-   // long startTime = new Date().getTime();
-   // for (int rowInt = 0; rowInt < riddle.getHeight(); rowInt++) {
-   // Row row = getRows().get(rowInt);
-   // System.out.println("Row:" + rowInt + " -- " + row.isGone());
-   // ArrayList<Block> blocks = row.getBlocks();
-   // if (null != blocks) {
-   // for (Block block : blocks) {
-   // System.out.println(block);
-   // }
-   // }
-   // }
-   // for (int columnInt = 0; columnInt < riddle.getWidth(); columnInt++) {
-   // Column column = getColumns().get(columnInt);
-   // System.out.println("Column:" + columnInt + " -- " + column.isGone());
-   // ArrayList<Block> blocks = column.getBlocks();
-   // if (null != blocks) {
-   // for (Block block : blocks) {
-   // System.out.println(block);
-   // }
-   // }
-   // }
-   // System.out.println("Time for " + methodName + ": " + (new Date().getTime()
-   // - startTime) + " ms");
-   // }
-
-   /**
     * Füllt alle '*' der Reihe oder Spalte mit '-'. Kann aufgerufen werden, wenn
     * eine Reihe gone ist.
     * 
@@ -1954,20 +1891,6 @@ public class NonoSolver implements INonogramSolver {
     */
    private ArrayList<Row> getRows() {
       return riddle.getRows();
-   }
-
-   /**
-    * Display the matrix. TODO delete
-    * 
-    */
-   private void showMatrix() {
-      StringBuilder out = new StringBuilder("\n");
-      ;
-      int height = riddle.getHeight();
-      for (int i = 0; i < height; i++) {
-         showRow(out, i);
-      }
-      System.out.println(out.toString());
    }
 
    /**

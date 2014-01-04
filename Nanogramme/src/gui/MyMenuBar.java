@@ -44,6 +44,11 @@ public class MyMenuBar extends JMenuBar {
     * Menueintrag
     */
    public JMenuItem check;
+   
+   /**
+    * Menueintrag
+    */
+   public JMenuItem show;
    /**
     * Menueintrag
     */
@@ -85,6 +90,8 @@ public class MyMenuBar extends JMenuBar {
       erstellen = new JMenuItem("Rätsel erstellen");
       check = new JMenuItem("Rätsel prüfen");
       check.addActionListener(playGame);
+      show = new JMenuItem("Rätsel lösen lassen");
+      show.addActionListener(playGame);
 
       // Menüelemente hinzufügen
       this.add(datei);
@@ -95,6 +102,7 @@ public class MyMenuBar extends JMenuBar {
       riddle.add(laden);
       riddle.add(erstellen);
       riddle.add(check);
+      riddle.add(show);
    }
 
 }

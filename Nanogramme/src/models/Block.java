@@ -316,7 +316,6 @@ public class Block {
     * @return true if the Block is gone after set.
     */
    public boolean increaseEntriesSet(int index) {
-      // // System.out.println("increaseEntriesSet()");
       if (!indeces.add(index)) {
          this.entriesSet++;
       }
