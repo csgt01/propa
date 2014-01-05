@@ -204,7 +204,7 @@ public class RiddleService {
          ArrayList<Block> blocks = new ArrayList<Block>();
          Block block = null;
          Integer blockSize = null;
-         for (int j = 0; j < image.getHeight(); j++) {
+         for (int j = 0; j < image.getWidth(); j++) {
             Color c = new Color(image.getRGB(j, i));
             Colour currentColour = colorMap.get(c);
             // noch kein Block, also neuen erstellen
