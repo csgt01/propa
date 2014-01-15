@@ -331,7 +331,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    @Override
    public void actionPerformed(ActionEvent e) {
       // Ein Raetsel soll geladen werden.
-      if (e.getActionCommand().equalsIgnoreCase("Raetsel laden")) {
+      if (e.getActionCommand().equalsIgnoreCase("Rätsel laden")) {
 
          // Datei auswaehlen.
          File file = getFileOrDirectryFromChooser(applikation, JFileChooser.OPEN_DIALOG, true);
@@ -470,19 +470,19 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
       JButton backgroundButton = new JButton("-");
       backgroundButton.setForeground(Color.DARK_GRAY);
       backgroundButton.addActionListener(playGame);
-      backgroundButton.setToolTipText("Leerfeld setzen wird ausgewaehlt.");
+      backgroundButton.setToolTipText("Leerfeld setzen wird ausgewählt.");
       toolbar.add(backgroundButton);
       JButton resetButton = new JButton("Reset");
       resetButton.setForeground(Color.DARK_GRAY);
       resetButton.addActionListener(playGame);
-      resetButton.setToolTipText("Zuruecksetzen eines Feldes wird ausgewaehlt.");
+      resetButton.setToolTipText("Zurücksetzen eines Feldes wird ausgewählt.");
       toolbar.add(resetButton);
       for (Colour colour : colours) {
          Color color = new Color(colour.getRed(), colour.getGreen(), colour.getBlue());
          JButton comp = new JButton(String.valueOf(colour.getName()));
          comp.setForeground(color);
          comp.addActionListener(playGame);
-         comp.setToolTipText("Diese Farbe auswaehlen, um ein Feld zu setzen.");
+         comp.setToolTipText("Diese Farbe auswählen, um ein Feld zu setzen.");
          toolbar.add(comp);
       }
    }
@@ -490,9 +490,9 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    @Override
    public void wasRight(boolean isRight, String message) {
       if (isRight) {
-         showAlert("Richtig geloest!");
+         showAlert("Richtig gelöst!");
       } else {
-         showAlert("Nicht komplett geloest!\n" + message);
+         showAlert("Nicht komplett gelöst!\n" + message);
       }
 
    }

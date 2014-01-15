@@ -81,16 +81,16 @@ public class MyMenuBar extends JMenuBar {
       // Menueelemente erzeugen
       datei = new JMenu("Datei");
       // hilfe = new JMenu("Hilfe");
-      riddle = new JMenu("Raetsel");
+      riddle = new JMenu("Rätsel");
 
       // Untermenueelemente erzeugen
       oeffnen = new JMenuItem("Speichern");
       oeffnen.addActionListener(playGame);
-      laden = new JMenuItem("Raetsel laden");
+      laden = new JMenuItem("Rätsel laden");
       erstellen = new JMenuItem("Raetsel erstellen");
-      check = new JMenuItem("Raetsel pruefen");
+      check = new JMenuItem("Rätsel prüfen");
       check.addActionListener(playGame);
-      show = new JMenuItem("Raetsel loesen lassen");
+      show = new JMenuItem("Rätsel lösen lassen");
       show.addActionListener(playGame);
 
       // Menueelemente hinzufuegen

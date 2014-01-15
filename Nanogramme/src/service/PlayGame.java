@@ -210,23 +210,29 @@ public class PlayGame implements IPlaygame {
    @Override
    public void actionPerformed(ActionEvent arg0) {
       String actionCommand = arg0.getActionCommand();
-      if (actionCommand.equals("check")) {
+      if (actionCommand.equals("Rätsel prüfen")) {
          boolean isRight = checkSolution();
          if (isRight) {
             listener.wasRight(isRight, null);
          } else {
             listener.wasRight(isRight, wrongCoordinates);
          }
-      } else if (actionCommand.equals("Raetsel loesen lassen")) {
-         for (int row = 0; row < riddle.getHeight(); row++) {
-            for (int column = 0; column < riddle.getWidth(); column++) {
-               if (solutions[row][column] != '-') {
-                  listener.placeAField(row, column, riddle.getColourByName(String.valueOf(solutions[row][column])), false);
-               } else {
-                  listener.placeAField(row, column, backGroundColour, false);
-               }
-            }
-         }
+      } else if (actionCommand.equals("Rätsel lösen lassen")) {
+         if (riddle != null) {
+			for (int row = 0; row < riddle.getHeight(); row++) {
+				for (int column = 0; column < riddle.getWidth(); column++) {
+					if (solutions[row][column] != '-') {
+						listener.placeAField(row, column, riddle
+								.getColourByName(String
+										.valueOf(solutions[row][column])),
+								false);
+					} else {
+						listener.placeAField(row, column, backGroundColour,
+								false);
+					}
+				}
+			}
+		}
       } else if (actionCommand.equals("Reset")) {
          currentColor = null;
       } else if (actionCommand.equals("Speichern")) {
@@ -251,20 +257,26 @@ public class PlayGame implements IPlaygame {
    private boolean checkSolution() {
       boolean isRight = true;
       StringBuilder builder = new StringBuilder();
-      for (int row = 0; row < riddle.getHeight(); row++) {
-         for (int column = 0; column < riddle.getWidth(); column++) {
-            if (matrix[row][column] != solutions[row][column]) {
-               if (matrix[row][column] != '*') {
-                  if (builder.length() == 0) {
-                     builder.append("Fehler an Folgenden Koordinaten:\n");
-                  }
-                  builder.append("Reihe:" + row + " Spalte:" + column + "\n");
-               }
-               isRight = false;
-            }
-         }
-      }
-      wrongCoordinates = builder.toString();
+      if (riddle != null && solutions != null) {
+		for (int row = 0; row < riddle.getHeight(); row++) {
+			for (int column = 0; column < riddle.getWidth(); column++) {
+				if (matrix[row][column] != solutions[row][column]) {
+					if (matrix[row][column] != '*') {
+						if (builder.length() == 0) {
+							builder.append("Fehler an Folgenden Koordinaten:\n");
+						}
+						builder.append("Reihe:" + (row + 1) + " Spalte:"
+								+ (column + 1) + "\n");
+					}
+					isRight = false;
+				}
+			}
+		}
+	} else {
+		builder.append("Es ist kein Rätsel vorhanden!");
+		isRight = false;
+	}
+	wrongCoordinates = builder.toString();
       return isRight;
    }
 
