@@ -217,7 +217,7 @@ public class PlayGame implements IPlaygame {
          } else {
             listener.wasRight(isRight, wrongCoordinates);
          }
-      } else if (actionCommand.equals("Raetsel loesen lassen")) {
+      } else if (actionCommand.equals("Rätsel lösen lassen")) {
          for (int row = 0; row < riddle.getHeight(); row++) {
             for (int column = 0; column < riddle.getWidth(); column++) {
                if (solutions[row][column] != '-') {

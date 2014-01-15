@@ -31,7 +31,7 @@ public class MyMenuBar extends JMenuBar {
    /**
     * Menueintrag
     */
-   public JMenuItem oeffnen;
+   public JMenuItem speichern;
    /**
     * Menueintrag
     */
@@ -81,16 +81,16 @@ public class MyMenuBar extends JMenuBar {
       // Menueelemente erzeugen
       datei = new JMenu("Datei");
       // hilfe = new JMenu("Hilfe");
-      riddle = new JMenu("Raetsel");
+      riddle = new JMenu("Rätsel");
 
       // Untermenueelemente erzeugen
-      oeffnen = new JMenuItem("Speichern");
-      oeffnen.addActionListener(playGame);
-      laden = new JMenuItem("Raetsel laden");
-      erstellen = new JMenuItem("Raetsel erstellen");
-      check = new JMenuItem("Raetsel pruefen");
+      speichern = new JMenuItem("Speichern");
+      speichern.addActionListener(playGame);
+      laden = new JMenuItem("Rätsel laden");
+      erstellen = new JMenuItem("Rätsel erstellen");
+      check = new JMenuItem("Rätsel prüfen");
       check.addActionListener(playGame);
-      show = new JMenuItem("Raetsel loesen lassen");
+      show = new JMenuItem("Rätsel lösen lassen");
       show.addActionListener(playGame);
 
       // Menueelemente hinzufuegen
@@ -98,7 +98,7 @@ public class MyMenuBar extends JMenuBar {
       this.add(riddle);
 
       // Untermenueelemente hinzufuegen
-      datei.add(oeffnen);
+      datei.add(speichern);
       riddle.add(laden);
       riddle.add(erstellen);
       riddle.add(check);

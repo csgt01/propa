@@ -331,8 +331,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    @Override
    public void actionPerformed(ActionEvent e) {
       // Ein Raetsel soll geladen werden.
-      if (e.getActionCommand().equalsIgnoreCase("Raetsel laden")) {
-
+      if (e.getActionCommand().equalsIgnoreCase("Rätsel laden")) {
          // Datei auswaehlen.
          File file = getFileOrDirectryFromChooser(applikation, JFileChooser.OPEN_DIALOG, true);
          if (file != null && file.getAbsoluteFile() != null) {
@@ -350,7 +349,11 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
          }
          // nicht Laden, also Erstellen!
       } else {
-         createRiddle();
+         try {
+            createRiddle();
+         } catch (Exception e1) {
+            showAlert("Fehler beim Erstellen.");
+         }
       }
 
       // String eingabe =
