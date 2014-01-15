@@ -84,6 +84,9 @@ public class PlayGame implements IPlaygame {
       try {
          riddleLoader = new RiddleService(listener);
          riddle = riddleLoader.readFile(arg0);
+         if (riddle == null) {
+            return false;
+         }
          setupIt(riddle, riddleLoader.getMatrix());
          return true;
       } catch (Exception e) {
@@ -143,6 +146,7 @@ public class PlayGame implements IPlaygame {
             // genommen. Abweichende Positionen werden als vorausgefuellte
             // Stellen uebernommen, um das Raetsel eindeutig zu machen
             matrix = getDifferences(solver.solutionsFromGuising);
+            this.matrix = matrix;
             listener.setupUIMatrix(riddle.getHeight(), riddle.getWidth(), riddle.getRows(), riddle.getColumns());
             listener.setColours(riddle.getColours());
             if (matrix != null) {

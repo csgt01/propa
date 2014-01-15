@@ -102,6 +102,9 @@ public class NonoSolver implements INonogramSolver {
    public void openFile(String arg0) throws IOException {
       riddleLoader = new RiddleService(null);
       riddle = riddleLoader.readFile(arg0);
+      if (riddle == null) {
+         return;
+      }
       matrix = riddleLoader.getMatrix();
    }
 

@@ -25,6 +25,21 @@ public class Riddle {
     * Hoehe
     */
    private int height;
+   
+   /**
+    * Titel
+    */
+   private String title;
+   
+   /**
+    * Ersteller
+    */
+   private String by;
+   
+   /**
+    * Anzahl Farben
+    */
+   private Integer numberOfColors;
 
    /**
     * Alles Reihen
@@ -206,6 +221,48 @@ public class Riddle {
    @Override
    public String toString() {
       return "Riddle [colours=" + colours + ", \nwidth=" + width + ", height=" + height + ", \nrows=" + rows + ", \ncolumns=" + columns + "]";
+   }
+
+   /**
+    * @return the title
+    */
+   public String getTitle() {
+      return title;
+   }
+
+   /**
+    * @param title the title to set
+    */
+   public void setTitle(String title) {
+      this.title = title;
+   }
+
+   /**
+    * @return the by
+    */
+   public String getBy() {
+      return by;
+   }
+
+   /**
+    * @param by the by to set
+    */
+   public void setBy(String by) {
+      this.by = by;
+   }
+
+   /**
+    * @return the numberOfColors
+    */
+   public Integer getNumberOfColors() {
+      return numberOfColors;
+   }
+
+   /**
+    * @param numberOfColors the numberOfColors to set
+    */
+   public void setNumberOfColors(Integer numberOfColors) {
+      this.numberOfColors = numberOfColors;
    }
 
 }

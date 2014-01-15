@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -101,6 +102,8 @@ public class RiddleService {
             lines.add(scanner.nextLine());
          }
       } catch (FileNotFoundException e) {
+         e.printStackTrace();
+      } catch (Exception e) {
          e.printStackTrace();
       } finally {
          if (null != scanner) {
@@ -379,7 +382,7 @@ public class RiddleService {
       boolean saved = false;
       File file = listener.getSaveFile();
       try {
-         writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file + ".nono"), "UTF-8"));
+         writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file + ".nono")));
          String nono = riddle.getNono();
          if (nono == null) {
             nono = createNono(riddle);
@@ -455,7 +458,7 @@ public class RiddleService {
     * 
     * @param str
     */
-   public void parseContent(String str) {
+   private void parseContent(String str) {
       for (int i = 0; i < str.length(); i++) {
          if (str.charAt(i) != ' ') {
             matrix[contentRow][contentColumn] = str.charAt(i);
@@ -483,7 +486,7 @@ public class RiddleService {
     * 
     * @param str
     */
-   public void parseColumns(String str) {
+   private void parseColumns(String str) {
       if (str.startsWith("content")) {
          contentColumn = 0;
          contentRow = 0;
@@ -513,7 +516,7 @@ public class RiddleService {
     * 
     * @param str
     */
-   public void parseRows(String str) {
+   private void parseRows(String str) {
       if (str.startsWith("column")) {
          parsingState = 3;
       } else {
@@ -541,7 +544,7 @@ public class RiddleService {
     * 
     * @param str
     */
-   public void parseColours(String str) {
+   private void parseColours(String str) {
       if (str.startsWith("rows")) {
          parsingState = 2;
       } else {
@@ -562,7 +565,7 @@ public class RiddleService {
     * 
     * @param str
     */
-   public void parseGeneralInformation(String str) {
+   private void parseGeneralInformation(String str) {
       if (str.startsWith("width")) {
          String splitted = str.split("width ")[1];
          riddle.setWidth(Integer.valueOf(splitted.trim()));
@@ -595,9 +598,15 @@ public class RiddleService {
    private String createNono(Riddle riddle2) {
       String nono = "";
       StringBuilder sb = new StringBuilder();
+      sb.append(String.format("title %s", "Nonogrammer" + new Date().getTime()));
+      sb.append(System.getProperty("line.separator"));
+      sb.append(String.format("by %s", "Nonogrammer"));
+      sb.append(System.getProperty("line.separator"));
       sb.append(String.format("width %1d", riddle.getWidth()));
       sb.append(System.getProperty("line.separator"));
       sb.append(String.format("height %1d", riddle.getHeight()));
+      sb.append(System.getProperty("line.separator"));
+      sb.append(String.format("numberofcolors %d", riddle.getColours().size()));
       sb.append(System.getProperty("line.separator"));
       sb.append("colors");
       sb.append(System.getProperty("line.separator"));

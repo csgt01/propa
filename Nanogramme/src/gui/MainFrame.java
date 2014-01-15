@@ -121,7 +121,7 @@ public class MainFrame extends JFrame implements ActionListener, IUIListener {
    protected void init() {
       playGame = new PlayGame(this);
       ps = new PictureService();
-      applikation = new JFrame("Main");
+      applikation = new JFrame("Christian Schulte genannt Trux, 8352437");
       container = applikation.getContentPane();
 
       // Menueleiste erzeugen
