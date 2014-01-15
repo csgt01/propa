@@ -1,0 +1,23 @@
+title Ein Nonogramm
+by "ProPra-Team - FernUni Hagen"
+
+width 5
+height 5
+numberofcolors 1
+
+colors
+A 187,221,255
+
+rows
+1A,1A,1A
+3A
+1A,1A,1A
+3A
+1A,1A,1A
+
+columns
+1A,1A,1A
+1A,1A
+5A
+1A,1A
+1A,1A,1A

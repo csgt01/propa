@@ -1,0 +1,58 @@
+title Ein Nonogramm
+by Nono
+
+width 21
+height 23
+numberofcolors 1
+
+colors
+A 118,134,142
+#  0x76868e
+
+rows
+1A
+2A
+7A
+8A
+13A
+15A
+20A
+21A
+0
+0
+20A
+3A,2A,2A,3A
+3A,2A,2A,3A
+3A,2A,2A,3A
+3A,2A,2A,3A
+3A,2A,2A,3A
+3A,2A,2A,3A
+3A,2A,2A,3A
+19A
+19A
+21A
+21A
+19A
+
+columns
+1A,2A
+2A,1A,5A
+2A,13A
+3A,13A
+4A,13A
+4A,1A,5A
+4A,1A,5A
+6A,13A
+6A,13A
+6A,1A,5A
+8A,1A,5A
+7A,1A,5A
+6A,13A
+6A,13A
+5A,1A,5A
+4A,1A,5A
+4A,13A
+3A,13A
+2A,13A
+2A,1A,5A
+2A,1A,2A
