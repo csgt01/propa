@@ -96,7 +96,7 @@ public class RiddleService {
       riddle = new Riddle();
       ArrayList<String> lines = new ArrayList<String>();
       try {
-         scanner = new Scanner(new File(filename), "UTF-8");
+         scanner = new Scanner(new File(filename));
          while (scanner.hasNextLine()) {
             lines.add(scanner.nextLine());
          }
