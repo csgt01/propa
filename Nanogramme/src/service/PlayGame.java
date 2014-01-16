@@ -209,6 +209,7 @@ public class PlayGame implements IPlaygame {
    public Riddle createRiddle(BufferedImage image) {
       this.riddle = riddleLoader.createRiddle(image);
       setupIt(this.riddle, null);
+      riddleLoader.save(this.matrix);
       return this.riddle;
    }
 
