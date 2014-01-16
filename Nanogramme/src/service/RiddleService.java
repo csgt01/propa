@@ -110,13 +110,18 @@ public class RiddleService {
             scanner.close();
          }
       }
-      for (String str : lines) {
-         if (str.length() > 0) {
-            analyzeLine(str);
+      try {
+         for (String str : lines) {
+            if (str.length() > 0) {
+               analyzeLine(str);
+            }
+            nono += (str + "\n");
          }
-         nono += (str + "\n");
+         riddle.setNono(nono);
+      } catch (Exception e) {
+         riddle = null;
+         e.printStackTrace();
       }
-      riddle.setNono(nono);
       return riddle;
    }
 
@@ -382,7 +387,11 @@ public class RiddleService {
       boolean saved = false;
       File file = listener.getSaveFile();
       try {
-         writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file + ".nono")));
+         if (file.getName().endsWith(".nono")) {
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+         } else {
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file + ".nono")));
+         }
          String nono = riddle.getNono();
          if (nono == null) {
             nono = createNono(riddle);
@@ -426,8 +435,9 @@ public class RiddleService {
     * Objekt mit Informationen.
     * 
     * @param str
+    * @throws Exception 
     */
-   private void analyzeLine(String str) {
+   private void analyzeLine(String str) throws Exception {
       str = str.trim();
       if (!str.startsWith("#")) {
          switch (parsingState) {
@@ -564,14 +574,42 @@ public class RiddleService {
     * Parsed eine Zeile mit allgemeinen Informationen
     * 
     * @param str
+    * @throws Exception 
     */
-   private void parseGeneralInformation(String str) {
-      if (str.startsWith("width")) {
+   private void parseGeneralInformation(String str) throws Exception {
+      if (str.startsWith("title")) {
+         riddle.setTitle(str.split("title ")[1].trim());
+      }
+      else if (str.startsWith("by")) {
+         if (riddle.getTitle() == null) {
+            throw new Exception("Falsches Format!");
+         }
+         String splitted = str.split("by ")[1];
+         riddle.setBy(splitted.trim());
+      } 
+      else if (str.startsWith("width")) {
+         if (riddle.getBy() == null) {
+            throw new Exception("Falsches Format!");
+         }
          String splitted = str.split("width ")[1];
          riddle.setWidth(Integer.valueOf(splitted.trim()));
       } else if (str.startsWith("height")) {
+         if (riddle.getWidth() == 0) {
+            throw new Exception("Falsches Format!");
+         }
          riddle.setHeight(Integer.valueOf(str.split("height ")[1].trim()));
-      } else if (str.startsWith("color")) {
+      } 
+      else if (str.startsWith("numberofcolors")) {
+         if (riddle.getHeight() == 0) {
+            throw new Exception("Falsches Format!");
+         }
+         String splitted = str.split("numberofcolors ")[1];
+         riddle.setNumberOfColors(Integer.valueOf(splitted.trim()));
+      } 
+      else if (str.startsWith("color")) {
+         if (riddle.getNumberOfColors() == null) {
+            throw new Exception("Falsches Format!");
+         }
          parsingState = 1;
       }
    }
